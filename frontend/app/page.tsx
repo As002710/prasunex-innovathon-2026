@@ -24,9 +24,25 @@ type AnyRow = Record<string, any>;
 type Notice = { text: string; kind?: "error" | "success" };
 
 const roleNames: Record<string, string> = {
-  chancellor_dean: "Campus administrator", professor_hod: "Professor / HOD",
-  student: "Student", technician_warden: "Technician / Warden", recruiter: "Recruiter",
+  admin: "Campus Administrator",
+  chancellor_dean: "Campus Administrator",
+  dean: "Dean Academics",
+  hod: "Head of Department",
+  professor: "Professor / Faculty",
+  professor_hod: "Professor / HOD",
+  student: "Student",
+  technician: "Campus Technician",
+  warden: "Hostel Warden",
+  technician_warden: "Technician / Warden",
+  recruiter: "Corporate Recruiter",
 };
+
+const isAdminRole = (r?: string) => ["admin", "dean", "chancellor_dean"].includes(r || "");
+const isFacultyRole = (r?: string) => ["professor", "hod", "professor_hod"].includes(r || "");
+const isStaffRole = (r?: string) => ["technician", "warden", "technician_warden"].includes(r || "");
+const canManageAcademics = (r?: string) => isAdminRole(r) || isFacultyRole(r);
+const canManageFacilities = (r?: string) => isStaffRole(r) || isAdminRole(r);
+
 const roles = [
   { key: "chancellor_dean", label: "Administrator", icon: Building2 },
   { key: "professor_hod", label: "Professor", icon: BookOpenCheck },
@@ -180,13 +196,17 @@ export default function Home() {
   }, []);
 
   const refreshCore = useCallback(async (accessToken: string, currentUser: CampusUser) => {
-    const isAdmin = ["chancellor_dean", "professor_hod"].includes(currentUser.role);
+    const canAcademics = canManageAcademics(currentUser.role);
+    const isStaff = isStaffRole(currentUser.role);
+    const isStudent = currentUser.role === "student";
+    const isRecruiter = currentUser.role === "recruiter";
+
     const dataTasks: Promise<any>[] = [
       request("/dashboard/overview", accessToken).then(setOverview),
       request("/facilities/tickets", accessToken).then(setTickets),
       request("/opportunities", accessToken).then(setEvents),
     ];
-    if (isAdmin) {
+    if (canAcademics) {
       dataTasks.push(request("/students", accessToken).then(setStudents));
       dataTasks.push(request("/attendance/early-warning", accessToken).then(setWarnings));
       dataTasks.push(request("/grading/courses", accessToken).then((rows: Course[]) => { setCourses(rows); setSelectedCourse((old) => old || rows[0]?.id || ""); }));
@@ -194,7 +214,7 @@ export default function Home() {
       dataTasks.push(request("/admin/billing", accessToken).then(setBilling));
       if (currentUser.features.zk_grievance) dataTasks.push(request("/privacy/reports", accessToken).then(setReports));
     }
-    if (currentUser.role === "student") {
+    if (isStudent) {
       dataTasks.push(request("/attendance/me", accessToken).then(setAttendance));
       dataTasks.push(request("/knowledge/me", accessToken).then(setKnowledge));
       dataTasks.push(request("/peer-matcher/me", accessToken).then(setMatches));
@@ -202,8 +222,8 @@ export default function Home() {
       dataTasks.push(request("/study-plan", accessToken).then(setStudyPlan));
       dataTasks.push(request("/micro-drills", accessToken).then(setDrills));
     }
-    if (currentUser.role === "technician_warden") dataTasks.push(request("/facilities/tickets", accessToken).then(setTickets));
-    if (currentUser.role === "recruiter") {
+    if (isStaff) dataTasks.push(request("/facilities/tickets", accessToken).then(setTickets));
+    if (isRecruiter) {
       dataTasks.push(request("/recruiter/talent", accessToken).then(setTalent));
       dataTasks.push(request("/invites/me", accessToken).then(setInvites));
     }
@@ -241,7 +261,7 @@ export default function Home() {
   const navigation = useMemo(() => {
     if (!user) return [];
     const common = [{ id: "dashboard", label: "Overview", icon: LayoutDashboard }];
-    if (["chancellor_dean", "professor_hod"].includes(user.role)) common.push(
+    if (canManageAcademics(user.role)) common.push(
       { id: "students", label: "Student success", icon: Users },
       { id: "grading", label: "Grading sandbox", icon: BarChart3 },
       { id: "attendance", label: "Attendance radar", icon: Activity },
@@ -253,12 +273,12 @@ export default function Home() {
       { id: "drills", label: "Micro drills", icon: Brain },
       { id: "attendance", label: "My attendance", icon: CalendarDays },
     );
-    if (["student", "technician_warden", "chancellor_dean"].includes(user.role)) common.push({ id: "facilities", label: "Facilities desk", icon: Wrench });
-    if (user.features.zk_grievance && ["student", "chancellor_dean"].includes(user.role)) common.push({ id: "privacy", label: "Anonymous reporting", icon: ShieldCheck });
-    if (["student", "chancellor_dean", "professor_hod"].includes(user.role)) common.push({ id: "community", label: "Peer study matcher", icon: Network });
+    if (user.role === "student" || canManageFacilities(user.role)) common.push({ id: "facilities", label: "Facilities desk", icon: Wrench });
+    if (user.features.zk_grievance && (user.role === "student" || isAdminRole(user.role))) common.push({ id: "privacy", label: "Anonymous reporting", icon: ShieldCheck });
+    if (user.role === "student" || canManageAcademics(user.role)) common.push({ id: "community", label: "Peer study matcher", icon: Network });
     common.push({ id: "opportunities", label: "Opportunity radar", icon: Sparkles });
     if (user.role === "recruiter") common.push({ id: "talent", label: "Talent marketplace", icon: Search });
-    if (["chancellor_dean", "professor_hod"].includes(user.role)) common.push({ id: "billing", label: "Plans & billing", icon: ArrowLeftRight });
+    if (canManageAcademics(user.role)) common.push({ id: "billing", label: "Plans & billing", icon: ArrowLeftRight });
     return common;
   }, [user]);
 
@@ -506,12 +526,12 @@ function Dashboard({ user, overview, students, warnings, tickets, onView, onNoti
     </Panel><Panel title="Campus pulse" subtitle="A quick look at today's activity"><div className="pulse-list"><Pulse icon={<BadgeCheck size={15}/>} tone="green" title="Course evidence is ready" description="Outcome mapping available for review" time="12 min ago"/><Pulse icon={<Wrench size={15}/>} tone="amber" title={`${tickets.filter((x) => x.status !== "Resolved").length} open facilities tickets`} description="Review the technician queue" time="38 min ago"/><Pulse icon={<Users size={15}/>} tone="violet" title={`${warnings.length} attendance signals`} description="A check-in could help these students" time="1 hour ago"/><Pulse icon={<Sparkles size={15}/>} tone="blue" title="New campus opportunities" description="Hackathons and fellowships are open" time="Today"/></div><button className="panel-bottom-link" onClick={() => onView("opportunities")}>Explore opportunities <ArrowRight size={12}/></button></Panel></div>
     <div className="dashboard-columns lower-columns"><Panel title="Students to check in with" subtitle="Based on attendance records in this semester" action={<button className="small-action" onClick={() => onView("students")}>View all <ArrowRight size={13}/></button>}>
       {atRiskNames.length ? <div className="simple-table"><div className="table-head"><span>STUDENT</span><span>COURSE</span><span>ATTENDANCE</span><span>STATUS</span></div>{atRiskNames.map((student) => { const warning = warnings.find((item) => item.student_id === student.id); return <div className="table-row" key={student.id}><span className="student-name-cell"><i className="mini-avatar">{initials(student.full_name)}</i><b>{student.full_name}<small>{student.department}</small></b></span><span>{warning?.course_code}</span><span><i className="mini-progress"><i style={{ width: `${warning?.current_percentage || 0}%` }}/></i>{warning?.current_percentage}%</span><span><Badge tone={warning?.current_percentage < 65 ? "red" : "amber"}>{warning?.current_percentage < 65 ? "Priority" : "Check in"}</Badge></span></div>; })}</div> : <Empty>Everything is looking steady. More student signals appear as this campus adds course activity.</Empty>}
-    </Panel><Panel title="Your plan" subtitle="Features available at this campus"><div className="plan-card"><div><Badge tone="lime"><Sparkles size={11}/>{user.tier_name}</Badge><span className="plan-price">{user.tier === "core" ? "Free" : user.tier === "cognitive" ? "$2.50" : "$4.00"}<small>{user.tier === "core" ? "up to 500 students" : "per student / year"}</small></span></div><div className="feature-pills">{Object.entries(user.features).filter(([, enabled]) => enabled).slice(0, 5).map(([name]) => <span key={name}><Check size={11}/>{formatFeature(name)}</span>)}</div><button className="panel-bottom-link" onClick={() => onView(user.role === "chancellor_dean" ? "billing" : "dashboard")}>See plan details <ArrowRight size={12}/></button></div></Panel></div>
+    </Panel><Panel title="Your plan" subtitle="Features available at this campus"><div className="plan-card"><div><Badge tone="lime"><Sparkles size={11}/>{user.tier_name}</Badge><span className="plan-price">{user.tier === "core" ? "Free" : user.tier === "cognitive" ? "$2.50" : "$4.00"}<small>{user.tier === "core" ? "up to 500 students" : "per student / year"}</small></span></div><div className="feature-pills">{Object.entries(user.features).filter(([, enabled]) => enabled).slice(0, 5).map(([name]) => <span key={name}><Check size={11}/>{formatFeature(name)}</span>)}</div><button className="panel-bottom-link" onClick={() => onView(isAdminRole(user.role) ? "billing" : "dashboard")}>See plan details <ArrowRight size={12}/></button></div></Panel></div>
     <div className="quick-actions">{[
       { id: "grading", icon: BarChart3, label: "Open grading sandbox", description: "Model a fair mark distribution" },
       { id: "facilities", icon: Wrench, label: "Report a campus issue", description: "Keep labs and spaces running" },
       { id: "accreditation", icon: FileBadge2, label: "Review course outcomes", description: "Prepare OBE evidence" },
-    ].filter((item) => item.id !== "grading" || ["chancellor_dean", "professor_hod"].includes(user.role)).map((item) => { const Icon = item.icon; return <button key={item.id} onClick={() => onView(item.id)}><i><Icon size={16}/></i><span><strong>{item.label}</strong><small>{item.description}</small></span><ArrowRight size={14}/></button>; })}</div>
+    ].filter((item) => item.id !== "grading" || canManageAcademics(user.role)).map((item) => { const Icon = item.icon; return <button key={item.id} onClick={() => onView(item.id)}><i><Icon size={16}/></i><span><strong>{item.label}</strong><small>{item.description}</small></span><ArrowRight size={14}/></button>; })}</div>
   </div>;
 }
 function Pulse({ icon, tone, title, description, time }: { icon: ReactNode; tone: string; title: string; description: string; time: string }) { return <div className="pulse-item"><i className={`pulse-icon ${tone}`}>{icon}</i><span><strong>{title}</strong><small>{description}</small></span><time>{time}</time></div>; }
@@ -612,7 +632,7 @@ function FacilitiesView({ tickets, user, run, refresh, onNotify }: { tickets: An
     try { await run(`/facilities/tickets/${encodeURIComponent(ticketId)}/merge`, { method: "POST", body: JSON.stringify({ candidate_id: candidateId }) }); onNotify("Duplicate confirmed and linked in the audit trail.", "success"); refresh(); }
     catch (error: any) { onNotify(error.message, "error"); }
   };
-  const canManage = ["technician_warden", "chancellor_dean"].includes(user.role);
+  const canManage = canManageFacilities(user.role);
   return <div className="view-stack"><div className="mini-stat-grid"><MiniStat icon={<Wrench size={15}/>} label="Open tickets" value={tickets.filter((t) => t.status === "Open").length} tone="amber"/><MiniStat icon={<Activity size={15}/>} label="In progress" value={tickets.filter((t) => t.status === "In progress").length} tone="blue"/><MiniStat icon={<Check size={15}/>} label="Resolved" value={tickets.filter((t) => t.status === "Resolved").length} tone="green"/><MiniStat icon={<Target size={15}/>} label="Response SLA" value="48 hours"/></div>
     <Panel title="Facilities service desk" subtitle="Track issues, triage and repair status across campus." action={<div className="panel-actions"><select className="small-select" value={filter} onChange={(event) => setFilter(event.target.value)}><option>All</option><option>Open</option><option>In progress</option><option>Resolved</option></select><button className="button-primary" onClick={() => setShowForm((value) => !value)}><Plus size={14}/> Report issue</button></div>}>
       {showForm && <form className="issue-form" onSubmit={submit}><div className="form-grid"><label className="field-label">Short description<input className="field-control" name="title" placeholder="e.g. Oscilloscope screen not powering on" required maxLength={200}/></label><label className="field-label">Location<input className="field-control" name="location" placeholder="Building, room or lab" defaultValue="" required/></label><label className="field-label">Priority<select className="field-control" name="priority"><option>Medium</option><option>High</option><option>Urgent</option><option>Low</option></select></label><label className="field-label">Photo <small>{user.features.vision_triage ? "Enterprise vision triage · max 5 MB" : "Text reports available on your plan"}</small><input className="field-control file-field" name="photo" type="file" accept="image/jpeg,image/png,image/webp" disabled={!user.features.vision_triage}/></label></div><label className="field-label">Details<textarea className="field-control" name="description" rows={2} placeholder="Add useful context for the facilities team."/></label><div className="form-button-row"><button type="button" className="button-secondary" onClick={() => setShowForm(false)}>Cancel</button><button className="button-primary" disabled={submitting}>{submitting ? "Submitting…" : "Submit issue"}<ArrowRight size={13}/></button></div></form>}
@@ -642,7 +662,7 @@ function PrivacyView({ user, token, reports, run, refresh, onNotify }: { user: C
   };
   const checkStatus = async (event: FormEvent) => { event.preventDefault(); try { setTrackedReport(await request(`/privacy/reports/${encodeURIComponent(tracking)}`)); } catch (error: any) { onNotify(error.message, "error"); } };
   const sendReply = async (event: FormEvent) => { event.preventDefault(); if (!reply.trim() || !tracking) return; try { const encrypted = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(reply)); const ciphertext = bytesToBase64(new Uint8Array(encrypted)); await request(`/privacy/reports/${encodeURIComponent(tracking)}/messages`, undefined, { method: "POST", body: JSON.stringify({ encrypted_body: ciphertext }) }); setReply(""); onNotify("Encrypted reply added to the anonymous thread.", "success"); await checkStatus(new Event("submit") as unknown as FormEvent); } catch (error: any) { onNotify(error.message, "error"); } };
-  const isAdmin = user.role === "chancellor_dean";
+  const isAdmin = isAdminRole(user.role);
   return <div className="view-stack"><div className="privacy-explainer"><div className="privacy-lock"><ShieldCheck size={25}/></div><div><strong>Eligibility is proven without attaching your account to the report.</strong><p>Your browser blinds a one-time token before campus eligibility is signed. The report body and each decryption key share are encrypted separately for the Dean and the ICC.</p></div><Badge tone="green">DUAL-CUSTODIAN DEMO</Badge></div><div className="module-grid privacy-grid"><Panel title={isAdmin ? "Anonymous reports" : "Submit a concern"} subtitle={isAdmin ? "Queue metadata only. Report ciphertext is never returned by this endpoint." : "Your report will not include your name, email or account ID."}>
     {isAdmin ? reports.length ? <div className="privacy-report-list">{reports.map((report) => <div className="privacy-report-row" key={report.tracking_code}><span className="report-glyph"><ShieldCheck size={15}/></span><span><strong>{report.category}</strong><small>Tracking {report.tracking_code.slice(0, 9)}… · {new Date(report.created_at).toLocaleDateString()}</small></span><Badge tone="blue">{report.status}</Badge></div>)}</div> : <Empty>No report metadata is in the queue.</Empty> : <form onSubmit={submit}><label className="field-label">Concern category<select className="field-control" value={category} onChange={(event) => setCategory(event.target.value)}><option>Campus safety</option><option>Harassment or discrimination</option><option>Ragging</option><option>Academic integrity</option><option>Facilities</option><option>Other</option></select></label><label className="field-label">Report details<textarea className="field-control" rows={5} value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Describe what happened and what support you need. Avoid including information that identifies you." required/></label><div className="private-note"><KeyRound size={14}/><span>The report is encrypted in your browser. Keep your tracking code private; it is the key to checking status and replies.</span></div><button className="button-primary" disabled={submitting}>{submitting ? "Encrypting & submitting…" : "Submit anonymously"}<ArrowRight size={14}/></button></form>}
     </Panel><Panel title="Track a report" subtitle="Use a private tracking code to view status and continue a conversation."><form className="track-form" onSubmit={checkStatus}><input className="field-control" value={tracking} onChange={(event) => setTracking(event.target.value)} placeholder="Paste your report tracking code" required/><button className="button-secondary">Check status</button></form>{savedCodes.length > 0 && <div className="saved-codes"><small>Saved on this browser</small>{savedCodes.slice(0, 4).map((code) => <button key={code} onClick={() => setTracking(code)}>{code}<ArrowRight size={11}/></button>)}</div>}{trackedReport && <div className="tracked-card"><div><strong>Report status</strong><Badge tone="blue">{trackedReport.status}</Badge></div><small>Tracking code: {trackedReport.tracking_code}</small><small>Category: {trackedReport.category}</small><form onSubmit={sendReply}><textarea className="field-control" rows={2} placeholder="Write a follow-up reply" value={reply} onChange={(event) => setReply(event.target.value)}/><button className="button-secondary">Add encrypted reply</button></form></div>}</Panel></div><InfoCallout title="Security design is a demo, not a deployment-ready whistleblower system." text="Private signing keys are stored in the local demo database, replies need client-side encryption, and there is no independent key-custodian service or security audit. Do not use this build for real sensitive reports."/></div>;
@@ -651,7 +671,7 @@ function PrivacyView({ user, token, reports, run, refresh, onNotify }: { user: C
 function CommunityView({ user, matches, run, onNotify, refresh }: { user: CampusUser; matches: AnyRow[]; run: (path: string, init?: RequestInit) => Promise<any>; onNotify: (text: string, kind?: Notice["kind"]) => void; refresh: () => void }) {
   const [working, setWorking] = useState(false);
   const [optIn, setOptIn] = useState(user.opt_in_recruiter !== false);
-  const isAdmin = ["chancellor_dean", "professor_hod"].includes(user.role);
+  const isAdmin = canManageAcademics(user.role);
   const generate = async () => { setWorking(true); try { const result = await run("/peer-matcher/generate", { method: "POST" }); onNotify(`${result.created} new peer matches created.`, "success"); refresh(); } catch (error: any) { onNotify(error.message, "error"); } finally { setWorking(false); } };
   const setRecruiterConsent = async () => { try { const result = await run("/recruiter/opt-in", { method: "PATCH", body: JSON.stringify({ opt_in: !optIn }) }); setOptIn(result.opt_in); onNotify(result.opt_in ? "Your profile is visible to recruiters." : "Your profile is hidden from recruiters.", "success"); } catch (error: any) { onNotify(error.message, "error"); } };
   return <div className="view-stack">{isAdmin && <div className="module-intro"><div><Network size={18}/><span><strong>Campus matching</strong><small>Pair learners with peers who have stronger mastery in a shared concept.</small></span></div><button className="button-primary" disabled={working} onClick={generate}>{working ? "Matching…" : "Generate study pairs"}<ArrowRight size={14}/></button></div>}{!isAdmin && <div className="privacy-explainer compact"><div className="privacy-lock"><HeartHandshake size={22}/></div><div><strong>Peer learning works both ways.</strong><p>You'll be matched for concepts where your practice can help a classmate, and where a classmate can help you.</p></div></div>}<Panel title="Your study matches" subtitle={isAdmin ? "Matches are generated within your campus tenant." : "Your partner's course and concept match are shown below."}>{matches.length ? <div className="match-grid">{matches.map((match, index) => <article className="match-card" key={`${match.course_id}-${match.concept_code}-${index}`}><span className="match-avatar">{initials(match.partner_name)}</span><div><Badge tone={match.role === "tutor" ? "green" : "blue"}>{match.role === "tutor" ? "You're the tutor" : "Study partner"}</Badge><strong>{match.partner_name}</strong><small>{match.concept_code} · {match.course_id}</small></div><span className="match-score">{Math.round(match.score * 100)}<small> match</small></span></article>)}</div> : <Empty>{isAdmin ? "No pairings yet. Generate matches after students complete concept checks." : "No study partner matches yet. Keep practising to improve the match signals."}</Empty>}</Panel>{!isAdmin && <Panel title="Recruiter profile privacy" subtitle="Your information is only available to recruiters if you opt in."><div className="consent-row"><span className="consent-icon"><ShieldCheck size={17}/></span><span><strong>{optIn ? "Profile is opted in" : "Profile is private"}</strong><small>{optIn ? "Recruiters see a limited skill profile and cannot contact you directly." : "Your student profile is hidden from the talent marketplace."}</small></span><button className={`toggle ${optIn ? "toggle-on" : ""}`} onClick={setRecruiterConsent} aria-label="Toggle recruiter profile consent"><i/></button></div></Panel>}</div>;
@@ -677,7 +697,7 @@ function BillingView({ billing, user, run, onNotify, refresh }: { billing: AnyRo
   if (!billing) return <Empty>Billing details could not be loaded.</Empty>;
   const labels: Record<string, string> = { core: "Core", cognitive: "Cognitive Campus", autonomous_enterprise: "Autonomous Enterprise" };
   const highlights: Record<string, string[]> = { core: ["Grading sandbox", "Attendance forecast", "Peer study matcher"], cognitive: ["Everything in Core", "BKT learning diagnostics", "NBA / OBE evidence", "Recruiter marketplace"], autonomous_enterprise: ["Everything in Cognitive", "Blind-token grievance workflow", "Photo triage", "99.9% SLA concept"] };
-  return <div className="view-stack"><div className="billing-summary"><div><span>ESTIMATED ANNUAL RECURRING REVENUE</span><strong>{money(billing.estimated_arr_usd)}</strong><small>{billing.billable_students.toLocaleString()} billable students × {billing.price_per_student_yr ? `$${billing.price_per_student_yr}` : "$0"} per year</small></div><div className="billing-mark"><Building2 size={28}/></div></div><div className="pricing-grid">{billing.available_tiers.map((tier: AnyRow) => <article className={`pricing-card ${billing.current_tier === tier.key ? "pricing-current" : ""}`} key={tier.key}>{billing.current_tier === tier.key && <Badge tone="green">CURRENT PLAN</Badge>}<h3>{labels[tier.key]}</h3><p>{tier.key === "core" ? "A simple entry point for smaller campuses." : tier.key === "cognitive" ? "Learning insights and outcome evidence." : "Advanced governance and facilities tools."}</p><strong className="price-line">{tier.price_per_student_yr ? `$${tier.price_per_student_yr.toFixed(2)}` : "Free"}<small>{tier.price_per_student_yr ? "/ student / year" : `Up to ${tier.max_students} students`}</small></strong><div className="pricing-arr">Estimated ARR <strong>{money(tier.estimated_arr_usd)}</strong></div><div className="pricing-features">{highlights[tier.key].map((item) => <span key={item}><Check size={13}/>{item}</span>)}</div><button className={billing.current_tier === tier.key ? "button-secondary" : "button-primary"} disabled={user.role !== "chancellor_dean" || busy === tier.key || billing.current_tier === tier.key} onClick={() => void updateTier(tier.key)}>{user.role !== "chancellor_dean" ? "Admin approval required" : busy === tier.key ? "Updating…" : billing.current_tier === tier.key ? "Current plan" : "Select plan"}</button></article>)}</div><InfoCallout title="Pricing is an estimate, not an invoice." text="Annual amounts use the configured per-student rate and campus count. Taxes, discounts, contracts and marketplace revenue are not included."/></div>;
+  return <div className="view-stack"><div className="billing-summary"><div><span>ESTIMATED ANNUAL RECURRING REVENUE</span><strong>{money(billing.estimated_arr_usd)}</strong><small>{billing.billable_students.toLocaleString()} billable students × {billing.price_per_student_yr ? `$${billing.price_per_student_yr}` : "$0"} per year</small></div><div className="billing-mark"><Building2 size={28}/></div></div><div className="pricing-grid">{billing.available_tiers.map((tier: AnyRow) => <article className={`pricing-card ${billing.current_tier === tier.key ? "pricing-current" : ""}`} key={tier.key}>{billing.current_tier === tier.key && <Badge tone="green">CURRENT PLAN</Badge>}<h3>{labels[tier.key]}</h3><p>{tier.key === "core" ? "A simple entry point for smaller campuses." : tier.key === "cognitive" ? "Learning insights and outcome evidence." : "Advanced governance and facilities tools."}</p><strong className="price-line">{tier.price_per_student_yr ? `$${tier.price_per_student_yr.toFixed(2)}` : "Free"}<small>{tier.price_per_student_yr ? "/ student / year" : `Up to ${tier.max_students} students`}</small></strong><div className="pricing-arr">Estimated ARR <strong>{money(tier.estimated_arr_usd)}</strong></div><div className="pricing-features">{highlights[tier.key].map((item) => <span key={item}><Check size={13}/>{item}</span>)}</div><button className={billing.current_tier === tier.key ? "button-secondary" : "button-primary"} disabled={!isAdminRole(user.role) || busy === tier.key || billing.current_tier === tier.key} onClick={() => void updateTier(tier.key)}>{!isAdminRole(user.role) ? "Admin approval required" : busy === tier.key ? "Updating…" : billing.current_tier === tier.key ? "Current plan" : "Select plan"}</button></article>)}</div><InfoCallout title="Pricing is an estimate, not an invoice." text="Annual amounts use the configured per-student rate and campus count. Taxes, discounts, contracts and marketplace revenue are not included."/></div>;
 }
 
 function MiniStat({ icon, label, value, tone = "green" }: { icon: ReactNode; label: string; value: ReactNode; tone?: string }) { return <div className="mini-stat"><i className={`mini-stat-icon ${tone}`}>{icon}</i><span><small>{label}</small><strong>{value}</strong></span></div>; }

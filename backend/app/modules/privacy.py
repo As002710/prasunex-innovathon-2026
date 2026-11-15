@@ -264,3 +264,60 @@ def update_report_status_dean(
         "status": report.status,
         "updated_at": datetime.now(timezone.utc).isoformat(),
     }
+
+
+@router.get("/reports")
+def get_reports_dean_alias(
+    user: User = Depends(require_roles(["dean", "admin", "chancellor_dean"])),
+    db: Session = Depends(get_db),
+):
+    """
+    Alias for /privacy/dean-inbox expected by frontend.
+    """
+    return dean_anti_ragging_inbox(user=user, db=db)
+
+
+@router.get("/reports/{tracking_code}")
+def get_report_track_alias(
+    tracking_code: str,
+    db: Session = Depends(get_db),
+):
+    """
+    Alias for /privacy/reports/track/{tracking_code} expected by frontend.
+    """
+    return track_anonymous_report(tracking_code=tracking_code, db=db)
+
+
+class ReportMessageRequest(BaseModel):
+    encrypted_body: str
+
+
+@router.post("/reports/{tracking_code}/messages")
+def add_report_message(
+    tracking_code: str,
+    payload: ReportMessageRequest,
+    db: Session = Depends(get_db),
+):
+    """
+    Adds an encrypted follow-up message to an anonymous report thread.
+    """
+    report = db.query(ZKReport).filter(ZKReport.tracking_code == tracking_code.strip()).first()
+    if not report:
+        raise HTTPException(status_code=404, detail="Invalid tracking code")
+
+    thread = json.loads(report.thread_json or "[]")
+    thread.append({
+        "at": datetime.now(timezone.utc).isoformat(),
+        "author": "Reporter",
+        "message": payload.encrypted_body,
+    })
+    report.thread_json = json.dumps(thread)
+    db.commit()
+
+    return {
+        "status": "ok",
+        "message": "Encrypted message added to thread",
+        "tracking_code": report.tracking_code,
+        "thread_length": len(thread),
+    }
+

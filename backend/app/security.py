@@ -91,6 +91,12 @@ def get_current_user(
 
 def require_roles(allowed: Iterable[str]):
     allowed_set = set(allowed)
+    if "chancellor_dean" in allowed_set or "dean" in allowed_set or "admin" in allowed_set:
+        allowed_set.update({"admin", "dean", "chancellor_dean"})
+    if "professor_hod" in allowed_set or "professor" in allowed_set or "hod" in allowed_set:
+        allowed_set.update({"professor", "hod", "professor_hod"})
+    if "technician_warden" in allowed_set or "technician" in allowed_set or "warden" in allowed_set:
+        allowed_set.update({"technician", "warden", "technician_warden"})
 
     def _checker(user: User = Depends(get_current_user)) -> User:
         if user.role not in allowed_set:

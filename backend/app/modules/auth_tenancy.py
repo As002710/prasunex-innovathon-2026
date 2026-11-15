@@ -265,3 +265,34 @@ def update_tier(
         "estimated_arr_usd": round(college.student_count * tier_meta["price_per_student_yr"], 2),
         "features": tier_meta["features"],
     }
+
+
+@router.get("/students")
+def get_students(
+    user: User = Depends(require_roles(["chancellor_dean", "professor_hod", "admin", "professor", "dean", "hod"])),
+    db: Session = Depends(get_db),
+):
+    """
+    Roster endpoint for Student Success Radar.
+    Returns enrolled students within the authenticated tenant.
+    """
+    students = (
+        db.query(User)
+        .filter(User.tenant_id == user.tenant_id, User.role == "student")
+        .order_by(User.full_name)
+        .limit(100)
+        .all()
+    )
+    return [
+        {
+            "id": s.id,
+            "full_name": s.full_name,
+            "email": s.email,
+            "department": s.department or "CSE",
+            "semester": s.semester or 5,
+            "cgpa": float(s.cgpa or 7.5),
+            "karma_points": s.karma_points or 0,
+        }
+        for s in students
+    ]
+
