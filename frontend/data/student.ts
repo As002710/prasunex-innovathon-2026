@@ -20,13 +20,22 @@ export interface CourseMastery {
 
 export interface ActivityItem {
   id: string;
-  date: { day: string; month: string };
+  date?: { day: string; month: string };
   title: string;
-  subtitle: string;
-  badge: {
-    label: string;
-    variant: "mint" | "cyan" | "purple" | "amber";
-  };
+  course?: string;
+  subtitle?: string;
+  due?: string;
+  type?: "quiz" | "lab" | "event" | string;
+  badge: string;
+}
+
+export interface QuickAccessItem {
+  id: string;
+  label: string;
+  title: string;
+  desc: string;
+  count: string;
+  icon: string;
 }
 
 export interface CopilotMessage {
@@ -68,43 +77,43 @@ export const KPI_CARDS: KpiItem[] = [
     ],
   },
   {
-    id: "mastery",
-    title: "Mastery Score",
+    id: "course-mastery",
+    title: "Course Mastery",
     value: "72%",
     change: "+5%",
     trend: "up",
+    isGold: true,
+    linkText: "DKT-Graph",
     sparkline: [
-      { x: 1, y: 64 },
-      { x: 2, y: 66 },
-      { x: 3, y: 68 },
-      { x: 4, y: 70 },
+      { x: 1, y: 65 },
+      { x: 2, y: 68 },
+      { x: 3, y: 69 },
+      { x: 4, y: 71 },
       { x: 5, y: 72 },
     ],
   },
   {
-    id: "upcoming-assessments",
-    title: "Upcoming Assessments",
-    value: "3",
-    change: "Next: Nov 10",
+    id: "assessments",
+    title: "Assessments",
+    value: "3 Active",
+    change: "2 Due Soon",
     trend: "neutral",
-    isGold: true,
-    linkText: "View Details →",
     sparkline: [
       { x: 1, y: 2 },
-      { x: 2, y: 1 },
+      { x: 2, y: 4 },
       { x: 3, y: 3 },
-      { x: 4, y: 2 },
+      { x: 4, y: 5 },
       { x: 5, y: 3 },
     ],
   },
 ];
 
-// 🎯 MASTERY MAP COURSES
+// 📚 MASTERY COURSE BREAKDOWN
 export const MASTERY_COURSES: CourseMastery[] = [
   {
     code: "CS301",
-    name: "DBMS",
-    percentage: 92,
+    name: "Database Management Systems",
+    percentage: 85,
     color: "green",
     hex: "#4ADE9A",
     instructor: "Prof. S. Rao",
@@ -120,15 +129,15 @@ export const MASTERY_COURSES: CourseMastery[] = [
   {
     code: "CS303",
     name: "Computer Networks",
-    percentage: 64,
+    percentage: 68,
     color: "amber",
     hex: "#F5B942",
     instructor: "Dr. N. Iyer",
   },
   {
     code: "CS304",
-    name: "Data Structures",
-    percentage: 41,
+    name: "Data Structures & Algorithms",
+    percentage: 58,
     color: "red",
     hex: "#F2705A",
     instructor: "Prof. M. Gupta",
@@ -138,12 +147,14 @@ export const MASTERY_COURSES: CourseMastery[] = [
 // 🤖 AI STUDY RECOMMENDATION
 export const AI_RECOMMENDATION = {
   subject: "Computer Networks",
+  topic: "Computer Networks",
   gapConcept: "Routing Protocols (Distance Vector & Link State)",
+  rationale: "Identified prerequisite gap in Distance Vector & Link State routing algorithms from the recent lab assessment.",
   status: "Requires Attention",
   actions: [
-    { id: "act-1", text: "Revise Routing Concepts (15 min)", duration: "15 min", completed: false },
-    { id: "act-2", text: "Attempt 5 practice questions", duration: "20 min", completed: false },
-    { id: "act-3", text: "Take a micro-drill quiz", duration: "10 min", completed: false },
+    { id: "act-1", label: "Revise Routing Concepts (15 min)", text: "Revise Routing Concepts (15 min)", duration: "15 min", completed: false },
+    { id: "act-2", label: "Attempt 5 practice questions", text: "Attempt 5 practice questions", duration: "20 min", completed: false },
+    { id: "act-3", label: "Take a micro-drill quiz", text: "Take a micro-drill quiz", duration: "10 min", completed: false },
   ],
 };
 
@@ -159,32 +170,41 @@ export const UPCOMING_ACTIVITIES: ActivityItem[] = [
   {
     id: "act-1",
     date: { day: "10", month: "NOV" },
-    title: "Algorithms Test",
+    title: "Algorithms Midterm Test",
+    course: "CS304",
     subtitle: "9:00 AM - 11:00 AM · Hall B",
-    badge: { label: "In 2 days", variant: "amber" },
+    due: "In 2 days · Hall B",
+    type: "quiz",
+    badge: "Urgent",
   },
   {
     id: "act-2",
     date: { day: "12", month: "NOV" },
-    title: "Project Submission",
+    title: "OS Kernel Lab Submission",
+    course: "CS302",
     subtitle: "Online Portal · CS302 Systems",
-    badge: { label: "On Time", variant: "mint" },
+    due: "In 4 days · Online Portal",
+    type: "lab",
+    badge: "On Track",
   },
   {
     id: "act-3",
     date: { day: "15", month: "NOV" },
-    title: "College Fest",
+    title: "Prasunex Tech Hackathon",
+    course: "Campus",
     subtitle: "Main Auditorium · Tech Innovate",
-    badge: { label: "Event", variant: "purple" },
+    due: "Nov 15 · Main Auditorium",
+    type: "event",
+    badge: "Event",
   },
 ];
 
 // ⚡ QUICK ACCESS TILES
-export const QUICK_ACCESS_ITEMS = [
-  { id: "planner", title: "Study Planner", icon: "Calendar", count: "3 active" },
-  { id: "grievance", title: "Grievance Desk", icon: "Shield", count: "Protected" },
-  { id: "mastery", title: "Mastery Map", icon: "Compass", count: "4 courses" },
-  { id: "resources", title: "Resources", icon: "BookOpen", count: "12 docs" },
+export const QUICK_ACCESS_ITEMS: QuickAccessItem[] = [
+  { id: "qa-drills", label: "Micro Drills", title: "Micro Drills", desc: "Forgetting-curve revision", count: "3 queued", icon: "Brain" },
+  { id: "qa-planner", label: "AI Study Planner", title: "Study Planner", desc: "7-day personalized schedule", count: "3 active", icon: "CalendarDays" },
+  { id: "qa-grievance", label: "Grievance Centre", title: "Grievance Desk", desc: "ZK-proof anonymous report", count: "Protected", icon: "Shield" },
+  { id: "qa-matcher", label: "Peer Matcher", title: "Peer Matcher", desc: "Reciprocal study pairings", count: "4 matches", icon: "Sparkles" },
 ];
 
 // 💬 COPILOT PRESET PROMPTS & REPLIES

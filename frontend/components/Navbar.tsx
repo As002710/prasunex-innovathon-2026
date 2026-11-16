@@ -6,7 +6,14 @@ import { usePathname } from "next/navigation";
 import { Logo } from "./Logo";
 import { Search, Bell, ChevronDown, ArrowRight, Menu, X } from "lucide-react";
 
-export function Navbar() {
+interface NavbarProps {
+  onLogin?: () => void;
+  user?: any;
+  onBackToConsole?: () => void;
+  onLogout?: () => void;
+}
+
+export function Navbar({ onLogin, user, onBackToConsole, onLogout }: NavbarProps = {}) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -99,14 +106,42 @@ export function Navbar() {
             </span>
           </button>
 
-          {/* Mint "Login →" Button linking to student dashboard */}
-          <Link
-            href="/student/dashboard"
-            className="btn-mint-primary px-5 py-2 text-xs flex items-center gap-1.5"
-          >
-            <span>Login</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
+          {/* Mint "Login →" or "Console" CTA */}
+          {user ? (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={onBackToConsole}
+                className="btn-mint-primary px-4 py-2 text-xs flex items-center gap-1.5"
+              >
+                <span>Console ({user.college_code})</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+              {onLogout && (
+                <button
+                  onClick={onLogout}
+                  className="px-3 py-2 text-xs text-mint-accent/70 hover:text-white rounded-lg border border-mint-400/20 hover:border-mint-400/50 transition-colors"
+                >
+                  Logout
+                </button>
+              )}
+            </div>
+          ) : onLogin ? (
+            <button
+              onClick={onLogin}
+              className="btn-mint-primary px-5 py-2 text-xs flex items-center gap-1.5"
+            >
+              <span>Login</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          ) : (
+            <Link
+              href="/student/dashboard"
+              className="btn-mint-primary px-5 py-2 text-xs flex items-center gap-1.5"
+            >
+              <span>Login</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          )}
 
           {/* Mobile Menu Trigger */}
           <button
@@ -168,14 +203,32 @@ export function Navbar() {
             >
               About
             </a>
-            <Link
-              href="/student/dashboard"
-              onClick={() => setMobileMenuOpen(false)}
-              className="mt-2 w-full btn-mint-primary py-2.5 text-center text-sm font-bold flex items-center justify-center gap-2"
-            >
-              <span>Launch Dashboard</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
+            {user ? (
+              <button
+                onClick={() => { setMobileMenuOpen(false); onBackToConsole?.(); }}
+                className="mt-2 w-full btn-mint-primary py-2.5 text-center text-sm font-bold flex items-center justify-center gap-2"
+              >
+                <span>Console ({user.college_code})</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            ) : onLogin ? (
+              <button
+                onClick={() => { setMobileMenuOpen(false); onLogin(); }}
+                className="mt-2 w-full btn-mint-primary py-2.5 text-center text-sm font-bold flex items-center justify-center gap-2"
+              >
+                <span>Launch Dashboard</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            ) : (
+              <Link
+                href="/student/dashboard"
+                onClick={() => setMobileMenuOpen(false)}
+                className="mt-2 w-full btn-mint-primary py-2.5 text-center text-sm font-bold flex items-center justify-center gap-2"
+              >
+                <span>Launch Dashboard</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            )}
           </div>
         </div>
       )}
