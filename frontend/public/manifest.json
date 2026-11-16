@@ -1,0 +1,21 @@
+{
+  "name": "CAMPUS-NEXUS",
+  "short_name": "CampusNexus",
+  "description": "Find why a student is failing. Then fix it. Cognitive insight layer for colleges.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1B0F1C",
+  "theme_color": "#F28BA8",
+  "icons": [
+    {
+      "src": "/images/robot.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/robot.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -2,14 +2,14 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "CAMPUS-NEXUS · One Campus. One Intelligence. Better Decisions.",
+  title: "CAMPUS-NEXUS · Find why a student is failing. Then fix it.",
   description:
-    "Transforming academic performance, campus operations and student wellbeing through connected AI. Learn · Connect · Thrive.",
-  manifest: "/manifest.webmanifest",
+    "Team: Last-Mile Leaders · An explainable add-on insight layer for colleges that sits next to Moodle/Canvas/ERPs.",
+  manifest: "/manifest.json",
 };
 
 export const viewport: Viewport = {
-  themeColor: "#06241C",
+  themeColor: "#1B0F1C",
 };
 
 export default function RootLayout({
@@ -31,8 +31,21 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="bg-darkEmerald-950 text-white min-h-screen antialiased">
+      <body className="bg-plum-950 text-white min-h-screen antialiased">
         {children}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js').catch(function(err) {
+                    console.log('SW registration note:', err);
+                  });
+                });
+              }
+            `,
+          }}
+        />
       </body>
     </html>
   );
