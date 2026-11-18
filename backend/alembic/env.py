@@ -1,6 +1,5 @@
 import os
 import sys
-# This is the Alembic configuration file for database migrations.
 from logging.config import fileConfig
 from pathlib import Path
 
