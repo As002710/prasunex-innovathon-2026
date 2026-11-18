@@ -53,17 +53,17 @@ export function Slide11LandingPage({
   };
 
   return (
-    <div className="min-h-screen bg-darkEmerald-950 text-white selection:bg-mint-400 selection:text-darkEmerald-950 relative overflow-x-hidden font-sans">
-      {/* Background Architectural Canvas & Glow Orbs */}
+    <div className="min-h-screen bg-burgundy-950 text-white selection:bg-gold-500 selection:text-burgundy-950 relative overflow-x-hidden font-sans">
+      {/* Background Architectural Canvas & Royal Gold Ambient Glows */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div
           className="absolute inset-0 opacity-15 bg-center bg-cover mix-blend-screen"
           style={{ backgroundImage: `url('/images/campus-night.svg')` }}
         />
-        {/* Soft Ambient Radial Highlights */}
-        <div className="absolute -top-40 left-1/4 w-[600px] h-[600px] bg-mint-500/10 rounded-full blur-[160px]" />
-        <div className="absolute top-1/2 -right-40 w-[550px] h-[550px] bg-teal-500/10 rounded-full blur-[150px]" />
-        <div className="absolute bottom-10 left-10 w-[450px] h-[450px] bg-gold/5 rounded-full blur-[130px]" />
+        {/* Soft Ambient Royal Gold & Wine Radial Highlights */}
+        <div className="absolute -top-40 left-1/4 w-[600px] h-[600px] bg-gold-500/15 rounded-full blur-[160px]" />
+        <div className="absolute top-1/2 -right-40 w-[550px] h-[550px] bg-burgundy-600/30 rounded-full blur-[150px]" />
+        <div className="absolute bottom-10 left-10 w-[450px] h-[450px] bg-gold-400/10 rounded-full blur-[130px]" />
 
         {/* Faint decorative globe graphic in bottom-left */}
         <div
@@ -89,8 +89,8 @@ export function Slide11LandingPage({
             {/* Left Column: Hero Text & Call-To-Actions */}
             <div className="lg:col-span-6 flex flex-col items-start text-left space-y-6">
               {/* Badge */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase bg-darkEmerald-900/90 border border-mint-400/30 text-mint-accent backdrop-blur-md shadow-[0_0_20px_rgba(94,234,212,0.2)]">
-                <Sparkles className="w-3.5 h-3.5 text-gold animate-pulse" />
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase bg-burgundy-900/90 border border-gold-500/40 text-gold-300 backdrop-blur-md shadow-[0_0_20px_rgba(212,175,55,0.25)]">
+                <Sparkles className="w-3.5 h-3.5 text-gold-400 animate-pulse" />
                 <span>AI-POWERED SMART CAMPUS PLATFORM</span>
               </div>
 
@@ -98,19 +98,19 @@ export function Slide11LandingPage({
               <h1 className="text-4xl sm:text-5xl xl:text-6xl font-black text-white tracking-tight leading-[1.1]">
                 One Campus. <br />
                 One Intelligence. <br />
-                <span className="text-gradient-mint">Better Decisions.</span>
+                <span className="text-gradient-gold">Better Decisions.</span>
               </h1>
 
               {/* Subhead Tagline */}
-              <p className="text-base sm:text-lg text-mint-accent/80 font-normal leading-relaxed max-w-xl">
+              <p className="text-base sm:text-lg text-gold-100/80 font-normal leading-relaxed max-w-xl">
                 Empowering universities with predictive academic analytics,
                 zero-knowledge grievance safety, automated grading, and cognitive
                 infrastructure.
               </p>
 
               {/* Mascot Robot Interaction Pill */}
-              <div className="inline-flex items-center gap-3 px-3.5 py-2 rounded-2xl bg-darkEmerald-900/70 border border-mint-400/20 backdrop-blur-md">
-                <div className="relative w-8 h-8 rounded-full overflow-hidden bg-mint-400/20 border border-mint-400/40 flex items-center justify-center">
+              <div className="inline-flex items-center gap-3 px-3.5 py-2 rounded-2xl bg-burgundy-900/80 border border-gold-500/30 backdrop-blur-md">
+                <div className="relative w-8 h-8 rounded-full overflow-hidden bg-gold-500/20 border border-gold-500/40 flex items-center justify-center">
                   <Image
                     src="/images/robot.svg"
                     alt="NEXUS Mascot"
@@ -121,7 +121,7 @@ export function Slide11LandingPage({
                 </div>
                 <div className="text-xs">
                   <span className="font-bold text-white block">Meet NEXUS Bot</span>
-                  <span className="text-mint-accent/70 text-[11px]">
+                  <span className="text-gold-200/70 text-[11px]">
                     24/7 AI tutor & cognitive campus assistant
                   </span>
                 </div>
@@ -132,7 +132,7 @@ export function Slide11LandingPage({
                 {user ? (
                   <button
                     onClick={onBackToConsole}
-                    className="btn-mint-primary px-7 py-3.5 text-sm font-bold flex items-center gap-2 shadow-[0_0_25px_rgba(74,222,154,0.4)]"
+                    className="btn-gold-primary px-7 py-3.5 text-sm font-bold flex items-center gap-2 shadow-[0_0_25px_rgba(212,175,55,0.4)]"
                   >
                     <span>Return to Console ({user.college_code})</span>
                     <ArrowRight className="w-4 h-4" />
@@ -141,16 +141,16 @@ export function Slide11LandingPage({
                   <>
                     <button
                       onClick={() => onDemoRole("student")}
-                      className="btn-mint-primary px-7 py-3.5 text-sm font-bold flex items-center gap-2 shadow-[0_0_25px_rgba(74,222,154,0.4)]"
+                      className="btn-gold-primary px-7 py-3.5 text-sm font-bold flex items-center gap-2 shadow-[0_0_25px_rgba(212,175,55,0.4)]"
                     >
                       <span>Explore Live Demo</span>
                       <ArrowRight className="w-4 h-4" />
                     </button>
                     <a
                       href="#features"
-                      className="px-6 py-3.5 rounded-full text-sm font-semibold text-mint-accent/90 hover:text-white bg-darkEmerald-900/70 hover:bg-darkEmerald-800/80 border border-mint-400/25 transition-all flex items-center gap-2 backdrop-blur-md"
+                      className="px-6 py-3.5 rounded-full text-sm font-semibold text-gold-200/90 hover:text-white bg-burgundy-900/80 hover:bg-burgundy-850 border border-gold-500/35 transition-all flex items-center gap-2 backdrop-blur-md"
                     >
-                      <Play className="w-3.5 h-3.5 text-gold fill-gold" />
+                      <Play className="w-3.5 h-3.5 text-gold-400 fill-gold-400" />
                       <span>Watch 2-Min Tour</span>
                     </a>
                   </>
@@ -158,17 +158,17 @@ export function Slide11LandingPage({
               </div>
 
               {/* Sub-signals */}
-              <div className="flex items-center gap-4 text-xs text-mint-accent/60 pt-1">
+              <div className="flex items-center gap-4 text-xs text-gold-200/60 pt-1">
                 <span className="flex items-center gap-1.5">
-                  <CheckCircle className="w-3.5 h-3.5 text-mint-400" /> 15 AI Modules
+                  <CheckCircle className="w-3.5 h-3.5 text-gold-400" /> 15 AI Modules
                 </span>
                 <span>•</span>
                 <span className="flex items-center gap-1.5">
-                  <CheckCircle className="w-3.5 h-3.5 text-mint-400" /> Zero Silos
+                  <CheckCircle className="w-3.5 h-3.5 text-gold-400" /> Zero Silos
                 </span>
                 <span>•</span>
                 <span className="flex items-center gap-1.5">
-                  <CheckCircle className="w-3.5 h-3.5 text-mint-400" /> 1-Click Role Access
+                  <CheckCircle className="w-3.5 h-3.5 text-gold-400" /> 1-Click Role Access
                 </span>
               </div>
             </div>

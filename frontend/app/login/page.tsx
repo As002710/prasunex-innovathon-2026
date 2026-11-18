@@ -35,7 +35,7 @@ const DEMO_ACCOUNTS = [
     password: "Student@123",
     icon: GraduationCap,
     desc: "Academic radar, 75% attendance forecaster & peer study",
-    color: "from-emerald-500/20 to-teal-500/20 text-mint-400 border-mint-400/30",
+    color: "from-burgundy-800/90 to-burgundy-900/95 text-gold-300 border-gold-500/35 hover:border-gold-400 hover:shadow-[0_0_20px_rgba(212,175,55,0.25)]",
   },
   {
     role: "faculty",
@@ -45,7 +45,7 @@ const DEMO_ACCOUNTS = [
     password: "Faculty@123",
     icon: BookOpenCheck,
     desc: "Relative grading sandbox, IRT item audit & at-risk alerts",
-    color: "from-blue-500/20 to-cyan-500/20 text-sky-400 border-sky-400/30",
+    color: "from-burgundy-800/90 to-burgundy-900/95 text-gold-200 border-gold-500/35 hover:border-gold-400 hover:shadow-[0_0_20px_rgba(212,175,55,0.25)]",
   },
   {
     role: "admin",
@@ -55,7 +55,7 @@ const DEMO_ACCOUNTS = [
     password: "Admin@123",
     icon: Building2,
     desc: "Campus overview, ARR billing, NBA outcomes & SLA desk",
-    color: "from-amber-500/20 to-yellow-500/20 text-amber-400 border-amber-400/30",
+    color: "from-burgundy-800/90 to-burgundy-900/95 text-gold-400 border-gold-500/45 hover:border-gold-400 hover:shadow-[0_0_20px_rgba(212,175,55,0.35)]",
   },
   {
     role: "other",
@@ -65,7 +65,7 @@ const DEMO_ACCOUNTS = [
     password: "Staff@123",
     icon: Wrench,
     desc: "Facilities triage desk, hash-chained ledger & campus logistics",
-    color: "from-purple-500/20 to-pink-500/20 text-pink-400 border-pink-400/30",
+    color: "from-burgundy-800/90 to-burgundy-900/95 text-gold-300 border-gold-500/35 hover:border-gold-400 hover:shadow-[0_0_20px_rgba(212,175,55,0.25)]",
   },
 ];
 
@@ -257,19 +257,19 @@ function LoginPageContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#041913] via-[#06241C] to-[#0A3427] text-white flex flex-col justify-between relative overflow-hidden">
-      {/* Decorative ambient glows */}
-      <div className="absolute -top-32 -left-32 w-96 h-96 bg-mint-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute top-1/2 -right-32 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-32 left-1/3 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+    <div className="min-h-screen bg-gradient-to-br from-[#120206] via-[#1B040A] to-[#2E0813] text-white flex flex-col justify-between relative overflow-hidden">
+      {/* Decorative royal gold & wine ambient glows */}
+      <div className="absolute -top-32 -left-32 w-96 h-96 bg-gold-500/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/2 -right-32 w-96 h-96 bg-burgundy-500/25 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-32 left-1/3 w-96 h-96 bg-gold-500/10 rounded-full blur-3xl pointer-events-none" />
 
       {/* Top Navbar */}
-      <header className="relative z-10 w-full border-b border-mint-400/10 backdrop-blur-md bg-darkEmerald-950/60 px-6 py-4">
+      <header className="relative z-10 w-full border-b border-gold-500/25 backdrop-blur-md bg-burgundy-950/70 px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Logo size="md" />
           <div className="flex items-center gap-3 text-xs">
-            <span className="hidden sm:inline-block text-mint-accent/60">Northstar Institute (NITX)</span>
-            <span className="px-2.5 py-1 rounded-full bg-mint-500/10 border border-mint-400/20 text-mint-300 font-mono text-[11px]">
+            <span className="hidden sm:inline-block text-gold-200/80">Northstar Institute (NITX)</span>
+            <span className="px-2.5 py-1 rounded-full bg-gold-500/15 border border-gold-400/35 text-gold-300 font-mono text-[11px] shadow-[0_0_10px_rgba(212,175,55,0.2)]">
               v2.4-SecureRBAC
             </span>
           </div>
@@ -282,28 +282,28 @@ function LoginPageContent() {
           {/* Left Column: Platform Branding & 1-Click Demo Accounts */}
           <div className="lg:col-span-5 flex flex-col gap-6">
             <div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-mint-400/10 border border-mint-400/25 text-mint-400 text-xs font-semibold mb-3">
-                <Sparkles className="w-3.5 h-3.5" />
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-500/15 border border-gold-400/35 text-gold-300 text-xs font-semibold mb-3">
+                <Sparkles className="w-3.5 h-3.5 text-gold-400" />
                 <span>One Campus. One Intelligence.</span>
               </div>
               <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
                 Enterprise Access <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-mint-300 via-mint-400 to-teal-300">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold-200 via-gold-400 to-amber-200">
                   Role-Based Portal
                 </span>
               </h1>
-              <p className="mt-2 text-xs sm:text-sm text-mint-accent/70 leading-relaxed">
+              <p className="mt-2 text-xs sm:text-sm text-gold-100/70 leading-relaxed">
                 Log in to your personalized workspace. Students, faculty, campus administrators, and operations staff are automatically routed to their authorized dashboards.
               </p>
             </div>
 
             {/* Quick 1-Click Demo Logins */}
-            <div className="bg-darkEmerald-900/60 border border-mint-400/20 rounded-2xl p-4 backdrop-blur-xl shadow-xl shadow-black/30">
+            <div className="bg-burgundy-900/85 border border-gold-500/35 rounded-2xl p-4 backdrop-blur-xl shadow-xl shadow-black/50">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-bold uppercase tracking-wider text-mint-300">
+                <span className="text-xs font-bold uppercase tracking-wider text-gold-300">
                   ⚡ 1-Click Demo Accounts
                 </span>
-                <span className="text-[10px] text-mint-400/60 font-mono">Bcrypt Authenticated</span>
+                <span className="text-[10px] text-gold-400/80 font-mono">Bcrypt Authenticated</span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 {DEMO_ACCOUNTS.map((acc) => {
@@ -326,26 +326,26 @@ function LoginPageContent() {
                   );
                 })}
               </div>
-              <div className="mt-3 pt-2.5 border-t border-mint-400/10 flex items-center justify-between text-[11px] text-mint-400/70">
+              <div className="mt-3 pt-2.5 border-t border-gold-500/20 flex items-center justify-between text-[11px] text-gold-300/80">
                 <span>All accounts use password:</span>
-                <span className="font-mono bg-darkEmerald-950 px-2 py-0.5 rounded border border-mint-400/20 text-mint-300 text-[10px]">
+                <span className="font-mono bg-burgundy-950 px-2 py-0.5 rounded border border-gold-500/35 text-gold-300 text-[10px]">
                   [Role]@123
                 </span>
               </div>
             </div>
 
             {/* Security Assurance Badges */}
-            <div className="flex items-center gap-4 text-xs text-mint-300/80">
+            <div className="flex items-center gap-4 text-xs text-gold-300/90">
               <div className="flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-mint-400" />
+                <ShieldCheck className="w-4 h-4 text-gold-400" />
                 <span>Bcrypt Hash</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <Lock className="w-4 h-4 text-mint-400" />
+                <Lock className="w-4 h-4 text-gold-400" />
                 <span>JWT Sessions</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <KeyRound className="w-4 h-4 text-mint-400" />
+                <KeyRound className="w-4 h-4 text-gold-400" />
                 <span>Server-Side RBAC</span>
               </div>
             </div>
@@ -353,9 +353,9 @@ function LoginPageContent() {
 
           {/* Right Column: Auth Form Card */}
           <div className="lg:col-span-7">
-            <div className="bg-darkEmerald-900/80 border border-mint-400/25 rounded-3xl p-6 sm:p-8 backdrop-blur-2xl shadow-2xl shadow-black/50 relative">
+            <div className="bg-burgundy-900/90 border border-gold-500/40 rounded-3xl p-6 sm:p-8 backdrop-blur-2xl shadow-2xl shadow-black/60 relative">
               {/* Form Tab Switcher */}
-              <div className="flex items-center gap-2 p-1 bg-darkEmerald-950/70 border border-mint-400/20 rounded-2xl mb-6">
+              <div className="flex items-center gap-2 p-1 bg-burgundy-950/80 border border-gold-500/30 rounded-2xl mb-6">
                 <button
                   type="button"
                   onClick={() => {
@@ -365,8 +365,8 @@ function LoginPageContent() {
                   }}
                   className={`flex-1 py-2 text-xs font-semibold rounded-xl transition-all ${
                     tab === "signin"
-                      ? "bg-mint-400 text-darkEmerald-950 shadow-[0_0_15px_rgba(74,222,154,0.3)]"
-                      : "text-mint-accent/70 hover:text-white"
+                      ? "bg-gradient-to-r from-gold-400 via-gold-500 to-gold-600 text-burgundy-950 font-bold shadow-[0_0_15px_rgba(212,175,55,0.4)]"
+                      : "text-gold-200/70 hover:text-white"
                   }`}
                 >
                   Sign In
@@ -380,8 +380,8 @@ function LoginPageContent() {
                   }}
                   className={`flex-1 py-2 text-xs font-semibold rounded-xl transition-all ${
                     tab === "signup"
-                      ? "bg-mint-400 text-darkEmerald-950 shadow-[0_0_15px_rgba(74,222,154,0.3)]"
-                      : "text-mint-accent/70 hover:text-white"
+                      ? "bg-gradient-to-r from-gold-400 via-gold-500 to-gold-600 text-burgundy-950 font-bold shadow-[0_0_15px_rgba(212,175,55,0.4)]"
+                      : "text-gold-200/70 hover:text-white"
                   }`}
                 >
                   Register Account
@@ -395,8 +395,8 @@ function LoginPageContent() {
                   }}
                   className={`flex-1 py-2 text-xs font-semibold rounded-xl transition-all ${
                     tab === "forgot"
-                      ? "bg-mint-400 text-darkEmerald-950 shadow-[0_0_15px_rgba(74,222,154,0.3)]"
-                      : "text-mint-accent/70 hover:text-white"
+                      ? "bg-gradient-to-r from-gold-400 via-gold-500 to-gold-600 text-burgundy-950 font-bold shadow-[0_0_15px_rgba(212,175,55,0.4)]"
+                      : "text-gold-200/70 hover:text-white"
                   }`}
                 >
                   Reset Password

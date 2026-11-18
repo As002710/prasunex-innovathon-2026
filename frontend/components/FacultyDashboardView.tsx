@@ -94,25 +94,25 @@ export function FacultyDashboardView() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#041913] via-[#06241C] to-[#0A3427] text-white">
+    <div className="min-h-screen bg-gradient-to-br from-[#120206] via-[#1B040A] to-[#2E0813] text-white">
       {/* Top Header */}
-      <header className="sticky top-0 z-40 border-b border-mint-400/15 backdrop-blur-xl bg-darkEmerald-950/80 px-6 py-4">
+      <header className="sticky top-0 z-40 border-b border-gold-500/30 backdrop-blur-xl bg-burgundy-950/85 px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Logo size="md" />
-            <div className="hidden md:flex items-center gap-2 pl-4 border-l border-mint-400/20">
-              <span className="px-2.5 py-1 rounded-full bg-sky-500/15 border border-sky-400/30 text-sky-300 text-xs font-semibold flex items-center gap-1.5">
+            <div className="hidden md:flex items-center gap-2 pl-4 border-l border-gold-500/30">
+              <span className="px-2.5 py-1 rounded-full bg-gold-500/15 border border-gold-400/40 text-gold-300 text-xs font-semibold flex items-center gap-1.5 shadow-[0_0_10px_rgba(212,175,55,0.2)]">
                 <BookOpenCheck className="w-3.5 h-3.5" />
                 FACULTY PORTAL
               </span>
-              <span className="text-xs text-mint-accent/60">CSE Department · NITX</span>
+              <span className="text-xs text-gold-200/60">CSE Department · NITX</span>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
             <div className="hidden sm:flex flex-col text-right">
               <span className="text-xs font-bold text-white">{user?.full_name || "Faculty Member"}</span>
-              <span className="text-[11px] text-mint-400 font-mono">{user?.email || "faculty@nitx.demo"}</span>
+              <span className="text-[11px] text-gold-400 font-mono">{user?.email || "faculty@nitx.demo"}</span>
             </div>
             <button
               onClick={logout}
@@ -130,26 +130,26 @@ export function FacultyDashboardView() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         {/* Course Banner & Quick Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-darkEmerald-900/60 border border-mint-400/20 rounded-2xl p-4 backdrop-blur-md">
-            <div className="flex items-center justify-between text-mint-accent/70 text-xs mb-1">
+          <div className="bg-burgundy-900/80 border border-gold-500/35 rounded-2xl p-4 backdrop-blur-md shadow-lg shadow-black/40">
+            <div className="flex items-center justify-between text-gold-200/70 text-xs mb-1">
               <span>ACTIVE COURSES</span>
-              <BookOpenCheck className="w-4 h-4 text-sky-400" />
+              <BookOpenCheck className="w-4 h-4 text-gold-400" />
             </div>
             <div className="text-2xl font-extrabold text-white">3 Courses</div>
-            <p className="text-[11px] text-mint-400 mt-1">CS201, CS301, CS401</p>
+            <p className="text-[11px] text-gold-400 mt-1">CS201, CS301, CS401</p>
           </div>
 
-          <div className="bg-darkEmerald-900/60 border border-mint-400/20 rounded-2xl p-4 backdrop-blur-md">
-            <div className="flex items-center justify-between text-mint-accent/70 text-xs mb-1">
+          <div className="bg-burgundy-900/80 border border-gold-500/35 rounded-2xl p-4 backdrop-blur-md shadow-lg shadow-black/40">
+            <div className="flex items-center justify-between text-gold-200/70 text-xs mb-1">
               <span>TOTAL ENROLLED</span>
-              <Users className="w-4 h-4 text-mint-400" />
+              <Users className="w-4 h-4 text-gold-400" />
             </div>
             <div className="text-2xl font-extrabold text-white">184 Students</div>
-            <p className="text-[11px] text-mint-400 mt-1">94.2% Overall Attendance</p>
+            <p className="text-[11px] text-gold-400 mt-1">94.2% Overall Attendance</p>
           </div>
 
-          <div className="bg-darkEmerald-900/60 border border-mint-400/20 rounded-2xl p-4 backdrop-blur-md">
-            <div className="flex items-center justify-between text-mint-accent/70 text-xs mb-1">
+          <div className="bg-burgundy-900/80 border border-gold-500/35 rounded-2xl p-4 backdrop-blur-md shadow-lg shadow-black/40">
+            <div className="flex items-center justify-between text-gold-200/70 text-xs mb-1">
               <span>AT-RISK (&lt;75%)</span>
               <AlertTriangle className="w-4 h-4 text-amber-400" />
             </div>
@@ -157,24 +157,24 @@ export function FacultyDashboardView() {
             <p className="text-[11px] text-amber-300/80 mt-1">Intervention alerts active</p>
           </div>
 
-          <div className="bg-darkEmerald-900/60 border border-mint-400/20 rounded-2xl p-4 backdrop-blur-md">
-            <div className="flex items-center justify-between text-mint-accent/70 text-xs mb-1">
+          <div className="bg-burgundy-900/80 border border-gold-500/35 rounded-2xl p-4 backdrop-blur-md shadow-lg shadow-black/40">
+            <div className="flex items-center justify-between text-gold-200/70 text-xs mb-1">
               <span>CO-PO ATTAINMENT</span>
-              <Award className="w-4 h-4 text-emerald-400" />
+              <Award className="w-4 h-4 text-gold-400" />
             </div>
-            <div className="text-2xl font-extrabold text-mint-300">89.6%</div>
-            <p className="text-[11px] text-emerald-400 mt-1">NBA Criterion 3 compliant</p>
+            <div className="text-2xl font-extrabold text-gold-300">89.6%</div>
+            <p className="text-[11px] text-gold-400 mt-1">NBA Criterion 3 compliant</p>
           </div>
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex items-center gap-2 p-1 bg-darkEmerald-950/70 border border-mint-400/20 rounded-2xl max-w-2xl">
+        <div className="flex items-center gap-2 p-1 bg-burgundy-950/80 border border-gold-500/30 rounded-2xl max-w-2xl">
           <button
             onClick={() => setActiveTab("grading")}
             className={`flex-1 py-2 text-xs font-semibold rounded-xl flex items-center justify-center gap-2 transition-all ${
               activeTab === "grading"
-                ? "bg-mint-400 text-darkEmerald-950 shadow-[0_0_15px_rgba(74,222,154,0.3)]"
-                : "text-mint-accent/70 hover:text-white"
+                ? "bg-gradient-to-r from-gold-400 via-gold-500 to-gold-600 text-burgundy-950 font-bold shadow-[0_0_15px_rgba(212,175,55,0.4)]"
+                : "text-gold-200/70 hover:text-white"
             }`}
           >
             <BarChart3 className="w-3.5 h-3.5" />
@@ -184,8 +184,8 @@ export function FacultyDashboardView() {
             onClick={() => setActiveTab("attendance")}
             className={`flex-1 py-2 text-xs font-semibold rounded-xl flex items-center justify-center gap-2 transition-all ${
               activeTab === "attendance"
-                ? "bg-mint-400 text-darkEmerald-950 shadow-[0_0_15px_rgba(74,222,154,0.3)]"
-                : "text-mint-accent/70 hover:text-white"
+                ? "bg-gradient-to-r from-gold-400 via-gold-500 to-gold-600 text-burgundy-950 font-bold shadow-[0_0_15px_rgba(212,175,55,0.4)]"
+                : "text-gold-200/70 hover:text-white"
             }`}
           >
             <Activity className="w-3.5 h-3.5" />

@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#06241C",
+  themeColor: "#1B040A",
 };
 
 export default function RootLayout({
@@ -31,7 +31,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="bg-darkEmerald-950 text-white min-h-screen antialiased">
+      <body className="bg-burgundy-950 text-[#FEF3C7] min-h-screen antialiased selection:bg-gold-500 selection:text-burgundy-950">
         <AuthProvider>
           {children}
         </AuthProvider>

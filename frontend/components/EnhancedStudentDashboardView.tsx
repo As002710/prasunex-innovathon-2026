@@ -196,10 +196,10 @@ export function EnhancedStudentDashboardView({
     { id: "opportunities", label: "Opportunity Radar", icon: BookOpen },
   ];
 
-  // Donut Chart Data (72% Overall Mastery)
+  // Donut Chart Data (72% Overall Mastery) in Royal Gold & Burgundy
   const donutData = [
-    { name: "Mastered", value: 72, fill: "#4ADE9A" },
-    { name: "Remaining", value: 28, fill: "#062A20" },
+    { name: "Mastered", value: 72, fill: "#D4AF37" },
+    { name: "Remaining", value: 28, fill: "#24060E" },
   ];
 
   const handleNavClick = (id: string) => {
@@ -210,7 +210,7 @@ export function EnhancedStudentDashboardView({
   };
 
   return (
-    <div className={`min-h-screen ${embedded ? "bg-transparent" : "bg-darkEmerald-950"} text-white flex flex-col lg:flex-row relative selection:bg-mint-400 selection:text-darkEmerald-950 font-sans`}>
+    <div className={`min-h-screen ${embedded ? "bg-transparent" : "bg-burgundy-950"} text-white flex flex-col lg:flex-row relative selection:bg-gold-500 selection:text-burgundy-950 font-sans`}>
       {/* Background Architectural Canvas & Glow (only if standalone) */}
       {!embedded && (
         <div className="fixed inset-0 pointer-events-none z-0">
