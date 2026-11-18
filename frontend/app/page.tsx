@@ -1,6 +1,8 @@
 "use client";
 
 import { FormEvent, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth, getDashboardPathForRole } from "@/context/AuthContext";
 import {
   Activity, ArrowDownToLine, ArrowLeftRight, ArrowRight, BadgeCheck, BarChart3,
   BookOpenCheck, Building2, CalendarDays, Check, ChevronDown, CircleHelp,
@@ -150,6 +152,19 @@ function Panel({ title, subtitle, children, action }: { title: string; subtitle?
 function Empty({ children }: { children: ReactNode }) { return <div className="empty-state"><Sparkles size={18}/><p>{children}</p></div>; }
 
 export default function Home() {
+  const router = useRouter();
+  const { user: authUser, isAuthenticated, isLoading: authLoading } = useAuth();
+
+  useEffect(() => {
+    if (!authLoading) {
+      if (!isAuthenticated || !authUser) {
+        router.replace("/login");
+      } else {
+        router.replace(getDashboardPathForRole(authUser.role));
+      }
+    }
+  }, [authLoading, isAuthenticated, authUser, router]);
+
   const [token, setToken] = useState("");
   const [user, setUser] = useState<CampusUser | null>(null);
   const [hydrated, setHydrated] = useState(false);

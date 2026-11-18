@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { AuthProvider } from "@/context/AuthContext";
 
 export const metadata: Metadata = {
   title: "CAMPUS-NEXUS · One Campus. One Intelligence. Better Decisions.",
@@ -31,7 +32,9 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-darkEmerald-950 text-white min-h-screen antialiased">
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

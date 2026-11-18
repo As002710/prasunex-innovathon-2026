@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Logo } from "./Logo";
-import { Search, Bell, ChevronDown, ArrowRight, Menu, X } from "lucide-react";
+import { Search, Bell, ChevronDown, ArrowRight, Menu, X, LogOut } from "lucide-react";
+import { useAuth, getDashboardPathForRole } from "@/context/AuthContext";
 
 interface NavbarProps {
   onLogin?: () => void;
@@ -13,8 +14,13 @@ interface NavbarProps {
   onLogout?: () => void;
 }
 
-export function Navbar({ onLogin, user, onBackToConsole, onLogout }: NavbarProps = {}) {
+export function Navbar({ onLogin, user: propUser, onBackToConsole, onLogout: propLogout }: NavbarProps = {}) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { user: authUser, logout: authLogout } = useAuth();
+  const user = propUser || authUser;
+  const onLogout = propLogout || authLogout;
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -106,22 +112,24 @@ export function Navbar({ onLogin, user, onBackToConsole, onLogout }: NavbarProps
             </span>
           </button>
 
-          {/* Mint "Login →" or "Console" CTA */}
+          {/* Mint "Login →" or "Dashboard" CTA */}
           {user ? (
             <div className="flex items-center gap-2">
-              <button
-                onClick={onBackToConsole}
+              <Link
+                href={getDashboardPathForRole(user.role)}
                 className="btn-mint-primary px-4 py-2 text-xs flex items-center gap-1.5"
               >
-                <span>Console ({user.college_code})</span>
+                <span>Dashboard ({user.role?.toUpperCase() || "NITX"})</span>
                 <ArrowRight className="w-3.5 h-3.5" />
-              </button>
+              </Link>
               {onLogout && (
                 <button
                   onClick={onLogout}
-                  className="px-3 py-2 text-xs text-mint-accent/70 hover:text-white rounded-lg border border-mint-400/20 hover:border-mint-400/50 transition-colors"
+                  className="px-3 py-2 text-xs text-mint-accent/70 hover:text-white rounded-lg border border-mint-400/20 hover:border-mint-400/50 transition-colors flex items-center gap-1"
+                  title="Sign out of CAMPUS-NEXUS"
                 >
-                  Logout
+                  <LogOut className="w-3 h-3" />
+                  <span>Logout</span>
                 </button>
               )}
             </div>
@@ -135,7 +143,7 @@ export function Navbar({ onLogin, user, onBackToConsole, onLogout }: NavbarProps
             </button>
           ) : (
             <Link
-              href="/student/dashboard"
+              href="/login"
               className="btn-mint-primary px-5 py-2 text-xs flex items-center gap-1.5"
             >
               <span>Login</span>
@@ -204,28 +212,43 @@ export function Navbar({ onLogin, user, onBackToConsole, onLogout }: NavbarProps
               About
             </a>
             {user ? (
-              <button
-                onClick={() => { setMobileMenuOpen(false); onBackToConsole?.(); }}
-                className="mt-2 w-full btn-mint-primary py-2.5 text-center text-sm font-bold flex items-center justify-center gap-2"
-              >
-                <span>Console ({user.college_code})</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
+              <div className="flex flex-col gap-2 mt-2">
+                <Link
+                  href={getDashboardPathForRole(user.role)}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full btn-mint-primary py-2.5 text-center text-sm font-bold flex items-center justify-center gap-2"
+                >
+                  <span>Dashboard ({user.role?.toUpperCase() || "NITX"})</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+                {onLogout && (
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      onLogout();
+                    }}
+                    className="w-full py-2 text-center text-xs text-red-300 bg-red-500/10 border border-red-500/20 rounded-lg flex items-center justify-center gap-1.5"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                    <span>Logout</span>
+                  </button>
+                )}
+              </div>
             ) : onLogin ? (
               <button
                 onClick={() => { setMobileMenuOpen(false); onLogin(); }}
                 className="mt-2 w-full btn-mint-primary py-2.5 text-center text-sm font-bold flex items-center justify-center gap-2"
               >
-                <span>Launch Dashboard</span>
+                <span>Login</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             ) : (
               <Link
-                href="/student/dashboard"
+                href="/login"
                 onClick={() => setMobileMenuOpen(false)}
                 className="mt-2 w-full btn-mint-primary py-2.5 text-center text-sm font-bold flex items-center justify-center gap-2"
               >
-                <span>Launch Dashboard</span>
+                <span>Login</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
             )}
