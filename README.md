@@ -9,9 +9,30 @@
 
 ## 🌐 Live Deployments & Repository Links
 
-- **🌍 Live Deployed Application:** [https://campus-nexus0.netlify.app/](https://campus-nexus0.netlify.app/)
+- **🌍 Primary Live Deployment:** [https://campus-nexus0.netlify.app/](https://campus-nexus0.netlify.app/)
+- **🔐 Live Login Portal:** [https://campus-nexus0.netlify.app/login](https://campus-nexus0.netlify.app/login)
+- **🎓 Student Dashboard:** [https://campus-nexus0.netlify.app/student/dashboard](https://campus-nexus0.netlify.app/student/dashboard)
+- **👨‍🏫 Faculty Dashboard:** [https://campus-nexus0.netlify.app/faculty/dashboard](https://campus-nexus0.netlify.app/faculty/dashboard)
+- **🏛️ Administrator Console:** [https://campus-nexus0.netlify.app/admin/dashboard](https://campus-nexus0.netlify.app/admin/dashboard)
+- **🛠️ Operations & Staff Desk:** [https://campus-nexus0.netlify.app/other/dashboard](https://campus-nexus0.netlify.app/other/dashboard)
+- **🛡️ 403 Access Denied Gate:** [https://campus-nexus0.netlify.app/403](https://campus-nexus0.netlify.app/403)
 - **💻 GitHub Official Repository:** [https://github.com/vanshikayadav6153-ai/prasunex-innovathon-2026](https://github.com/vanshikayadav6153-ai/prasunex-innovathon-2026)
-- **🖥️ Local Web Application:** `http://localhost:3000`
+- **🖥️ Local Web Application:** `http://localhost:3000` (or `http://localhost:3001`)
+
+---
+
+## 🔑 Demo Access Credentials (RBAC)
+
+All accounts are pre-seeded with secure `bcrypt` hashed credentials. You can also click any of the **1-Click Demo Account** cards directly on the login page:
+
+| Role | Role Key | Email | Password | Authorized Dashboard | Description |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Admin** | `admin` | `admin@nitx.demo` | `Admin@123` | [`/admin/dashboard`](https://campus-nexus0.netlify.app/admin/dashboard) | Campus Overview, Multi-Tenant ARR Billing, NBA/NAAC Outcome Evidence, SLA Desk |
+| **Faculty** | `faculty` | `faculty@nitx.demo` | `Faculty@123` | [`/faculty/dashboard`](https://campus-nexus0.netlify.app/faculty/dashboard) | Relative Grading Sandbox (Gaussian curve), IRT Item Audit, 75% Attendance Warning |
+| **Student** | `student` | `student@nitx.demo` | `Student@123` | [`/student/dashboard`](https://campus-nexus0.netlify.app/student/dashboard) | Academic Radar, 75% Attendance Forecaster, Micro-Drills, Study Planner, ZK Grievance |
+| **Other / Staff** | `other` | `staff@nitx.demo` | `Staff@123` | [`/other/dashboard`](https://campus-nexus0.netlify.app/other/dashboard) | Facilities Maintenance Queue, Hardware Health, Hash-Chained Ledger, Talent Radar |
+
+*(Note: legacy aliases `admin`, `professor`, `student123`, `technician` are also supported for backward compatibility).*
 
 ---
 
@@ -21,29 +42,45 @@
 ```bash
 # Clone the repository
 git clone https://github.com/vanshikayadav6153-ai/prasunex-innovathon-2026.git
-cd prasunex-innovathon-2026/frontend
+cd prasunex-innovathon-2026
 
-# Install dependencies
+# Install frontend dependencies
+cd frontend
 npm install
+cd ..
+
+# (Optional) Setup Python backend virtual environment
+python3 -m venv backend/.venv
+source backend/.venv/bin/activate
+pip install -r backend/requirements.txt
 ```
 
-### 2. Run Development Server
+### 2. Run Application
 ```bash
+# Terminal 1: Backend API (FastAPI on Port 8000)
+PYTHONPATH=backend ./backend/.venv/bin/python backend/app/seed_users.py
+PYTHONPATH=backend ./backend/.venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+# Terminal 2: Web App (Next.js on Port 3000)
+cd frontend
 npm run dev
-# App starts instantly at http://localhost:3000
+# App starts at http://localhost:3000 (auto-redirects to /login)
 ```
 
 ### 3. Run Production Build & Static Verification
 ```bash
+cd frontend
 npm run build
 npm start
 ```
 
-### 4. Run Core Algorithm Unit Tests
-Verifies Bayesian Knowledge Tracing, Ticket Priority equation, Point-Biserial discrimination, and Gap-Aware cut-offs:
+### 4. Run Automated Test Suites
 ```bash
-npm test
-# Executes tests/unit_tests.ts using native TypeScript execution (100% passing)
+# Automated RBAC & Security Test Suite (Zero plaintext passwords, role guarding, public signup block)
+PYTHONPATH=backend ./backend/.venv/bin/pytest backend/tests/test_rbac_complete.py -vv
+
+# Full System & Innovations Test Suite (21 tests passing)
+PYTHONPATH=backend ./backend/.venv/bin/pytest backend/tests/test_all_innovations.py -vv
 ```
 
 ---
