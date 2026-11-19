@@ -3,12 +3,39 @@ node_modules/
 .venv/
 __pycache__/
 .env
+.env.*
+!.env.example
+
+# Python runtime, tooling, and test output
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Local databases and user-uploaded files
 *.db
-backend/campus_nexus.db
-campus_nexus.db
+*.sqlite
+*.sqlite3
+backend/uploads/
+uploads/
+
+# Next.js build and test output
 frontend/.next/
 frontend/out/
-.pytest_cache/
+frontend/coverage/
 *.tsbuildinfo
+
+# Logs and local editor settings
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.idea/
+.vscode/
 
 .vercel
