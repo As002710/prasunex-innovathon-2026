@@ -45,6 +45,27 @@ class User(Base):
     opt_in_recruiter = Column(Boolean, nullable=False, default=True)
     created_at = Column(DateTime(timezone=True), default=utcnow)
 
+    # Aliases for specification consistency (name, email, passwordHash, role, createdAt)
+    @property
+    def name(self) -> str:
+        return self.full_name
+
+    @name.setter
+    def name(self, val: str):
+        self.full_name = val
+
+    @property
+    def passwordHash(self) -> str:
+        return self.hashed_password
+
+    @passwordHash.setter
+    def passwordHash(self, val: str):
+        self.hashed_password = val
+
+    @property
+    def createdAt(self):
+        return self.created_at
+
 
 class Course(Base):
     __tablename__ = "courses"

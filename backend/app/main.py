@@ -51,6 +51,8 @@ async def lifespan(app: FastAPI):
     try:
         from .seed import seed_database
         seed_database()
+        from .seed_users import seed_auth_users
+        seed_auth_users()
     except Exception as e:
         print(f"Lifespan seed notice: {e}")
     yield

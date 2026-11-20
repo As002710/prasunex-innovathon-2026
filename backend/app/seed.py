@@ -120,6 +120,7 @@ def seed_database(db: Session | None = None):
                       "Bose", "Mehta", "Chopra", "Gupta", "Malhotra", "Verma", "Saxena", "Choudhury", "Menon", "Singh"]
 
         students = []
+        default_student_pwd = hash_password("student123")
         for i in range(1, 201):
             email = f"student{i:03d}@nitx.demo"
             s_id = f"usr-student-{i:03d}"
@@ -131,7 +132,7 @@ def seed_database(db: Session | None = None):
                     id=s_id,
                     tenant_id=college.id,
                     email=email,
-                    hashed_password=hash_password("student123"),
+                    hashed_password=default_student_pwd,
                     full_name=full_name,
                     role="student",
                     department=dept,

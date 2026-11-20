@@ -699,3 +699,102 @@ def get_course_gradesheet(
         pass
 
     return payload
+
+
+@router.get("/courses")
+def get_grading_courses(
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Returns list of courses available in the authenticated tenant for grading sandbox.
+    """
+    courses = db.query(Course).filter(Course.tenant_id == user.tenant_id).order_by(Course.code).all()
+    return [
+        {
+            "id": c.id,
+            "code": c.code,
+            "title": c.title,
+            "department": c.department,
+            "semester": c.semester,
+        }
+        for c in courses
+    ]
+
+
+class GradingSandboxRequest(BaseModel):
+    course_id: str
+    mean_shift: float = 0.0
+    std_scale: float = 1.0
+    save_grades: bool = False
+
+
+@router.post("/sandbox")
+def run_grading_sandbox(
+    payload: GradingSandboxRequest,
+    user: User = Depends(require_roles(["professor", "hod", "dean", "admin", "chancellor_dean", "professor_hod"])),
+    db: Session = Depends(get_db),
+):
+    sim_payload = CurveSimulationRequest(
+        course_id=payload.course_id,
+        mean_shift=payload.mean_shift,
+        std_scale=payload.std_scale,
+        save_to_db=payload.save_grades,
+        mode="relative",
+    )
+    sim_result = simulate_grading_curve(sim_payload, user, db)
+
+    try:
+        irt_data = get_irt_audit(payload.course_id, user, db)
+        irt_items = irt_data.get("questions", [])
+    except Exception:
+        irt_items = []
+
+    course = db.query(Course).filter(Course.id == payload.course_id).first()
+
+    grade_distribution = [
+        {"grade": row["grade"], "count": row["actual_count"]}
+        for row in sim_result.get("comparison_table", [])
+    ]
+
+    return {
+        "course_id": payload.course_id,
+        "course_code": course.code if course else "",
+        "course_title": course.title if course else "",
+        "count": sim_result.get("sample_size", 0),
+        "raw_mean": round(sim_result.get("mean", 0) - payload.mean_shift, 2),
+        "adjusted_mean": sim_result.get("mean", 0),
+        "adjusted_std": sim_result.get("std_dev", 0),
+        "curve": sim_result.get("curve_points", []),
+        "grade_distribution": grade_distribution,
+        "irt_audit": irt_items,
+        "saved": payload.save_grades,
+    }
+
+
+@router.get("/export-csv/{course_id}")
+def export_course_grades_csv(
+    course_id: str,
+    user: User = Depends(require_roles(["professor", "hod", "dean", "admin", "chancellor_dean", "professor_hod"])),
+    db: Session = Depends(get_db),
+):
+    """
+    Streams CSV export of student grades for the given course.
+    """
+    records = db.query(MarkRecord).filter(MarkRecord.course_id == course_id, MarkRecord.tenant_id == user.tenant_id).all()
+    if not records:
+        raise HTTPException(status_code=404, detail="No student marks found for this course")
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["student_id", "total_score", "z_score", "letter_grade", "evaluated_at"])
+    for r in records:
+        writer.writerow([r.student_id, r.total_score, r.z_score or "", r.letter_grade or "", r.evaluated_at.isoformat() if r.evaluated_at else ""])
+
+    output.seek(0)
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": f"attachment; filename=campus-nexus-grades-{course_id}.csv"},
+    )
+
