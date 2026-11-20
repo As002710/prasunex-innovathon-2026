@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
+import { LogoutButton } from "@/components/LogoutButton";
 
 export const metadata: Metadata = {
   title: "CAMPUS-NEXUS · One Campus. One Intelligence. Better Decisions.",
@@ -33,6 +34,7 @@ export default function RootLayout({
       </head>
       <body className="bg-burgundy-950 text-[#FEF3C7] min-h-screen antialiased selection:bg-gold-500 selection:text-burgundy-950">
         <AuthProvider>
+          <LogoutButton />
           {children}
         </AuthProvider>
       </body>
