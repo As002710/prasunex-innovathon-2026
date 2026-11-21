@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#1B040A",
+  themeColor: "#FFFFFF",
 };
 
 export default function RootLayout({
@@ -19,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
@@ -32,7 +32,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="bg-burgundy-950 text-[#FEF3C7] min-h-screen antialiased selection:bg-gold-500 selection:text-burgundy-950">
+      <body className="bg-white text-[#0B2E22] min-h-screen antialiased selection:bg-[#34D399] selection:text-[#0B2E22]">
         <AuthProvider>
           <LogoutButton />
           {children}

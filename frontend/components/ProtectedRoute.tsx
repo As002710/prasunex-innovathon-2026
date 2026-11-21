@@ -38,11 +38,11 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-darkEmerald-950 flex flex-col items-center justify-center text-white space-y-4">
-        <div className="w-12 h-12 rounded-2xl bg-mint-400/20 border border-mint-400/40 flex items-center justify-center animate-pulse">
-          <Sparkles className="w-6 h-6 text-mint-400 animate-spin" />
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center text-[#0B2E22] space-y-4">
+        <div className="w-12 h-12 rounded-2xl bg-[#F0FAF5] border border-[#CDEBDD] flex items-center justify-center animate-pulse shadow-sm">
+          <Sparkles className="w-6 h-6 text-[#047857] animate-spin" />
         </div>
-        <p className="text-xs font-semibold text-mint-accent/80 tracking-wider uppercase">
+        <p className="text-xs font-semibold text-[#4B6B5E] tracking-wider uppercase">
           Verifying Campus Credentials…
         </p>
       </div>
