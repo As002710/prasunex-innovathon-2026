@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Menu, X, Search, Bell, ArrowRight } from "lucide-react";
 import { Logo } from "./Logo";
+import { ThemeToggle } from "./ThemeToggle";
 
 const menuLinks = [
   { label: "Home", href: "/" },
@@ -19,7 +20,7 @@ export function Navbar() {
 
   return (
     <header className="relative z-50 w-full border-y border-amber-200 bg-white">
-      <div className="mx-auto flex h-[84px] w-[92%] -translate-y-2 items-center justify-between gap-3 sm:h-[124px] sm:w-[90%] sm:gap-5">
+      <div className="mx-auto flex h-[92px] w-[92%] items-center justify-between gap-3 sm:h-[132px] sm:w-[90%] sm:gap-5">
         <div className="flex min-w-0 shrink-0 items-center gap-3 sm:gap-4">
           <button
             onClick={() => setOpen((value) => !value)}
@@ -50,6 +51,7 @@ export function Navbar() {
             <Bell className="h-5 w-5" />
             <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white">3</span>
           </button>
+          <ThemeToggle />
           <Link href="/login" className="flex shrink-0 items-center gap-2 rounded-xl bg-[#FACC15] px-4 py-3 text-sm font-bold text-[#0B2E22] shadow-sm transition-colors hover:bg-[#EAB308] sm:px-6">
             <span className="hidden sm:inline">Login</span><ArrowRight className="h-4 w-4" />
           </Link>
