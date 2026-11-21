@@ -2,11 +2,14 @@
 
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { EnhancedStudentDashboardView } from "@/components/EnhancedStudentDashboardView";
+import { useAuth } from "@/context/AuthContext";
 
 export default function StudentDashboardPage() {
+  const { user } = useAuth();
+
   return (
     <ProtectedRoute allowedRoles={["student"]}>
-      <EnhancedStudentDashboardView embedded={false} />
+      <EnhancedStudentDashboardView user={user} embedded={false} />
     </ProtectedRoute>
   );
 }

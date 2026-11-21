@@ -20,9 +20,12 @@ import {
   Filter,
   Search,
   ArrowUpRight,
+  Menu,
+  X,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Logo } from "@/components/Logo";
+import { FreshRoleDashboard } from "@/components/FreshRoleDashboard";
 import {
   BarChart,
   Bar,
@@ -64,6 +67,7 @@ export function FacultyDashboardView() {
   const [meanShift, setMeanShift] = useState(0);
   const [stdScale, setStdScale] = useState(1);
   const [exportNotice, setExportNotice] = useState<string | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Compute Gaussian Grade Distribution based on meanShift & stdScale
   const gradeDistribution = useMemo(() => {
@@ -93,12 +97,32 @@ export function FacultyDashboardView() {
     setTimeout(() => setExportNotice(null), 3500);
   };
 
+  if (user?.is_new_account) {
+    return (
+      <FreshRoleDashboard
+        user={user}
+        roleLabel="Faculty"
+        metrics={["Active Courses", "Total Enrolled", "At-Risk Students", "CO-PO Attainment"]}
+        onLogout={logout}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#120206] via-[#1B040A] to-[#2E0813] text-white">
       {/* Top Header */}
       <header className="sticky top-0 z-40 border-b border-gold-500/30 backdrop-blur-xl bg-burgundy-950/85 px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden p-2 rounded-lg border border-gold-500/30 bg-burgundy-900/80 text-gold-300"
+              aria-label="Toggle menu"
+              aria-expanded={mobileMenuOpen}
+              aria-controls="faculty-mobile-navigation"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
             <Logo size="md" />
             <div className="hidden md:flex items-center gap-2 pl-4 border-l border-gold-500/30">
               <span className="px-2.5 py-1 rounded-full bg-gold-500/15 border border-gold-400/40 text-gold-300 text-xs font-semibold flex items-center gap-1.5 shadow-[0_0_10px_rgba(212,175,55,0.2)]">
@@ -125,6 +149,34 @@ export function FacultyDashboardView() {
           </div>
         </div>
       </header>
+
+      {mobileMenuOpen && (
+        <nav id="faculty-mobile-navigation" className="lg:hidden border-b border-gold-500/25 bg-burgundy-950/95 px-4 py-3 backdrop-blur-xl">
+          <div className="grid grid-cols-2 gap-2">
+            {([
+              ["overview", "Overview"],
+              ["grading", "Grading"],
+              ["attendance", "Attendance"],
+              ["audit", "Audit"],
+            ] as const).map(([tab, label]) => (
+              <button
+                key={tab}
+                onClick={() => {
+                  setActiveTab(tab);
+                  setMobileMenuOpen(false);
+                }}
+                className={`rounded-xl border px-3 py-2.5 text-xs font-semibold ${
+                  activeTab === tab
+                    ? "border-gold-400 bg-gold-500 text-burgundy-950"
+                    : "border-gold-500/25 bg-burgundy-900/80 text-gold-200"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </nav>
+      )}
 
       {/* Main Container */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">

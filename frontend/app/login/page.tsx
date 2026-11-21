@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, FormEvent, Suspense } from "react";
+import React, { useState, useEffect, FormEvent, Suspense, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -20,11 +20,30 @@ import {
   CheckCircle2,
   KeyRound,
   RotateCcw,
+  ArrowLeft,
 } from "lucide-react";
 import { useAuth, normalizeRole, getDashboardPathForRole } from "@/context/AuthContext";
 import { Logo } from "@/components/Logo";
 
 type AuthTab = "signin" | "signup" | "forgot";
+
+interface GoogleIdentityApi {
+  accounts: {
+    id: {
+      initialize: (options: {
+        client_id: string;
+        callback: (response: { credential?: string }) => void;
+      }) => void;
+      prompt: () => void;
+    };
+  };
+}
+
+declare global {
+  interface Window {
+    google?: GoogleIdentityApi;
+  }
+}
 
 const DEMO_ACCOUNTS = [
   {
@@ -73,14 +92,17 @@ function LoginPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectParam = searchParams.get("redirect");
+  const demoParam = searchParams.get("demo");
 
-  const { user, isAuthenticated, isLoading: authLoading, login, register, forgotPassword, resetPassword } = useAuth();
+  const { user, isAuthenticated, isLoading: authLoading, login, loginWithGoogle, register, forgotPassword, resetPassword } = useAuth();
 
   const [tab, setTab] = useState<AuthTab>("signin");
   const [showPassword, setShowPassword] = useState(false);
   const [busy, setBusy] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+  const googleInitialized = useRef(false);
 
   // Sign In state
   const [signInEmail, setSignInEmail] = useState("");
@@ -107,6 +129,28 @@ function LoginPageContent() {
     }
   }, [isAuthenticated, user, authLoading, router, redirectParam]);
 
+  useEffect(() => {
+    if (authLoading || isAuthenticated || !demoParam) return;
+
+    const account = DEMO_ACCOUNTS.find((item) => item.role === demoParam);
+    if (!account) return;
+
+    setSignInEmail(account.email);
+    setSignInPassword(account.password);
+    setBusy(true);
+
+    login(account.email, account.password, "NITX")
+      .then((loggedUser) => {
+        const target = redirectParam || getDashboardPathForRole(loggedUser.role);
+        setSuccessMsg(`Authenticated as ${account.label}. Redirecting...`);
+        router.replace(target);
+      })
+      .catch((err: any) => {
+        setErrorMsg(err.message || "Quick demo login failed.");
+      })
+      .finally(() => setBusy(false));
+  }, [authLoading, isAuthenticated, demoParam, login, redirectParam, router]);
+
   const handleSignIn = async (e: FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
@@ -129,6 +173,84 @@ function LoginPageContent() {
       setBusy(false);
     }
   };
+
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      router.back();
+    } else {
+      router.push("/");
+    }
+  };
+
+  const handleGoogleCredential = async (response: { credential?: string }) => {
+    if (!response.credential) {
+      setErrorMsg("Google did not return a sign-in credential. Please try again.");
+      return;
+    }
+
+    setErrorMsg(null);
+    setSuccessMsg(null);
+    setBusy(true);
+    try {
+      const loggedUser = await loginWithGoogle(response.credential);
+      setSuccessMsg(`Welcome back, ${loggedUser.full_name || loggedUser.email}! Redirecting...`);
+      router.replace(redirectParam || getDashboardPathForRole(loggedUser.role));
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : "Google sign-in failed. Please try again.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleGoogleSignIn = () => {
+    setErrorMsg(null);
+    if (!googleClientId) {
+      setErrorMsg("Google sign-in is not configured yet. Set NEXT_PUBLIC_GOOGLE_CLIENT_ID to enable it.");
+      return;
+    }
+
+    const google = window.google;
+    if (!google?.accounts?.id || !googleInitialized.current) {
+      setErrorMsg("Google sign-in is still loading. Please try again in a moment.");
+      return;
+    }
+
+    google.accounts.id.prompt();
+  };
+
+  useEffect(() => {
+    if (!googleClientId || googleInitialized.current) return;
+
+    const initializeGoogle = () => {
+      if (!window.google?.accounts?.id || googleInitialized.current) return;
+      window.google.accounts.id.initialize({
+        client_id: googleClientId,
+        callback: handleGoogleCredential,
+      });
+      googleInitialized.current = true;
+    };
+
+    const existingScript = document.querySelector<HTMLScriptElement>(
+      'script[src="https://accounts.google.com/gsi/client"]'
+    );
+    if (existingScript) {
+      existingScript.addEventListener("load", initializeGoogle, { once: true });
+      initializeGoogle();
+      return () => existingScript.removeEventListener("load", initializeGoogle);
+    }
+
+    const script = document.createElement("script");
+    script.src = "https://accounts.google.com/gsi/client";
+    script.async = true;
+    script.defer = true;
+    script.onload = initializeGoogle;
+    script.onerror = () => setErrorMsg("Could not load Google sign-in. Check your connection and try again.");
+    document.head.appendChild(script);
+    return () => {
+      script.onload = null;
+      script.onerror = null;
+    };
+  }, [googleClientId]);
 
   const handleQuickDemoLogin = async (acc: (typeof DEMO_ACCOUNTS)[0]) => {
     setErrorMsg(null);
@@ -266,7 +388,19 @@ function LoginPageContent() {
       {/* Top Navbar */}
       <header className="relative z-10 w-full border-b border-gold-500/25 backdrop-blur-md bg-burgundy-950/70 px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <Logo size="md" />
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={handleBack}
+              aria-label="Go back"
+              title="Go back"
+              className="inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-xl border border-gold-500/35 bg-burgundy-950/70 px-3 text-xs font-semibold text-gold-300 transition-colors hover:border-gold-400 hover:bg-burgundy-800/80 hover:text-gold-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-400"
+            >
+              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+              <span>Back</span>
+            </button>
+            <Logo size="md" />
+          </div>
           <div className="flex items-center gap-3 text-xs">
             <span className="hidden sm:inline-block text-gold-200/80">Northstar Institute (NITX)</span>
             <span className="px-2.5 py-1 rounded-full bg-gold-500/15 border border-gold-400/35 text-gold-300 font-mono text-[11px] shadow-[0_0_10px_rgba(212,175,55,0.2)]">
@@ -491,6 +625,30 @@ function LoginPageContent() {
                       )}
                     </button>
                   </div>
+
+                  <div className="relative py-1" aria-hidden="true">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-gold-500/20" />
+                    </div>
+                    <div className="relative flex justify-center">
+                      <span className="bg-burgundy-900 px-3 text-[10px] uppercase tracking-wider text-gold-200/50">or continue with</span>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleGoogleSignIn}
+                    disabled={busy}
+                    className="w-full flex items-center justify-center gap-3 rounded-xl border border-gold-500/30 bg-burgundy-950/60 py-3 text-xs font-semibold text-gold-100 hover:border-gold-400 hover:bg-burgundy-800/70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-400 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    <svg aria-hidden="true" viewBox="0 0 48 48" className="h-4 w-4">
+                      <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5Z" />
+                      <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.73 7.18l7.62 5.91c4.45-4.11 7.15-10.16 7.15-17.56Z" />
+                      <path fill="#FBBC05" d="M10.53 28.59A14.4 14.4 0 0 1 9.75 24c0-1.59.27-3.13.75-4.59l-7.98-6.19A23.9 23.9 0 0 0 0 24c0 3.87.93 7.53 2.56 10.78l7.97-6.19Z" />
+                      <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.9-5.89l-7.62-5.91c-2.12 1.42-4.84 2.26-8.28 2.26-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48Z" />
+                    </svg>
+                    <span>Sign in with Google</span>
+                  </button>
 
                   <div className="text-center pt-2 text-[11px] text-mint-accent/60">
                     New to CAMPUS-NEXUS?{" "}

@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ detail: "An account with this email already exists." }, { status: 409 });
     }
 
-    const passwordHash = bcrypt.hashSync(password, 10);
+    const passwordHash = await bcrypt.hash(password, 10);
     const normalizedRole = normRole === "faculty" ? "faculty" : normRole === "student" ? "student" : "other";
 
     const newUser: UserRecord = {
@@ -43,9 +43,10 @@ export async function POST(req: NextRequest) {
       normalized_role: normalizedRole,
       department: department || "CSE",
       passwordHash,
-      cgpa: 8.5,
-      karma_points: 50,
-      opt_in_recruiter: true,
+      cgpa: 0,
+      karma_points: 0,
+      opt_in_recruiter: false,
+      is_new_account: true,
     };
 
     addUser(newUser);
@@ -68,6 +69,7 @@ export async function POST(req: NextRequest) {
       cgpa: newUser.cgpa,
       karma_points: newUser.karma_points,
       opt_in_recruiter: newUser.opt_in_recruiter,
+      is_new_account: true,
     };
 
     const response = NextResponse.json({
@@ -76,6 +78,7 @@ export async function POST(req: NextRequest) {
       refresh_token: refreshToken,
       refreshToken,
       token_type: "bearer",
+      account_created: true,
       user: safeUser,
     });
 

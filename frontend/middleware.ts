@@ -46,10 +46,7 @@ export function middleware(request: NextRequest) {
 
   // 1. Root path "/"
   if (pathname === "/") {
-    if (!isAuth) {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
-    return NextResponse.redirect(new URL(getDashboardPath(normRole), request.url));
+    return NextResponse.next();
   }
 
   // 2. "/login" page
