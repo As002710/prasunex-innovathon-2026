@@ -12,13 +12,13 @@ export function Logo({
   const iconSizes = {
     sm: "w-6 h-6",
     md: "w-8 h-8",
-    lg: "w-10 h-10",
+    lg: "w-12 h-12",
   };
 
   const titleSizes = {
     sm: "text-base",
     md: "text-lg",
-    lg: "text-2xl",
+    lg: "text-3xl",
   };
 
   return (
@@ -52,7 +52,7 @@ export function Logo({
           CAMPUS<span className="text-[#047857] font-black">-NEXUS</span>
         </span>
         {showTagline && (
-          <span className="text-[10px] tracking-wider uppercase font-medium text-[#4B6B5E] -mt-0.5">
+          <span className={`${size === "lg" ? "text-xs" : "text-[10px]"} tracking-wider uppercase font-medium text-[#4B6B5E] -mt-0.5`}>
             Learn · Connect · Thrive
           </span>
         )}

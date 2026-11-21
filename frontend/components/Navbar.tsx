@@ -25,13 +25,13 @@ export function Navbar({ onLogin, user: propUser, onBackToConsole, onLogout: pro
   const [searchQuery, setSearchQuery] = useState("");
 
   return (
-    <header className="sticky top-0 z-50 w-full backdrop-blur-xl bg-burgundy-950/85 border-b border-gold-500/30 transition-all">
+    <header className="sticky top-0 z-50 w-full backdrop-blur-xl bg-white/90 border-b border-amber-200/80 transition-all">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-2 sm:gap-4">
         {/* Left: Mobile Menu + Logo */}
         <div className="flex items-center gap-2 flex-shrink-0">
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="xl:hidden p-2 rounded-lg bg-burgundy-900/80 border border-gold-500/30 text-gold-400"
+            className="xl:hidden p-2 rounded-lg bg-[#F0FAF5] border border-amber-200 text-amber-500"
             aria-label="Toggle Menu"
             aria-expanded={mobileMenuOpen}
             aria-controls="mobile-navigation"
@@ -39,7 +39,7 @@ export function Navbar({ onLogin, user: propUser, onBackToConsole, onLogout: pro
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
           <div className="flex-shrink-0">
-            <Logo size="md" />
+            <Logo size="lg" />
           </div>
         </div>
 
@@ -59,7 +59,7 @@ export function Navbar({ onLogin, user: propUser, onBackToConsole, onLogout: pro
 
           {/* Features */}
           <a
-            href="#features"
+            href="/#features"
             className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium text-[#4B6B5E] hover:text-[#0B2E22] hover:bg-white transition-all"
           >
             Features <ChevronDown className="w-3 h-3 text-[#4B6B5E]" />
@@ -67,7 +67,7 @@ export function Navbar({ onLogin, user: propUser, onBackToConsole, onLogout: pro
 
           {/* Portals */}
           <a
-            href="#portals"
+            href="/#portals"
             className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium text-[#4B6B5E] hover:text-[#0B2E22] hover:bg-white transition-all"
           >
             Portals <ChevronDown className="w-3 h-3 text-[#4B6B5E]" />
@@ -75,7 +75,7 @@ export function Navbar({ onLogin, user: propUser, onBackToConsole, onLogout: pro
 
           {/* AI Insights */}
           <a
-            href="#insights"
+            href="/#insights"
             className="px-3 py-1.5 rounded-full text-xs font-medium text-[#4B6B5E] hover:text-[#0B2E22] hover:bg-white transition-all"
           >
             AI Insights
@@ -83,7 +83,7 @@ export function Navbar({ onLogin, user: propUser, onBackToConsole, onLogout: pro
 
           {/* About */}
           <a
-            href="#about"
+            href="/#about"
             className="px-3 py-1.5 rounded-full text-xs font-medium text-[#4B6B5E] hover:text-[#0B2E22] hover:bg-white transition-all"
           >
             About
@@ -91,15 +91,15 @@ export function Navbar({ onLogin, user: propUser, onBackToConsole, onLogout: pro
 
           {/* Resources */}
           <a
-            href="#resources"
+            href="/#resources"
             className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium text-[#4B6B5E] hover:text-[#0B2E22] hover:bg-white transition-all"
           >
             Resources <ChevronDown className="w-3 h-3 text-[#4B6B5E]" />
           </a>
         </nav>
 
-        {/* Right: Search Box + Bell + Login CTA */}
-        <div className="flex items-center gap-3">
+        {/* The destination page owns its actions; keep this moved header focused on navigation. */}
+        {pathname !== "/login" && <div className="flex items-center gap-3">
           {/* Search Box */}
           <div className="relative hidden md:block w-64 lg:w-72">
             <Search className="w-3.5 h-3.5 text-[#4B6B5E] absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -164,12 +164,12 @@ export function Navbar({ onLogin, user: propUser, onBackToConsole, onLogout: pro
             </Link>
           )}
 
-        </div>
+        </div>}
       </div>
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div id="mobile-navigation" className="xl:hidden px-4 pt-2 pb-6 bg-burgundy-950/95 border-b border-gold-500/30 backdrop-blur-2xl">
+        <div id="mobile-navigation" className="xl:hidden px-4 pt-2 pb-6 bg-white/95 border-b border-amber-200/80 backdrop-blur-2xl">
           <div className="flex flex-col gap-2.5">
             <div className="relative mb-2">
               <Search className="w-4 h-4 text-[#4B6B5E] absolute left-3 top-1/2 -translate-y-1/2" />
@@ -191,35 +191,35 @@ export function Navbar({ onLogin, user: propUser, onBackToConsole, onLogout: pro
               Home
             </Link>
             <a
-              href="#features"
+              href="/#features"
               onClick={() => setMobileMenuOpen(false)}
               className="px-3 py-2 rounded-lg text-xs font-medium text-[#4B6B5E] hover:bg-[#F0FAF5] hover:text-[#0B2E22]"
             >
               Features
             </a>
             <a
-              href="#portals"
+              href="/#portals"
               onClick={() => setMobileMenuOpen(false)}
               className="px-3 py-2 rounded-lg text-xs font-medium text-[#4B6B5E] hover:bg-[#F0FAF5] hover:text-[#0B2E22]"
             >
               Portals
             </a>
             <a
-              href="#insights"
+              href="/#insights"
               onClick={() => setMobileMenuOpen(false)}
               className="px-3 py-2 rounded-lg text-xs font-medium text-[#4B6B5E] hover:bg-[#F0FAF5] hover:text-[#0B2E22]"
             >
               AI Insights
             </a>
             <a
-              href="#about"
+              href="/#about"
               onClick={() => setMobileMenuOpen(false)}
               className="px-3 py-2 rounded-lg text-xs font-medium text-[#4B6B5E] hover:bg-[#F0FAF5] hover:text-[#0B2E22]"
             >
               About
             </a>
             <a
-              href="#resources"
+              href="/#resources"
               onClick={() => setMobileMenuOpen(false)}
               className="px-3 py-2 rounded-lg text-xs font-medium text-[#4B6B5E] hover:bg-[#F0FAF5] hover:text-[#0B2E22]"
             >

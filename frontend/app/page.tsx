@@ -6,7 +6,7 @@ import { useAuth, getDashboardPathForRole } from "@/context/AuthContext";
 
 export default function HomePage() {
   const router = useRouter();
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
 
   const openLogin = () => router.push("/login");
 
@@ -35,7 +35,6 @@ export default function HomePage() {
       onDemoRole={openRoleDemo}
       user={user}
       onBackToConsole={openConsole}
-      onLogout={logout}
     />
   );
 }

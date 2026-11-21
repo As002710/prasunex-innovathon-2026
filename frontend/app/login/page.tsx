@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, FormEvent, Suspense, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
+import { Navbar } from "@/components/Navbar";
 import {
   GraduationCap,
   BookOpenCheck,
@@ -20,10 +20,8 @@ import {
   CheckCircle2,
   KeyRound,
   RotateCcw,
-  ArrowLeft,
 } from "lucide-react";
 import { useAuth, normalizeRole, getDashboardPathForRole } from "@/context/AuthContext";
-import { Logo } from "@/components/Logo";
 
 type AuthTab = "signin" | "signup" | "forgot";
 
@@ -171,14 +169,6 @@ function LoginPageContent() {
       setErrorMsg(err.message || "Invalid credentials. Please verify your email and password.");
     } finally {
       setBusy(false);
-    }
-  };
-
-  const handleBack = () => {
-    if (window.history.length > 1) {
-      router.back();
-    } else {
-      router.push("/");
     }
   };
 
@@ -385,37 +375,7 @@ function LoginPageContent() {
       <div className="absolute top-1/2 -right-32 w-96 h-96 bg-amber-200/35 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-32 left-1/3 w-96 h-96 bg-amber-300/20 rounded-full blur-3xl pointer-events-none" />
 
-      {/* Top Navbar */}
-      <header className="relative z-10 w-full border-b border-amber-900/10 backdrop-blur-md bg-white/75 px-6 py-4 shadow-sm">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={handleBack}
-              aria-label="Go back"
-              title="Go back"
-              className="inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-xl border border-gold-500/35 bg-burgundy-950/70 px-3 text-xs font-semibold text-gold-300 transition-colors hover:border-gold-400 hover:bg-burgundy-800/80 hover:text-gold-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-400"
-            >
-              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-              <span>Back</span>
-            </button>
-            <Logo size="md" />
-          </div>
-          <div className="flex items-center gap-3 text-xs">
-            <Link
-              href="/split"
-              title="Full-Stack Split View: Frontend + Backend Together"
-              className="px-2.5 py-1 rounded-full bg-[#34D399] hover:bg-[#10B981] text-[#0B2E22] font-bold text-[11px] shadow-sm flex items-center gap-1 transition-all"
-            >
-              <span>◫ Frontend + Backend Split</span>
-            </Link>
-            <span className="hidden sm:inline-block text-slate-700 font-medium">Northstar Institute (NITX)</span>
-            <span className="px-2.5 py-1 rounded-full bg-amber-100 border border-amber-300 text-amber-900 font-mono text-[11px] shadow-sm font-semibold">
-              v2.4-SecureRBAC
-            </span>
-          </div>
-        </div>
-      </header>
+      <Navbar />
 
       {/* Main Login / Signup Container */}
       <main className="relative z-10 flex-1 flex items-center justify-center px-4 py-8">

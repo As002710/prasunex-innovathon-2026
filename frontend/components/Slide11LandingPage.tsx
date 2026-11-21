@@ -18,7 +18,6 @@ import {
   ChevronRight,
   BookOpen,
 } from "lucide-react";
-import { Navbar } from "./Navbar";
 import { HeroDashboardMockup } from "./HeroDashboardMockup";
 import { FeatureCard } from "./FeatureCard";
 import { GlassCard } from "./GlassCard";
@@ -32,7 +31,6 @@ interface Slide11LandingPageProps {
   onDemoRole: (roleKey: string) => void;
   user?: any;
   onBackToConsole?: () => void;
-  onLogout?: () => void;
 }
 
 export function Slide11LandingPage({
@@ -41,7 +39,6 @@ export function Slide11LandingPage({
   onDemoRole,
   user,
   onBackToConsole,
-  onLogout,
 }: Slide11LandingPageProps) {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
 
@@ -54,14 +51,6 @@ export function Slide11LandingPage({
 
   return (
     <div className="min-h-screen bg-white text-[#0B2E22] selection:bg-[#34D399]/30 relative overflow-x-hidden font-sans">
-      {/* Sticky Top Navbar */}
-      <Navbar
-        user={user}
-        onLogin={onLogin}
-        onBackToConsole={onBackToConsole}
-        onLogout={onLogout}
-      />
-
       <main className="relative z-10">
         {/* =================================================================
             HERO SECTION
