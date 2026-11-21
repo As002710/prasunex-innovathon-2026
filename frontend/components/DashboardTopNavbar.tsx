@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { ChevronDown, Menu, X, LogOut } from "lucide-react";
+import { ChevronDown, Menu, X, LogOut, Columns } from "lucide-react";
 import { Logo } from "@/components/Logo";
 
 export interface NavItem {
@@ -175,6 +175,16 @@ export function DashboardTopNavbar({
 
         {/* RIGHT AREA: User Info & Logout + Mobile Hamburger Button */}
         <div className="flex items-center gap-3 shrink-0">
+          {/* Split Screen Frontend + Backend Button */}
+          <Link
+            href="/split"
+            title="View Frontend & Backend API Docs Side-by-Side"
+            className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#F0FAF5] hover:bg-[#FEF9C3] border border-[#CDEBDD] hover:border-[#FACC15] text-[11px] font-semibold text-[#0B2E22] transition-all"
+          >
+            <Columns className="w-3.5 h-3.5 text-[#047857]" />
+            <span>Split View</span>
+          </Link>
+
           {/* User profile card */}
           <div className="flex items-center gap-2.5">
             <div

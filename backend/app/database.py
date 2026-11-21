@@ -6,6 +6,12 @@ from .config import settings
 
 def _make_engine():
     url = settings.database_url
+    # Render and many hosted Postgres providers supply a plain postgresql:// URL.
+    # This project installs psycopg 3, so tell SQLAlchemy to use that driver.
+    if url.startswith("postgres://"):
+        url = "postgresql+psycopg://" + url[len("postgres://"):]
+    elif url.startswith("postgresql://"):
+        url = "postgresql+psycopg://" + url[len("postgresql://"):]
     if url.startswith("sqlite"):
         eng = create_engine(url, connect_args={"check_same_thread": False})
 

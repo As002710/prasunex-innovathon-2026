@@ -268,6 +268,13 @@ function LoginPageContent() {
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Logo size="md" light={true} />
           <div className="flex items-center gap-3 text-xs">
+            <Link
+              href="/split"
+              title="Full-Stack Split View: Frontend + Backend Together"
+              className="px-2.5 py-1 rounded-full bg-[#34D399] hover:bg-[#10B981] text-[#0B2E22] font-bold text-[11px] shadow-sm flex items-center gap-1 transition-all"
+            >
+              <span>◫ Frontend + Backend Split</span>
+            </Link>
             <span className="hidden sm:inline-block text-slate-700 font-medium">Northstar Institute (NITX)</span>
             <span className="px-2.5 py-1 rounded-full bg-amber-100 border border-amber-300 text-amber-900 font-mono text-[11px] shadow-sm font-semibold">
               v2.4-SecureRBAC

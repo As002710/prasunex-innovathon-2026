@@ -1,3 +1,3 @@
-# Symlinked/Mirrored compose.yaml for standard docker compose commands
+# Standard Compose entry point; service definitions live in docker-compose.yml.
 include:
   - docker-compose.yml

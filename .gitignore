@@ -47,9 +47,11 @@ pnpm-debug.log*
 .DS_Store
 Thumbs.db
 
-.vercel
-
+# Local dependencies, builds, and deployment secrets
+.vercel/
 node_modules/
 .next/
 .env
 .env.local
+.env.*
+!.env.example
