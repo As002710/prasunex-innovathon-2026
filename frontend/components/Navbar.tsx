@@ -20,7 +20,7 @@ export function Navbar() {
 
   return (
     <header className="relative z-50 w-full border-y border-amber-200 bg-white">
-      <div className="mx-auto flex h-[92px] w-[92%] items-center justify-between gap-3 sm:h-[132px] sm:w-[90%] sm:gap-5">
+      <div className="mx-auto flex h-[76px] w-[92%] -translate-y-2 items-center justify-between gap-3 sm:h-[96px] sm:w-[90%] sm:gap-5">
         <div className="flex min-w-0 shrink-0 items-center gap-3 sm:gap-4">
           <button
             onClick={() => setOpen((value) => !value)}
