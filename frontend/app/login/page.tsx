@@ -105,6 +105,8 @@ function LoginPageContent() {
   // Sign In state
   const [signInEmail, setSignInEmail] = useState("");
   const [signInPassword, setSignInPassword] = useState("");
+  const [emailInputUnlocked, setEmailInputUnlocked] = useState(false);
+  const [passwordInputUnlocked, setPasswordInputUnlocked] = useState(false);
 
   // Sign Up state (Admin role is strictly excluded from public registration)
   const [signUpName, setSignUpName] = useState("");
@@ -518,7 +520,7 @@ function LoginPageContent() {
               {/* TAB 1: SIGN IN */}
               {/* ============================================================== */}
               {tab === "signin" && (
-                <form onSubmit={handleSignIn} className="space-y-4">
+                <form onSubmit={handleSignIn} autoComplete="off" className="space-y-4">
                   <div>
                     <label className="block text-xs font-medium text-slate-700 mb-1.5">Email Address</label>
                     <div className="relative">
@@ -527,6 +529,8 @@ function LoginPageContent() {
                         type="email"
                         name="login-email"
                         autoComplete="off"
+                        readOnly={!emailInputUnlocked}
+                        onFocus={() => setEmailInputUnlocked(true)}
                         required
                         value={signInEmail}
                         onChange={(e) => setSignInEmail(e.target.value)}
@@ -555,7 +559,9 @@ function LoginPageContent() {
                       <input
                         type={showPassword ? "text" : "password"}
                         name="login-password"
-                        autoComplete="off"
+                        autoComplete="new-password"
+                        readOnly={!passwordInputUnlocked}
+                        onFocus={() => setPasswordInputUnlocked(true)}
                         required
                         value={signInPassword}
                         onChange={(e) => setSignInPassword(e.target.value)}
