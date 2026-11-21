@@ -21,7 +21,7 @@ import {
   Building,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { Logo } from "@/components/Logo";
+import { DashboardTopNavbar, NavItem } from "@/components/DashboardTopNavbar";
 
 interface Ticket {
   id: string;
@@ -58,6 +58,14 @@ export function OtherDashboardView() {
   const [ledgerVerified, setLedgerVerified] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
 
+  // Other/Staff Navbar Items
+  const staffNavItems: NavItem[] = [
+    { id: "tickets", label: "Work Orders", icon: Wrench },
+    { id: "equipment", label: "Equipment Telemetry", icon: Cpu },
+    { id: "ledger", label: "Ledger Verifier", icon: ShieldCheck },
+    { id: "talent", label: "Talent Radar", icon: Search },
+  ];
+
   const handleStatusChange = (id: string, newStatus: Ticket["status"]) => {
     setTickets((prev) =>
       prev.map((t) => (t.id === id ? { ...t, status: newStatus } : t))
@@ -81,134 +89,67 @@ export function OtherDashboardView() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#120206] via-[#1B040A] to-[#2E0813] text-white">
-      {/* Top Header */}
-      <header className="sticky top-0 z-40 border-b border-gold-500/30 backdrop-blur-xl bg-burgundy-950/85 px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Logo size="md" />
-            <div className="hidden md:flex items-center gap-2 pl-4 border-l border-gold-500/30">
-              <span className="px-2.5 py-1 rounded-full bg-gold-500/15 border border-gold-400/40 text-gold-300 text-xs font-semibold flex items-center gap-1.5 shadow-[0_0_10px_rgba(212,175,55,0.2)]">
-                <Wrench className="w-3.5 h-3.5" />
-                OPERATIONS & STAFF DESK
-              </span>
-              <span className="text-xs text-gold-200/60">Campus Logistics & Facilities · NITX</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="hidden sm:flex flex-col text-right">
-              <span className="text-xs font-bold text-white">{user?.full_name || "Campus Staff"}</span>
-              <span className="text-[11px] text-gold-400 font-mono">{user?.email || "staff@nitx.demo"}</span>
-            </div>
-            <button
-              onClick={logout}
-              className="px-3 py-1.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 hover:bg-red-500/20 text-xs font-semibold flex items-center gap-1.5 transition-all"
-              title="Sign Out"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-              <span>Logout</span>
-            </button>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-white text-[#0B2E22] flex flex-col font-sans selection:bg-[#34D399]/30">
+      {/* Top Navigation Bar with Staff Pink Accent (#BE185D) */}
+      <DashboardTopNavbar
+        items={staffNavItems}
+        activeId={activeTab}
+        onSelect={(id) => setActiveTab(id as any)}
+        user={user}
+        onLogout={logout}
+        roleBadgeText="Staff / Operations"
+        roleColor="#BE185D"
+        tagline="Campus Logistics, Facilities & Operations Desk"
+      />
 
       {/* Main Container */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <main className="flex-1 w-full max-w-[1280px] mx-auto px-4 sm:px-6 py-6 space-y-6">
         {/* KPI Row */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-burgundy-900/80 border border-gold-500/35 rounded-2xl p-4 backdrop-blur-md shadow-lg shadow-black/40">
-            <div className="flex items-center justify-between text-gold-200/70 text-xs mb-1">
+          <div className="bg-[#F0FAF5] border border-[#CDEBDD] rounded-xl p-4 shadow-[0_1px_2px_rgba(11,46,34,0.06)]">
+            <div className="flex items-center justify-between text-[#4B6B5E] text-xs mb-1 font-semibold">
               <span>ACTIVE WORK ORDERS</span>
-              <Wrench className="w-4 h-4 text-gold-400" />
+              <Wrench className="w-4 h-4 text-[#BE185D]" />
             </div>
-            <div className="text-2xl font-extrabold text-white">
+            <div className="text-2xl font-extrabold text-[#0B2E22]">
               {tickets.filter((t) => t.status !== "Resolved").length} Pending
             </div>
-            <p className="text-[11px] text-gold-300 mt-1">2 Urgent · SLA &lt; 2 hrs</p>
+            <p className="text-[11px] text-amber-700 mt-1 font-medium">2 Urgent · SLA &lt; 2 hrs</p>
           </div>
 
-          <div className="bg-burgundy-900/80 border border-gold-500/35 rounded-2xl p-4 backdrop-blur-md shadow-lg shadow-black/40">
-            <div className="flex items-center justify-between text-gold-200/70 text-xs mb-1">
+          <div className="bg-[#F0FAF5] border border-[#CDEBDD] rounded-xl p-4 shadow-[0_1px_2px_rgba(11,46,34,0.06)]">
+            <div className="flex items-center justify-between text-[#4B6B5E] text-xs mb-1 font-semibold">
               <span>AVG RESOLUTION TIME</span>
-              <Clock className="w-4 h-4 text-gold-400" />
+              <Clock className="w-4 h-4 text-[#BE185D]" />
             </div>
-            <div className="text-2xl font-extrabold text-white">1.8 Hours</div>
-            <p className="text-[11px] text-gold-400 mt-1">98.4% On-Time SLA</p>
+            <div className="text-2xl font-extrabold text-[#0B2E22]">1.8 Hours</div>
+            <p className="text-[11px] text-[#047857] mt-1 font-medium">98.4% On-Time SLA</p>
           </div>
 
-          <div className="bg-burgundy-900/80 border border-gold-500/35 rounded-2xl p-4 backdrop-blur-md shadow-lg shadow-black/40">
-            <div className="flex items-center justify-between text-gold-200/70 text-xs mb-1">
+          <div className="bg-[#F0FAF5] border border-[#CDEBDD] rounded-xl p-4 shadow-[0_1px_2px_rgba(11,46,34,0.06)]">
+            <div className="flex items-center justify-between text-[#4B6B5E] text-xs mb-1 font-semibold">
               <span>CAMPUS UPTIME</span>
-              <Server className="w-4 h-4 text-emerald-400" />
+              <Server className="w-4 h-4 text-[#047857]" />
             </div>
-            <div className="text-2xl font-extrabold text-emerald-400">99.98%</div>
-            <p className="text-[11px] text-emerald-300 mt-1">All lab servers online</p>
+            <div className="text-2xl font-extrabold text-[#047857]">99.98%</div>
+            <p className="text-[11px] text-[#4B6B5E] mt-1 font-medium">All lab servers online</p>
           </div>
 
-          <div className="bg-burgundy-900/80 border border-gold-500/35 rounded-2xl p-4 backdrop-blur-md shadow-lg shadow-black/40">
-            <div className="flex items-center justify-between text-gold-200/70 text-xs mb-1">
+          <div className="bg-[#F0FAF5] border border-[#CDEBDD] rounded-xl p-4 shadow-[0_1px_2px_rgba(11,46,34,0.06)]">
+            <div className="flex items-center justify-between text-[#4B6B5E] text-xs mb-1 font-semibold">
               <span>HASH-CHAIN INTEGRITY</span>
-              <ShieldCheck className="w-4 h-4 text-gold-400" />
+              <ShieldCheck className="w-4 h-4 text-[#047857]" />
             </div>
-            <div className="text-2xl font-extrabold text-gold-300">Verified</div>
-            <p className="text-[11px] text-gold-400 mt-1">Cryptographic ledger valid</p>
+            <div className="text-2xl font-extrabold text-[#047857]">Verified</div>
+            <p className="text-[11px] text-[#4B6B5E] mt-1 font-medium">Cryptographic ledger valid</p>
           </div>
-        </div>
-
-        {/* Tab Selector */}
-        <div className="flex items-center gap-2 p-1 bg-burgundy-950/80 border border-gold-500/30 rounded-2xl max-w-2xl">
-          <button
-            onClick={() => setActiveTab("tickets")}
-            className={`flex-1 py-2 text-xs font-semibold rounded-xl flex items-center justify-center gap-2 transition-all ${
-              activeTab === "tickets"
-                ? "bg-gradient-to-r from-gold-400 via-gold-500 to-gold-600 text-burgundy-950 font-bold shadow-[0_0_15px_rgba(212,175,55,0.4)]"
-                : "text-gold-200/70 hover:text-white"
-            }`}
-          >
-            <Wrench className="w-3.5 h-3.5" />
-            <span>Work Orders</span>
-          </button>
-          <button
-            onClick={() => setActiveTab("equipment")}
-            className={`flex-1 py-2 text-xs font-semibold rounded-xl flex items-center justify-center gap-2 transition-all ${
-              activeTab === "equipment"
-                ? "bg-gradient-to-r from-gold-400 via-gold-500 to-gold-600 text-burgundy-950 font-bold shadow-[0_0_15px_rgba(212,175,55,0.4)]"
-                : "text-gold-200/70 hover:text-white"
-            }`}
-          >
-            <Cpu className="w-3.5 h-3.5" />
-            <span>Equipment Telemetry</span>
-          </button>
-          <button
-            onClick={() => setActiveTab("ledger")}
-            className={`flex-1 py-2 text-xs font-semibold rounded-xl flex items-center justify-center gap-2 transition-all ${
-              activeTab === "ledger"
-                ? "bg-mint-400 text-darkEmerald-950 shadow-[0_0_15px_rgba(74,222,154,0.3)]"
-                : "text-mint-accent/70 hover:text-white"
-            }`}
-          >
-            <ShieldCheck className="w-3.5 h-3.5" />
-            <span>Ledger Verifier</span>
-          </button>
-          <button
-            onClick={() => setActiveTab("talent")}
-            className={`flex-1 py-2 text-xs font-semibold rounded-xl flex items-center justify-center gap-2 transition-all ${
-              activeTab === "talent"
-                ? "bg-mint-400 text-darkEmerald-950 shadow-[0_0_15px_rgba(74,222,154,0.3)]"
-                : "text-mint-accent/70 hover:text-white"
-            }`}
-          >
-            <Search className="w-3.5 h-3.5" />
-            <span>Talent Radar</span>
-          </button>
         </div>
 
         {/* Notice Toast */}
         {notice && (
-          <div className="p-3.5 rounded-xl bg-mint-500/15 border border-mint-400/40 text-mint-300 text-xs flex items-center gap-2 shadow-lg animate-fadeIn">
-            <CheckCircle2 className="w-4 h-4 text-mint-400 shrink-0" />
-            <span>{notice}</span>
+          <div className="p-3.5 rounded-xl bg-[#F0FAF5] border border-[#34D399] text-[#047857] text-xs flex items-center gap-2 shadow-sm animate-fadeIn">
+            <CheckCircle2 className="w-4 h-4 text-[#047857] shrink-0" />
+            <span className="font-semibold">{notice}</span>
           </div>
         )}
 
@@ -217,24 +158,24 @@ export function OtherDashboardView() {
         {/* ==================================================================== */}
         {activeTab === "tickets" && (
           <div className="space-y-6">
-            <div className="bg-darkEmerald-900/60 border border-mint-400/20 rounded-3xl p-6 backdrop-blur-xl">
+            <div className="bg-[#F0FAF5] border border-[#CDEBDD] rounded-xl p-6 shadow-[0_1px_2px_rgba(11,46,34,0.06)]">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <div>
-                  <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                    <Wrench className="w-5 h-5 text-pink-400" />
+                  <h2 className="text-xl font-bold text-[#0B2E22] flex items-center gap-2">
+                    <Wrench className="w-5 h-5 text-[#BE185D]" />
                     Facilities Work Order Queue
                   </h2>
-                  <p className="text-xs text-mint-accent/70 mt-1">
+                  <p className="text-xs text-[#4B6B5E] mt-1">
                     Prioritized maintenance requests across campus blocks. Updating status recalculates department SLA metrics.
                   </p>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <Filter className="w-4 h-4 text-mint-400" />
+                  <Filter className="w-4 h-4 text-[#4B6B5E]" />
                   <select
                     value={filterCategory}
                     onChange={(e) => setFilterCategory(e.target.value)}
-                    className="bg-darkEmerald-950 border border-mint-400/25 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mint-400"
+                    className="bg-white border border-[#CDEBDD] rounded-xl px-3 py-2 text-xs text-[#0B2E22] focus:outline-none focus:border-[#34D399]"
                   >
                     <option value="All">All Categories</option>
                     <option value="HVAC">HVAC & Cooling</option>
@@ -251,32 +192,32 @@ export function OtherDashboardView() {
                 {filteredTickets.map((t) => (
                   <div
                     key={t.id}
-                    className="p-4 rounded-2xl bg-darkEmerald-950/70 border border-mint-400/15 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-mint-400/30 transition-all"
+                    className="p-4 rounded-xl bg-white border border-[#CDEBDD] flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-[#34D399] transition-all shadow-sm"
                   >
                     <div className="space-y-1.5 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-mono text-xs font-bold text-mint-400 bg-darkEmerald-900 px-2 py-0.5 rounded border border-mint-400/20">
+                        <span className="font-mono text-xs font-bold text-[#047857] bg-[#F0FAF5] px-2 py-0.5 rounded border border-[#CDEBDD]">
                           {t.id}
                         </span>
                         <span
                           className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                             t.priority === "Urgent"
-                              ? "bg-red-500/20 text-red-300 border border-red-500/30"
+                              ? "bg-red-50 text-red-700 border border-red-200"
                               : t.priority === "High"
-                              ? "bg-amber-500/20 text-amber-300 border border-amber-500/30"
-                              : "bg-mint-500/20 text-mint-300 border border-mint-500/30"
+                              ? "bg-amber-50 text-amber-700 border border-amber-200"
+                              : "bg-emerald-50 text-emerald-800 border border-emerald-200"
                           }`}
                         >
                           {t.priority} Priority
                         </span>
-                        <span className="text-[11px] text-mint-accent/60 font-mono">{t.category}</span>
-                        <span className="text-[11px] text-mint-accent/40 font-mono">• {t.time}</span>
+                        <span className="text-[11px] text-[#4B6B5E] font-mono">{t.category}</span>
+                        <span className="text-[11px] text-[#7A968A] font-mono">• {t.time}</span>
                       </div>
-                      <h4 className="text-sm font-bold text-white">{t.title}</h4>
-                      <p className="text-xs text-mint-accent/70 flex items-center gap-1.5">
-                        <Building className="w-3.5 h-3.5 text-mint-400/70" />
+                      <h4 className="text-sm font-bold text-[#0B2E22]">{t.title}</h4>
+                      <p className="text-xs text-[#4B6B5E] flex items-center gap-1.5">
+                        <Building className="w-3.5 h-3.5 text-[#047857]" />
                         <span>{t.location}</span>
-                        <span className="text-mint-accent/40">• Reported by: {t.reportedBy}</span>
+                        <span className="text-[#7A968A]">• Reported by: {t.reportedBy}</span>
                       </p>
                     </div>
 
@@ -284,30 +225,30 @@ export function OtherDashboardView() {
                     <div className="flex items-center gap-2 shrink-0">
                       <button
                         onClick={() => handleStatusChange(t.id, "Open")}
-                        className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                           t.status === "Open"
-                            ? "bg-amber-500/20 border border-amber-400 text-amber-300"
-                            : "bg-darkEmerald-900/60 border border-mint-400/15 text-mint-accent/60 hover:text-white"
+                            ? "bg-amber-100 border border-amber-300 text-amber-900 font-bold"
+                            : "bg-[#F0FAF5] border border-[#CDEBDD] text-[#4B6B5E] hover:text-[#0B2E22]"
                         }`}
                       >
                         Open
                       </button>
                       <button
                         onClick={() => handleStatusChange(t.id, "In Progress")}
-                        className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                           t.status === "In Progress"
-                            ? "bg-sky-500/20 border border-sky-400 text-sky-300"
-                            : "bg-darkEmerald-900/60 border border-mint-400/15 text-mint-accent/60 hover:text-white"
+                            ? "bg-sky-100 border border-sky-300 text-sky-900 font-bold"
+                            : "bg-[#F0FAF5] border border-[#CDEBDD] text-[#4B6B5E] hover:text-[#0B2E22]"
                         }`}
                       >
                         In Progress
                       </button>
                       <button
                         onClick={() => handleStatusChange(t.id, "Resolved")}
-                        className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                           t.status === "Resolved"
-                            ? "bg-mint-500/20 border border-mint-400 text-mint-300"
-                            : "bg-darkEmerald-900/60 border border-mint-400/15 text-mint-accent/60 hover:text-white"
+                            ? "bg-emerald-100 border border-emerald-300 text-emerald-900 font-bold"
+                            : "bg-[#F0FAF5] border border-[#CDEBDD] text-[#4B6B5E] hover:text-[#0B2E22]"
                         }`}
                       >
                         Resolved
@@ -325,41 +266,41 @@ export function OtherDashboardView() {
         {/* ==================================================================== */}
         {activeTab === "equipment" && (
           <div className="space-y-6">
-            <div className="bg-darkEmerald-900/60 border border-mint-400/20 rounded-3xl p-6 backdrop-blur-xl">
-              <h2 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
-                <Cpu className="w-5 h-5 text-emerald-400" />
+            <div className="bg-[#F0FAF5] border border-[#CDEBDD] rounded-xl p-6 shadow-[0_1px_2px_rgba(11,46,34,0.06)]">
+              <h2 className="text-xl font-bold text-[#0B2E22] mb-1 flex items-center gap-2">
+                <Cpu className="w-5 h-5 text-[#047857]" />
                 Campus Infrastructure & Lab Telemetry
               </h2>
-              <p className="text-xs text-mint-accent/70 mb-6">
+              <p className="text-xs text-[#4B6B5E] mb-6">
                 Real-time operational metrics across campus hardware, network switches, and critical power infrastructure.
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div className="p-4 rounded-2xl bg-darkEmerald-950/70 border border-mint-400/15">
+                <div className="p-4 rounded-xl bg-white border border-[#CDEBDD] shadow-sm">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold text-white">Central Server Rack A</span>
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <span className="text-xs font-bold text-[#0B2E22]">Central Server Rack A</span>
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
                   </div>
-                  <div className="text-2xl font-extrabold text-mint-300">22.4°C</div>
-                  <p className="text-[11px] text-mint-accent/60 mt-1">Normal thermal band · 4 fans active</p>
+                  <div className="text-2xl font-extrabold text-[#047857]">22.4°C</div>
+                  <p className="text-[11px] text-[#4B6B5E] mt-1">Normal thermal band · 4 fans active</p>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-darkEmerald-950/70 border border-mint-400/15">
+                <div className="p-4 rounded-xl bg-white border border-[#CDEBDD] shadow-sm">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold text-white">Campus Core Switch</span>
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <span className="text-xs font-bold text-[#0B2E22]">Campus Core Switch</span>
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
                   </div>
-                  <div className="text-2xl font-extrabold text-mint-300">9.8 Gbps</div>
-                  <p className="text-[11px] text-mint-accent/60 mt-1">0% packet drop · 10G optical uplink</p>
+                  <div className="text-2xl font-extrabold text-[#047857]">9.8 Gbps</div>
+                  <p className="text-[11px] text-[#4B6B5E] mt-1">0% packet drop · 10G optical uplink</p>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-darkEmerald-950/70 border border-mint-400/15">
+                <div className="p-4 rounded-xl bg-white border border-[#CDEBDD] shadow-sm">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold text-white">Diesel Generator & UPS</span>
-                    <span className="w-2 h-2 rounded-full bg-amber-400" />
+                    <span className="text-xs font-bold text-[#0B2E22]">Diesel Generator & UPS</span>
+                    <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
                   </div>
-                  <div className="text-2xl font-extrabold text-amber-400">94% Capacity</div>
-                  <p className="text-[11px] text-amber-300/80 mt-1">Maintenance scheduled in 4 days</p>
+                  <div className="text-2xl font-extrabold text-amber-700">94% Capacity</div>
+                  <p className="text-[11px] text-[#4B6B5E] mt-1">Maintenance scheduled in 4 days</p>
                 </div>
               </div>
             </div>
@@ -371,14 +312,14 @@ export function OtherDashboardView() {
         {/* ==================================================================== */}
         {activeTab === "ledger" && (
           <div className="space-y-6">
-            <div className="bg-darkEmerald-900/60 border border-mint-400/20 rounded-3xl p-6 backdrop-blur-xl">
+            <div className="bg-[#F0FAF5] border border-[#CDEBDD] rounded-xl p-6 shadow-[0_1px_2px_rgba(11,46,34,0.06)]">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <div>
-                  <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                    <ShieldCheck className="w-5 h-5 text-sky-400" />
+                  <h2 className="text-xl font-bold text-[#0B2E22] flex items-center gap-2">
+                    <ShieldCheck className="w-5 h-5 text-[#047857]" />
                     Cryptographic Maintenance Hash-Chain Verifier
                   </h2>
-                  <p className="text-xs text-mint-accent/70 mt-1">
+                  <p className="text-xs text-[#4B6B5E] mt-1">
                     Every maintenance event is permanently linked with its predecessor via SHA-256 hash chaining.
                   </p>
                 </div>
@@ -386,11 +327,11 @@ export function OtherDashboardView() {
                 <button
                   onClick={handleVerifyLedger}
                   disabled={isVerifying}
-                  className="px-4 py-2.5 rounded-xl btn-mint-primary text-xs font-bold flex items-center gap-2 shadow-lg shadow-mint-500/20 disabled:opacity-50"
+                  className="px-4 py-2.5 rounded-xl bg-[#FACC15] hover:bg-[#EAB308] text-[#0B2E22] text-xs font-bold flex items-center gap-2 shadow-sm disabled:opacity-50"
                 >
                   {isVerifying ? (
                     <>
-                      <div className="w-3.5 h-3.5 border-2 border-darkEmerald-950 border-t-transparent rounded-full animate-spin" />
+                      <div className="w-3.5 h-3.5 border-2 border-[#0B2E22] border-t-transparent rounded-full animate-spin" />
                       <span>Verifying Hashes...</span>
                     </>
                   ) : (
@@ -402,22 +343,22 @@ export function OtherDashboardView() {
                 </button>
               </div>
 
-              <div className="p-4 rounded-2xl bg-darkEmerald-950/80 border border-mint-400/20 space-y-3 font-mono text-xs">
-                <div className="flex items-center justify-between text-mint-300 border-b border-mint-400/10 pb-2">
-                  <span>LEDGER ROOT BLOCK:</span>
-                  <span className="text-mint-400 font-bold">genesis-ticket-nitx-001</span>
+              <div className="p-4 rounded-xl bg-white border border-[#CDEBDD] space-y-3 font-mono text-xs shadow-sm">
+                <div className="flex items-center justify-between text-[#0B2E22] border-b border-[#CDEBDD] pb-2">
+                  <span className="text-[#4B6B5E]">LEDGER ROOT BLOCK:</span>
+                  <span className="text-[#047857] font-bold">genesis-ticket-nitx-001</span>
                 </div>
-                <div className="flex items-center justify-between text-mint-300 border-b border-mint-400/10 pb-2">
-                  <span>CHAIN LENGTH:</span>
-                  <span>105 Recorded Blocks</span>
+                <div className="flex items-center justify-between text-[#0B2E22] border-b border-[#CDEBDD] pb-2">
+                  <span className="text-[#4B6B5E]">CHAIN LENGTH:</span>
+                  <span className="font-bold">105 Recorded Blocks</span>
                 </div>
-                <div className="flex items-center justify-between text-mint-300 border-b border-mint-400/10 pb-2">
-                  <span>ALGORITHM:</span>
-                  <span>SHA-256 HMAC Chaining</span>
+                <div className="flex items-center justify-between text-[#0B2E22] border-b border-[#CDEBDD] pb-2">
+                  <span className="text-[#4B6B5E]">ALGORITHM:</span>
+                  <span className="font-bold">SHA-256 HMAC Chaining</span>
                 </div>
-                <div className="flex items-center justify-between text-mint-300">
-                  <span>TAMPER STATUS:</span>
-                  <span className="text-emerald-400 font-bold">✓ 0 BROKEN LINKS DETECTED</span>
+                <div className="flex items-center justify-between text-[#0B2E22]">
+                  <span className="text-[#4B6B5E]">TAMPER STATUS:</span>
+                  <span className="text-[#047857] font-bold">✓ 0 BROKEN LINKS DETECTED</span>
                 </div>
               </div>
             </div>
@@ -429,14 +370,14 @@ export function OtherDashboardView() {
         {/* ==================================================================== */}
         {activeTab === "talent" && (
           <div className="space-y-6">
-            <div className="bg-darkEmerald-900/60 border border-mint-400/20 rounded-3xl p-6 backdrop-blur-xl">
+            <div className="bg-[#F0FAF5] border border-[#CDEBDD] rounded-xl p-6 shadow-[0_1px_2px_rgba(11,46,34,0.06)]">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <div>
-                  <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                    <Search className="w-5 h-5 text-amber-400" />
+                  <h2 className="text-xl font-bold text-[#0B2E22] flex items-center gap-2">
+                    <Search className="w-5 h-5 text-[#BE185D]" />
                     Corporate Talent Radar & Verified Credentials
                   </h2>
-                  <p className="text-xs text-mint-accent/70 mt-1">
+                  <p className="text-xs text-[#4B6B5E] mt-1">
                     Connect directly with students whose skills, CGPA, and peer karma points are cryptographically validated by the institute.
                   </p>
                 </div>
@@ -444,18 +385,18 @@ export function OtherDashboardView() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {SAMPLE_TALENT.map((s) => (
-                  <div key={s.id} className="p-4 rounded-2xl bg-darkEmerald-950/70 border border-mint-400/15 flex flex-col justify-between">
+                  <div key={s.id} className="p-4 rounded-xl bg-white border border-[#CDEBDD] flex flex-col justify-between shadow-sm">
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <h4 className="text-sm font-bold text-white">{s.name}</h4>
-                        <span className="px-2 py-0.5 rounded bg-mint-500/20 text-mint-300 font-mono text-xs font-bold">
+                        <h4 className="text-sm font-bold text-[#0B2E22]">{s.name}</h4>
+                        <span className="px-2 py-0.5 rounded bg-[#FEF9C3] text-[#713F12] border border-[#FACC15] font-mono text-xs font-bold">
                           CGPA: {s.cgpa}
                         </span>
                       </div>
-                      <p className="text-xs text-mint-accent/70 mb-3">{s.branch} · {s.karma} Karma Points</p>
+                      <p className="text-xs text-[#4B6B5E] mb-3">{s.branch} · {s.karma} Karma Points</p>
                       <div className="flex flex-wrap gap-1.5 mb-4">
                         {s.skills.map((skill, idx) => (
-                          <span key={idx} className="px-2 py-0.5 rounded-md bg-darkEmerald-900 border border-mint-400/20 text-[10px] text-mint-300">
+                          <span key={idx} className="px-2 py-0.5 rounded-md bg-[#F0FAF5] border border-[#CDEBDD] text-[10px] text-[#047857] font-semibold">
                             {skill}
                           </span>
                         ))}
@@ -467,7 +408,7 @@ export function OtherDashboardView() {
                         setNotice(`Interview Invitation sent to ${s.name}!`);
                         setTimeout(() => setNotice(null), 3000);
                       }}
-                      className="w-full py-2 rounded-xl bg-mint-500/20 border border-mint-400/30 text-mint-300 hover:bg-mint-500/30 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all"
+                      className="w-full py-2 rounded-xl bg-[#FACC15] hover:bg-[#EAB308] text-[#0B2E22] text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-sm"
                     >
                       <Send className="w-3.5 h-3.5" />
                       <span>Send Interview Invite</span>

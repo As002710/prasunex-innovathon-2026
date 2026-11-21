@@ -13,25 +13,24 @@ export function ProgressBar({
   code,
   instructor,
 }: ProgressBarProps) {
-  // Determine color if not explicitly provided
   const activeColor =
     color || (value >= 75 ? "green" : value >= 55 ? "amber" : "red");
 
   const colorStyles = {
     green: {
-      fill: "bg-gradient-to-r from-mint-500 to-mint-glow shadow-[0_0_12px_rgba(74,222,154,0.6)]",
-      text: "text-mint-400",
-      dot: "bg-mint-400",
+      fill: "bg-[#34D399]",
+      text: "text-[#047857]",
+      dot: "bg-[#047857]",
     },
     amber: {
-      fill: "bg-gradient-to-r from-gold to-gold-light shadow-[0_0_12px_rgba(245,185,66,0.6)]",
-      text: "text-gold",
-      dot: "bg-gold",
+      fill: "bg-[#FACC15]",
+      text: "text-[#713F12]",
+      dot: "bg-[#EAB308]",
     },
     red: {
-      fill: "bg-gradient-to-r from-coral to-coral-light shadow-[0_0_12px_rgba(242,112,90,0.6)]",
-      text: "text-coral",
-      dot: "bg-coral",
+      fill: "bg-[#B91C1C]",
+      text: "text-[#B91C1C]",
+      dot: "bg-[#B91C1C]",
     },
   };
 
@@ -42,12 +41,12 @@ export function ProgressBar({
       <div className="flex items-center justify-between text-xs font-semibold">
         <div className="flex items-center gap-2">
           <span className={`w-2 h-2 rounded-full ${current.dot}`} />
-          <span className="text-white">{label}</span>
-          {code && <span className="text-[10px] text-mint-accent/60">({code})</span>}
+          <span className="text-[#0B2E22]">{label}</span>
+          {code && <span className="text-[10px] text-[#4B6B5E]">({code})</span>}
         </div>
         <div className="flex items-center gap-2">
           {instructor && (
-            <span className="text-[10px] text-mint-accent/50 hidden sm:inline">
+            <span className="text-[10px] text-[#4B6B5E] hidden sm:inline">
               {instructor}
             </span>
           )}
@@ -55,11 +54,10 @@ export function ProgressBar({
         </div>
       </div>
 
-      {/* Track */}
-      <div className="w-full h-2 rounded-full bg-darkEmerald-950/80 border border-mint-400/20 overflow-hidden p-0.5">
+      <div className="w-full h-2 rounded-full bg-[#CDEBDD] overflow-hidden">
         <div
-          className={`h-full rounded-full ${current.fill} transition-all duration-700 ease-out`}
-          style={{ width: `${Math.min(Math.max(value, 3), 100)}%` }}
+          className={`h-full rounded-full transition-all duration-700 ease-out ${current.fill}`}
+          style={{ width: `${Math.min(100, Math.max(0, value))}%` }}
         />
       </div>
     </div>

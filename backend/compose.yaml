@@ -1,0 +1,3 @@
+# Symlinked/Mirrored compose.yaml for standard docker compose commands
+include:
+  - docker-compose.yml

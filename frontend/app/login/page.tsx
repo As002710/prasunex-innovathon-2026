@@ -35,7 +35,7 @@ const DEMO_ACCOUNTS = [
     password: "Student@123",
     icon: GraduationCap,
     desc: "Academic radar, 75% attendance forecaster & peer study",
-    color: "from-burgundy-800/90 to-burgundy-900/95 text-gold-300 border-gold-500/35 hover:border-gold-400 hover:shadow-[0_0_20px_rgba(212,175,55,0.25)]",
+    color: "from-amber-50 to-white text-slate-800 border-amber-200/90 hover:border-amber-400 hover:shadow-md",
   },
   {
     role: "faculty",
@@ -45,7 +45,7 @@ const DEMO_ACCOUNTS = [
     password: "Faculty@123",
     icon: BookOpenCheck,
     desc: "Relative grading sandbox, IRT item audit & at-risk alerts",
-    color: "from-burgundy-800/90 to-burgundy-900/95 text-gold-200 border-gold-500/35 hover:border-gold-400 hover:shadow-[0_0_20px_rgba(212,175,55,0.25)]",
+    color: "from-amber-50 to-white text-slate-800 border-amber-200/90 hover:border-amber-400 hover:shadow-md",
   },
   {
     role: "admin",
@@ -55,7 +55,7 @@ const DEMO_ACCOUNTS = [
     password: "Admin@123",
     icon: Building2,
     desc: "Campus overview, ARR billing, NBA outcomes & SLA desk",
-    color: "from-burgundy-800/90 to-burgundy-900/95 text-gold-400 border-gold-500/45 hover:border-gold-400 hover:shadow-[0_0_20px_rgba(212,175,55,0.35)]",
+    color: "from-amber-50 to-white text-slate-800 border-amber-200/90 hover:border-amber-400 hover:shadow-md",
   },
   {
     role: "other",
@@ -65,7 +65,7 @@ const DEMO_ACCOUNTS = [
     password: "Staff@123",
     icon: Wrench,
     desc: "Facilities triage desk, hash-chained ledger & campus logistics",
-    color: "from-burgundy-800/90 to-burgundy-900/95 text-gold-300 border-gold-500/35 hover:border-gold-400 hover:shadow-[0_0_20px_rgba(212,175,55,0.25)]",
+    color: "from-amber-50 to-white text-slate-800 border-amber-200/90 hover:border-amber-400 hover:shadow-md",
   },
 ];
 
@@ -247,29 +247,29 @@ function LoginPageContent() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-darkEmerald-950 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3 text-mint-400">
-          <div className="w-8 h-8 border-2 border-mint-400 border-t-transparent rounded-full animate-spin" />
-          <p className="text-xs tracking-wider text-mint-300 uppercase font-medium">Verifying Session...</p>
+      <div className="min-h-screen bg-[#FAF8F5] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3 text-amber-700">
+          <div className="w-8 h-8 border-2 border-amber-600 border-t-transparent rounded-full animate-spin" />
+          <p className="text-xs tracking-wider text-slate-600 uppercase font-medium">Verifying Session...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#120206] via-[#1B040A] to-[#2E0813] text-white flex flex-col justify-between relative overflow-hidden">
-      {/* Decorative royal gold & wine ambient glows */}
-      <div className="absolute -top-32 -left-32 w-96 h-96 bg-gold-500/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute top-1/2 -right-32 w-96 h-96 bg-burgundy-500/25 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-32 left-1/3 w-96 h-96 bg-gold-500/10 rounded-full blur-3xl pointer-events-none" />
+    <div className="min-h-screen bg-gradient-to-br from-[#FAF8F5] via-[#F4EFE6] to-[#EAE0D0] text-slate-900 flex flex-col justify-between relative overflow-hidden font-sans">
+      {/* Decorative ambient warm light flares */}
+      <div className="absolute -top-32 -left-32 w-96 h-96 bg-amber-400/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/2 -right-32 w-96 h-96 bg-amber-200/35 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-32 left-1/3 w-96 h-96 bg-amber-300/20 rounded-full blur-3xl pointer-events-none" />
 
       {/* Top Navbar */}
-      <header className="relative z-10 w-full border-b border-gold-500/25 backdrop-blur-md bg-burgundy-950/70 px-6 py-4">
+      <header className="relative z-10 w-full border-b border-amber-900/10 backdrop-blur-md bg-white/75 px-6 py-4 shadow-sm">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <Logo size="md" />
+          <Logo size="md" light={true} />
           <div className="flex items-center gap-3 text-xs">
-            <span className="hidden sm:inline-block text-gold-200/80">Northstar Institute (NITX)</span>
-            <span className="px-2.5 py-1 rounded-full bg-gold-500/15 border border-gold-400/35 text-gold-300 font-mono text-[11px] shadow-[0_0_10px_rgba(212,175,55,0.2)]">
+            <span className="hidden sm:inline-block text-slate-700 font-medium">Northstar Institute (NITX)</span>
+            <span className="px-2.5 py-1 rounded-full bg-amber-100 border border-amber-300 text-amber-900 font-mono text-[11px] shadow-sm font-semibold">
               v2.4-SecureRBAC
             </span>
           </div>
@@ -282,28 +282,28 @@ function LoginPageContent() {
           {/* Left Column: Platform Branding & 1-Click Demo Accounts */}
           <div className="lg:col-span-5 flex flex-col gap-6">
             <div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-500/15 border border-gold-400/35 text-gold-300 text-xs font-semibold mb-3">
-                <Sparkles className="w-3.5 h-3.5 text-gold-400" />
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 border border-amber-300 text-amber-900 text-xs font-semibold mb-3 shadow-sm">
+                <Sparkles className="w-3.5 h-3.5 text-amber-600" />
                 <span>One Campus. One Intelligence.</span>
               </div>
-              <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
+              <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 leading-tight">
                 Enterprise Access <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold-200 via-gold-400 to-amber-200">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-700 via-amber-600 to-yellow-600">
                   Role-Based Portal
                 </span>
               </h1>
-              <p className="mt-2 text-xs sm:text-sm text-gold-100/70 leading-relaxed">
+              <p className="mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
                 Log in to your personalized workspace. Students, faculty, campus administrators, and operations staff are automatically routed to their authorized dashboards.
               </p>
             </div>
 
             {/* Quick 1-Click Demo Logins */}
-            <div className="bg-burgundy-900/85 border border-gold-500/35 rounded-2xl p-4 backdrop-blur-xl shadow-xl shadow-black/50">
+            <div className="bg-white/90 border border-amber-200/90 rounded-2xl p-4 backdrop-blur-xl shadow-lg shadow-amber-950/5">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-bold uppercase tracking-wider text-gold-300">
+                <span className="text-xs font-bold uppercase tracking-wider text-amber-900">
                   ⚡ 1-Click Demo Accounts
                 </span>
-                <span className="text-[10px] text-gold-400/80 font-mono">Bcrypt Authenticated</span>
+                <span className="text-[10px] text-amber-700 font-mono font-medium">Bcrypt Authenticated</span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 {DEMO_ACCOUNTS.map((acc) => {
@@ -314,38 +314,38 @@ function LoginPageContent() {
                       type="button"
                       disabled={busy}
                       onClick={() => handleQuickDemoLogin(acc)}
-                      className={`text-left p-3 rounded-xl border transition-all duration-200 bg-gradient-to-br ${acc.color} hover:scale-[1.02] hover:shadow-lg disabled:opacity-50 group`}
+                      className={`text-left p-3 rounded-xl border transition-all duration-200 bg-gradient-to-br ${acc.color} hover:scale-[1.02] hover:shadow-md disabled:opacity-50 group`}
                     >
                       <div className="flex items-center gap-2 mb-1">
-                        <Icon className="w-4 h-4 shrink-0" />
-                        <span className="text-xs font-bold">{acc.label}</span>
+                        <Icon className="w-4 h-4 shrink-0 text-amber-700" />
+                        <span className="text-xs font-bold text-amber-900">{acc.label}</span>
                       </div>
-                      <p className="text-[11px] text-white/90 font-medium truncate">{acc.name}</p>
-                      <p className="text-[10px] text-white/60 font-mono truncate">{acc.email}</p>
+                      <p className="text-[11px] text-slate-900 font-bold truncate">{acc.name}</p>
+                      <p className="text-[10px] text-slate-500 font-mono truncate">{acc.email}</p>
                     </button>
                   );
                 })}
               </div>
-              <div className="mt-3 pt-2.5 border-t border-gold-500/20 flex items-center justify-between text-[11px] text-gold-300/80">
+              <div className="mt-3 pt-2.5 border-t border-amber-200/80 flex items-center justify-between text-[11px] text-slate-600">
                 <span>All accounts use password:</span>
-                <span className="font-mono bg-burgundy-950 px-2 py-0.5 rounded border border-gold-500/35 text-gold-300 text-[10px]">
+                <span className="font-mono bg-amber-100 px-2 py-0.5 rounded border border-amber-300 text-amber-900 text-[10px] font-semibold">
                   [Role]@123
                 </span>
               </div>
             </div>
 
             {/* Security Assurance Badges */}
-            <div className="flex items-center gap-4 text-xs text-gold-300/90">
+            <div className="flex items-center gap-4 text-xs text-slate-600 font-medium">
               <div className="flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-gold-400" />
+                <ShieldCheck className="w-4 h-4 text-amber-600" />
                 <span>Bcrypt Hash</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <Lock className="w-4 h-4 text-gold-400" />
+                <Lock className="w-4 h-4 text-amber-600" />
                 <span>JWT Sessions</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <KeyRound className="w-4 h-4 text-gold-400" />
+                <KeyRound className="w-4 h-4 text-amber-600" />
                 <span>Server-Side RBAC</span>
               </div>
             </div>
@@ -353,9 +353,9 @@ function LoginPageContent() {
 
           {/* Right Column: Auth Form Card */}
           <div className="lg:col-span-7">
-            <div className="bg-burgundy-900/90 border border-gold-500/40 rounded-3xl p-6 sm:p-8 backdrop-blur-2xl shadow-2xl shadow-black/60 relative">
+            <div className="bg-white/95 border border-amber-200/90 rounded-3xl p-6 sm:p-8 backdrop-blur-2xl shadow-xl shadow-amber-950/10 relative">
               {/* Form Tab Switcher */}
-              <div className="flex items-center gap-2 p-1 bg-burgundy-950/80 border border-gold-500/30 rounded-2xl mb-6">
+              <div className="flex items-center gap-2 p-1 bg-amber-50/80 border border-amber-200/80 rounded-2xl mb-6">
                 <button
                   type="button"
                   onClick={() => {
@@ -365,8 +365,8 @@ function LoginPageContent() {
                   }}
                   className={`flex-1 py-2 text-xs font-semibold rounded-xl transition-all ${
                     tab === "signin"
-                      ? "bg-gradient-to-r from-gold-400 via-gold-500 to-gold-600 text-burgundy-950 font-bold shadow-[0_0_15px_rgba(212,175,55,0.4)]"
-                      : "text-gold-200/70 hover:text-white"
+                      ? "bg-gradient-to-r from-amber-500 via-gold-500 to-amber-600 text-slate-950 font-bold shadow-md shadow-amber-500/25"
+                      : "text-slate-600 hover:text-slate-900"
                   }`}
                 >
                   Sign In
@@ -380,8 +380,8 @@ function LoginPageContent() {
                   }}
                   className={`flex-1 py-2 text-xs font-semibold rounded-xl transition-all ${
                     tab === "signup"
-                      ? "bg-gradient-to-r from-gold-400 via-gold-500 to-gold-600 text-burgundy-950 font-bold shadow-[0_0_15px_rgba(212,175,55,0.4)]"
-                      : "text-gold-200/70 hover:text-white"
+                      ? "bg-gradient-to-r from-amber-500 via-gold-500 to-amber-600 text-slate-950 font-bold shadow-md shadow-amber-500/25"
+                      : "text-slate-600 hover:text-slate-900"
                   }`}
                 >
                   Register Account
@@ -395,8 +395,8 @@ function LoginPageContent() {
                   }}
                   className={`flex-1 py-2 text-xs font-semibold rounded-xl transition-all ${
                     tab === "forgot"
-                      ? "bg-gradient-to-r from-gold-400 via-gold-500 to-gold-600 text-burgundy-950 font-bold shadow-[0_0_15px_rgba(212,175,55,0.4)]"
-                      : "text-gold-200/70 hover:text-white"
+                      ? "bg-gradient-to-r from-amber-500 via-gold-500 to-amber-600 text-slate-950 font-bold shadow-md shadow-amber-500/25"
+                      : "text-slate-600 hover:text-slate-900"
                   }`}
                 >
                   Reset Password
@@ -405,14 +405,14 @@ function LoginPageContent() {
 
               {/* Status Alerts */}
               {errorMsg && (
-                <div className="mb-5 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-xs flex items-start gap-2.5 animate-fadeIn">
-                  <AlertCircle className="w-4 h-4 shrink-0 text-red-400 mt-0.5" />
+                <div className="mb-5 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-start gap-2.5 animate-fadeIn">
+                  <AlertCircle className="w-4 h-4 shrink-0 text-red-500 mt-0.5" />
                   <span>{errorMsg}</span>
                 </div>
               )}
               {successMsg && (
-                <div className="mb-5 p-3 rounded-xl bg-mint-500/10 border border-mint-500/30 text-mint-300 text-xs flex items-start gap-2.5 animate-fadeIn">
-                  <CheckCircle2 className="w-4 h-4 shrink-0 text-mint-400 mt-0.5" />
+                <div className="mb-5 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-start gap-2.5 animate-fadeIn">
+                  <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600 mt-0.5" />
                   <span>{successMsg}</span>
                 </div>
               )}
@@ -423,49 +423,49 @@ function LoginPageContent() {
               {tab === "signin" && (
                 <form onSubmit={handleSignIn} className="space-y-4">
                   <div>
-                    <label className="block text-xs font-medium text-mint-200 mb-1.5">Email Address</label>
+                    <label className="block text-xs font-medium text-slate-700 mb-1.5">Email Address</label>
                     <div className="relative">
-                      <Mail className="w-4 h-4 text-mint-400/60 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                      <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                       <input
                         type="email"
                         required
                         value={signInEmail}
                         onChange={(e) => setSignInEmail(e.target.value)}
                         placeholder="you@nitx.demo"
-                        className="w-full bg-darkEmerald-950/70 border border-mint-400/25 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white placeholder:text-mint-400/30 focus:outline-none focus:border-mint-400 focus:ring-1 focus:ring-mint-400 transition-all"
+                        className="w-full bg-slate-50/80 border border-slate-300 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 focus:bg-white transition-all"
                       />
                     </div>
                   </div>
 
                   <div>
                     <div className="flex items-center justify-between mb-1.5">
-                      <label className="text-xs font-medium text-mint-200">Password</label>
+                      <label className="text-xs font-medium text-slate-700">Password</label>
                       <button
                         type="button"
                         onClick={() => {
                           setTab("forgot");
                           setForgotEmail(signInEmail);
                         }}
-                        className="text-[11px] text-mint-400 hover:underline"
+                        className="text-[11px] text-amber-700 font-medium hover:underline"
                       >
                         Forgot password?
                       </button>
                     </div>
                     <div className="relative">
-                      <Lock className="w-4 h-4 text-mint-400/60 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                      <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                       <input
                         type={showPassword ? "text" : "password"}
                         required
                         value={signInPassword}
                         onChange={(e) => setSignInPassword(e.target.value)}
                         placeholder="••••••••••••"
-                        className="w-full bg-darkEmerald-950/70 border border-mint-400/25 rounded-xl pl-10 pr-10 py-2.5 text-xs text-white placeholder:text-mint-400/30 focus:outline-none focus:border-mint-400 focus:ring-1 focus:ring-mint-400 transition-all"
+                        className="w-full bg-slate-50/80 border border-slate-300 rounded-xl pl-10 pr-10 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 focus:bg-white transition-all"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
                         aria-label="Toggle password visibility"
-                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-mint-400/60 hover:text-mint-300"
+                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                       >
                         {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
@@ -476,11 +476,11 @@ function LoginPageContent() {
                     <button
                       type="submit"
                       disabled={busy}
-                      className="w-full btn-mint-primary py-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-lg shadow-mint-500/20 disabled:opacity-50"
+                      className="w-full bg-gradient-to-r from-amber-500 via-gold-500 to-amber-600 text-slate-950 font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/25 hover:brightness-105 active:scale-[0.99] transition-all disabled:opacity-50"
                     >
                       {busy ? (
                         <>
-                          <div className="w-4 h-4 border-2 border-darkEmerald-950 border-t-transparent rounded-full animate-spin" />
+                          <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
                           <span>Authenticating...</span>
                         </>
                       ) : (
@@ -492,12 +492,12 @@ function LoginPageContent() {
                     </button>
                   </div>
 
-                  <div className="text-center pt-2 text-[11px] text-mint-accent/60">
+                  <div className="text-center pt-2 text-[11px] text-slate-500">
                     New to CAMPUS-NEXUS?{" "}
                     <button
                       type="button"
                       onClick={() => setTab("signup")}
-                      className="text-mint-400 font-semibold hover:underline"
+                      className="text-amber-700 font-semibold hover:underline"
                     >
                       Create an account
                     </button>
@@ -511,39 +511,39 @@ function LoginPageContent() {
               {tab === "signup" && (
                 <form onSubmit={handleSignUp} className="space-y-4">
                   <div>
-                    <label className="block text-xs font-medium text-mint-200 mb-1.5">Full Name</label>
+                    <label className="block text-xs font-medium text-slate-700 mb-1.5">Full Name</label>
                     <div className="relative">
-                      <UserIcon className="w-4 h-4 text-mint-400/60 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                      <UserIcon className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                       <input
                         type="text"
                         required
                         value={signUpName}
                         onChange={(e) => setSignUpName(e.target.value)}
                         placeholder="e.g. Diya Sen"
-                        className="w-full bg-darkEmerald-950/70 border border-mint-400/25 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white placeholder:text-mint-400/30 focus:outline-none focus:border-mint-400 focus:ring-1 focus:ring-mint-400 transition-all"
+                        className="w-full bg-slate-50/80 border border-slate-300 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 focus:bg-white transition-all"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-mint-200 mb-1.5">Email Address</label>
+                    <label className="block text-xs font-medium text-slate-700 mb-1.5">Email Address</label>
                     <div className="relative">
-                      <Mail className="w-4 h-4 text-mint-400/60 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                      <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                       <input
                         type="email"
                         required
                         value={signUpEmail}
                         onChange={(e) => setSignUpEmail(e.target.value)}
                         placeholder="e.g. diya.sen@nitx.demo"
-                        className="w-full bg-darkEmerald-950/70 border border-mint-400/25 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white placeholder:text-mint-400/30 focus:outline-none focus:border-mint-400 focus:ring-1 focus:ring-mint-400 transition-all"
+                        className="w-full bg-slate-50/80 border border-slate-300 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 focus:bg-white transition-all"
                       />
                     </div>
                   </div>
 
                   {/* Public Role Selector (Admin is strictly disallowed) */}
                   <div>
-                    <label className="block text-xs font-medium text-mint-200 mb-1.5">
-                      Select Role <span className="text-mint-400/60 font-normal">(Admin is invitation-only)</span>
+                    <label className="block text-xs font-medium text-slate-700 mb-1.5">
+                      Select Role <span className="text-slate-500 font-normal">(Admin is invitation-only)</span>
                     </label>
                     <div className="grid grid-cols-3 gap-2">
                       <button
@@ -551,11 +551,11 @@ function LoginPageContent() {
                         onClick={() => setSignUpRole("student")}
                         className={`p-2.5 rounded-xl border text-xs font-medium flex flex-col items-center gap-1.5 transition-all ${
                           signUpRole === "student"
-                            ? "bg-mint-500/20 border-mint-400 text-mint-300 shadow-[0_0_12px_rgba(74,222,154,0.2)]"
-                            : "bg-darkEmerald-950/60 border-mint-400/15 text-mint-200/70 hover:border-mint-400/30"
+                            ? "bg-amber-100/90 border-amber-500 text-amber-900 font-bold shadow-sm"
+                            : "bg-slate-50 border-slate-200 text-slate-600 hover:border-amber-300"
                         }`}
                       >
-                        <GraduationCap className="w-4 h-4 text-mint-400" />
+                        <GraduationCap className="w-4 h-4 text-amber-700" />
                         <span>Student</span>
                       </button>
                       <button
@@ -563,11 +563,11 @@ function LoginPageContent() {
                         onClick={() => setSignUpRole("faculty")}
                         className={`p-2.5 rounded-xl border text-xs font-medium flex flex-col items-center gap-1.5 transition-all ${
                           signUpRole === "faculty"
-                            ? "bg-mint-500/20 border-mint-400 text-mint-300 shadow-[0_0_12px_rgba(74,222,154,0.2)]"
-                            : "bg-darkEmerald-950/60 border-mint-400/15 text-mint-200/70 hover:border-mint-400/30"
+                            ? "bg-amber-100/90 border-amber-500 text-amber-900 font-bold shadow-sm"
+                            : "bg-slate-50 border-slate-200 text-slate-600 hover:border-amber-300"
                         }`}
                       >
-                        <BookOpenCheck className="w-4 h-4 text-sky-400" />
+                        <BookOpenCheck className="w-4 h-4 text-sky-600" />
                         <span>Faculty</span>
                       </button>
                       <button
@@ -575,11 +575,11 @@ function LoginPageContent() {
                         onClick={() => setSignUpRole("other")}
                         className={`p-2.5 rounded-xl border text-xs font-medium flex flex-col items-center gap-1.5 transition-all ${
                           signUpRole === "other"
-                            ? "bg-mint-500/20 border-mint-400 text-mint-300 shadow-[0_0_12px_rgba(74,222,154,0.2)]"
-                            : "bg-darkEmerald-950/60 border-mint-400/15 text-mint-200/70 hover:border-mint-400/30"
+                            ? "bg-amber-100/90 border-amber-500 text-amber-900 font-bold shadow-sm"
+                            : "bg-slate-50 border-slate-200 text-slate-600 hover:border-amber-300"
                         }`}
                       >
-                        <Wrench className="w-4 h-4 text-pink-400" />
+                        <Wrench className="w-4 h-4 text-pink-600" />
                         <span>Other (Staff)</span>
                       </button>
                     </div>
@@ -587,11 +587,11 @@ function LoginPageContent() {
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-medium text-mint-200 mb-1.5">Department</label>
+                      <label className="block text-xs font-medium text-slate-700 mb-1.5">Department</label>
                       <select
                         value={signUpDept}
                         onChange={(e) => setSignUpDept(e.target.value)}
-                        className="w-full bg-darkEmerald-950/70 border border-mint-400/25 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-mint-400 transition-all"
+                        className="w-full bg-slate-50/80 border border-slate-300 rounded-xl px-3 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-amber-500 focus:bg-white transition-all"
                       >
                         <option value="CSE">Computer Science (CSE)</option>
                         <option value="ECE">Electronics (ECE)</option>
@@ -600,22 +600,22 @@ function LoginPageContent() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-mint-200 mb-1.5">Password</label>
+                      <label className="block text-xs font-medium text-slate-700 mb-1.5">Password</label>
                       <div className="relative">
-                        <Lock className="w-4 h-4 text-mint-400/60 absolute left-3 top-1/2 -translate-y-1/2" />
+                        <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                         <input
                           type={showPassword ? "text" : "password"}
                           required
                           value={signUpPassword}
                           onChange={(e) => setSignUpPassword(e.target.value)}
                           placeholder="Min 6 chars"
-                          className="w-full bg-darkEmerald-950/70 border border-mint-400/25 rounded-xl pl-9 pr-8 py-2.5 text-xs text-white placeholder:text-mint-400/30 focus:outline-none focus:border-mint-400 transition-all"
+                          className="w-full bg-slate-50/80 border border-slate-300 rounded-xl pl-9 pr-8 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-amber-500 focus:bg-white transition-all"
                         />
                         <button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
                           aria-label="Toggle password visibility"
-                          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-mint-400/60 hover:text-mint-300"
+                          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                         >
                           {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                         </button>
@@ -627,11 +627,11 @@ function LoginPageContent() {
                     <button
                       type="submit"
                       disabled={busy}
-                      className="w-full btn-mint-primary py-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-lg shadow-mint-500/20 disabled:opacity-50"
+                      className="w-full bg-gradient-to-r from-amber-500 via-gold-500 to-amber-600 text-slate-950 font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/25 hover:brightness-105 active:scale-[0.99] transition-all disabled:opacity-50"
                     >
                       {busy ? (
                         <>
-                          <div className="w-4 h-4 border-2 border-darkEmerald-950 border-t-transparent rounded-full animate-spin" />
+                          <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
                           <span>Registering Account...</span>
                         </>
                       ) : (
@@ -643,12 +643,12 @@ function LoginPageContent() {
                     </button>
                   </div>
 
-                  <div className="text-center pt-1 text-[11px] text-mint-accent/60">
+                  <div className="text-center pt-1 text-[11px] text-slate-500">
                     Already have an account?{" "}
                     <button
                       type="button"
                       onClick={() => setTab("signin")}
-                      className="text-mint-400 font-semibold hover:underline"
+                      className="text-amber-700 font-semibold hover:underline"
                     >
                       Sign In
                     </button>
@@ -663,20 +663,20 @@ function LoginPageContent() {
                 <div className="space-y-4">
                   {forgotStep === "request" ? (
                     <form onSubmit={handleForgotPasswordRequest} className="space-y-4">
-                      <p className="text-xs text-mint-accent/70 leading-relaxed">
+                      <p className="text-xs text-slate-600 leading-relaxed">
                         Enter your registered email address. We will generate a secure one-time password reset token for your account.
                       </p>
                       <div>
-                        <label className="block text-xs font-medium text-mint-200 mb-1.5">Registered Email</label>
+                        <label className="block text-xs font-medium text-slate-700 mb-1.5">Registered Email</label>
                         <div className="relative">
-                          <Mail className="w-4 h-4 text-mint-400/60 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                          <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                           <input
                             type="email"
                             required
                             value={forgotEmail}
                             onChange={(e) => setForgotEmail(e.target.value)}
                             placeholder="you@nitx.demo"
-                            className="w-full bg-darkEmerald-950/70 border border-mint-400/25 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white placeholder:text-mint-400/30 focus:outline-none focus:border-mint-400 transition-all"
+                            className="w-full bg-slate-50/80 border border-slate-300 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 focus:bg-white transition-all"
                           />
                         </div>
                       </div>
@@ -685,11 +685,11 @@ function LoginPageContent() {
                         <button
                           type="submit"
                           disabled={busy}
-                          className="w-full btn-mint-primary py-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-lg shadow-mint-500/20 disabled:opacity-50"
+                          className="w-full bg-gradient-to-r from-amber-500 via-gold-500 to-amber-600 text-slate-950 font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/25 hover:brightness-105 active:scale-[0.99] transition-all disabled:opacity-50"
                         >
                           {busy ? (
                             <>
-                              <div className="w-4 h-4 border-2 border-darkEmerald-950 border-t-transparent rounded-full animate-spin" />
+                              <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
                               <span>Generating Token...</span>
                             </>
                           ) : (
@@ -704,36 +704,36 @@ function LoginPageContent() {
                   ) : (
                     <form onSubmit={handlePasswordResetSubmit} className="space-y-4">
                       <div>
-                        <label className="block text-xs font-medium text-mint-200 mb-1.5">Reset Token</label>
+                        <label className="block text-xs font-medium text-slate-700 mb-1.5">Reset Token</label>
                         <input
                           type="text"
                           required
                           value={resetToken}
                           onChange={(e) => setResetToken(e.target.value)}
                           placeholder="e.g. rst-abc123xyz"
-                          className="w-full bg-darkEmerald-950/70 border border-mint-400/25 rounded-xl px-4 py-2.5 text-xs text-white font-mono placeholder:text-mint-400/30 focus:outline-none focus:border-mint-400 transition-all"
+                          className="w-full bg-slate-50/80 border border-slate-300 rounded-xl px-4 py-2.5 text-xs text-slate-900 font-mono placeholder:text-slate-400 focus:outline-none focus:border-amber-500 focus:bg-white transition-all"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-xs font-medium text-mint-200 mb-1.5">New Password</label>
+                        <label className="block text-xs font-medium text-slate-700 mb-1.5">New Password</label>
                         <div className="relative">
-                          <Lock className="w-4 h-4 text-mint-400/60 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                          <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                           <input
                             type={showPassword ? "text" : "password"}
                             required
                             value={newPassword}
                             onChange={(e) => setNewPassword(e.target.value)}
                             placeholder="Min 6 characters"
-                            className="w-full bg-darkEmerald-950/70 border border-mint-400/25 rounded-xl pl-10 pr-10 py-2.5 text-xs text-white placeholder:text-mint-400/30 focus:outline-none focus:border-mint-400 transition-all"
+                            className="w-full bg-slate-50/80 border border-slate-300 rounded-xl pl-10 pr-10 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-amber-500 focus:bg-white transition-all"
                           />
                           <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
                             aria-label="Toggle password visibility"
-                            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-mint-400/60 hover:text-mint-300"
+                            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                           >
-                            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                            {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                           </button>
                         </div>
                       </div>
@@ -742,11 +742,11 @@ function LoginPageContent() {
                         <button
                           type="submit"
                           disabled={busy}
-                          className="w-full btn-mint-primary py-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-lg shadow-mint-500/20 disabled:opacity-50"
+                          className="w-full bg-gradient-to-r from-amber-500 via-gold-500 to-amber-600 text-slate-950 font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/25 hover:brightness-105 active:scale-[0.99] transition-all disabled:opacity-50"
                         >
                           {busy ? (
                             <>
-                              <div className="w-4 h-4 border-2 border-darkEmerald-950 border-t-transparent rounded-full animate-spin" />
+                              <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
                               <span>Updating Password...</span>
                             </>
                           ) : (
@@ -760,12 +760,12 @@ function LoginPageContent() {
                     </form>
                   )}
 
-                  <div className="text-center pt-2 text-[11px] text-mint-accent/60">
+                  <div className="text-center pt-2 text-[11px] text-slate-500">
                     Remembered your password?{" "}
                     <button
                       type="button"
                       onClick={() => setTab("signin")}
-                      className="text-mint-400 font-semibold hover:underline"
+                      className="text-amber-700 font-semibold hover:underline"
                     >
                       Return to Sign In
                     </button>
@@ -778,7 +778,7 @@ function LoginPageContent() {
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 w-full border-t border-mint-400/10 py-4 px-6 text-center text-xs text-mint-accent/50 backdrop-blur-md bg-darkEmerald-950/60">
+      <footer className="relative z-10 w-full border-t border-amber-900/10 py-4 px-6 text-center text-xs text-slate-500 backdrop-blur-md bg-white/70">
         <p>
           CAMPUS-NEXUS · Enterprise Cognitive Campus OS · Multi-Tenant Architecture · Demo seeded for Northstar Institute of Technology
         </p>
@@ -791,10 +791,10 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-darkEmerald-950 flex items-center justify-center">
-          <div className="flex flex-col items-center gap-3 text-mint-400">
-            <div className="w-8 h-8 border-2 border-mint-400 border-t-transparent rounded-full animate-spin" />
-            <p className="text-xs tracking-wider text-mint-300 uppercase font-medium">Loading Portal...</p>
+        <div className="min-h-screen bg-[#FAF8F5] flex items-center justify-center">
+          <div className="flex flex-col items-center gap-3 text-amber-700">
+            <div className="w-8 h-8 border-2 border-amber-600 border-t-transparent rounded-full animate-spin" />
+            <p className="text-xs tracking-wider text-slate-600 uppercase font-medium">Loading Portal...</p>
           </div>
         </div>
       }

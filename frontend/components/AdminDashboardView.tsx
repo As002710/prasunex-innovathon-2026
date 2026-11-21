@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import {
   Building2,
   Users,
@@ -22,7 +22,7 @@ import {
   Lock,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { Logo } from "@/components/Logo";
+import { DashboardTopNavbar, NavItem } from "@/components/DashboardTopNavbar";
 import {
   BarChart,
   Bar,
@@ -91,6 +91,14 @@ export function AdminDashboardView() {
   const [studentCount, setStudentCount] = useState(200);
   const [notice, setNotice] = useState<string | null>(null);
 
+  // Admin Navbar Items
+  const adminNavItems: NavItem[] = [
+    { id: "overview", label: "Overview", icon: Layers },
+    { id: "billing", label: "Billing & ARR", icon: DollarSign },
+    { id: "nba", label: "NBA / NAAC", icon: FileBadge2 },
+    { id: "audit", label: "Audit Ledger", icon: ShieldCheck },
+  ];
+
   // ARR Calculation
   const selectedTierObj = TIERS.find((t) => t.key === currentTier) || TIERS[2];
   const estimatedARR = studentCount * selectedTierObj.price;
@@ -107,134 +115,67 @@ export function AdminDashboardView() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#120206] via-[#1B040A] to-[#2E0813] text-white">
-      {/* Top Header */}
-      <header className="sticky top-0 z-40 border-b border-gold-500/30 backdrop-blur-xl bg-burgundy-950/85 px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Logo size="md" />
-            <div className="hidden md:flex items-center gap-2 pl-4 border-l border-gold-500/30">
-              <span className="px-2.5 py-1 rounded-full bg-gold-500/15 border border-gold-400/40 text-gold-300 text-xs font-semibold flex items-center gap-1.5 shadow-[0_0_10px_rgba(212,175,55,0.2)]">
-                <Building2 className="w-3.5 h-3.5" />
-                ADMINISTRATION CONSOLE
-              </span>
-              <span className="text-xs text-gold-200/60">Northstar Institute (NITX) · Enterprise Tenant</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="hidden sm:flex flex-col text-right">
-              <span className="text-xs font-bold text-white">{user?.full_name || "Campus Administrator"}</span>
-              <span className="text-[11px] text-gold-400 font-mono">{user?.email || "admin@nitx.demo"}</span>
-            </div>
-            <button
-              onClick={logout}
-              className="px-3 py-1.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 hover:bg-red-500/20 text-xs font-semibold flex items-center gap-1.5 transition-all"
-              title="Sign Out"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-              <span>Logout</span>
-            </button>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-white text-[#0B2E22] flex flex-col font-sans selection:bg-[#34D399]/30">
+      {/* Top Navigation Bar with Admin Red Accent (#B91C1C) */}
+      <DashboardTopNavbar
+        items={adminNavItems}
+        activeId={activeTab}
+        onSelect={(id) => setActiveTab(id as any)}
+        user={user}
+        onLogout={logout}
+        roleBadgeText="Admin"
+        roleColor="#B91C1C"
+        tagline="Campus Administration & Tenant Governance"
+      />
 
       {/* Main Container */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <main className="flex-1 w-full max-w-[1280px] mx-auto px-4 sm:px-6 py-6 space-y-6">
         {/* KPI Row */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-burgundy-900/80 border border-gold-500/35 rounded-2xl p-4 backdrop-blur-md shadow-lg shadow-black/40">
-            <div className="flex items-center justify-between text-gold-200/70 text-xs mb-1">
+          <div className="bg-[#F0FAF5] border border-[#CDEBDD] rounded-xl p-4 shadow-[0_1px_2px_rgba(11,46,34,0.06)]">
+            <div className="flex items-center justify-between text-[#4B6B5E] text-xs mb-1 font-semibold">
               <span>ENROLLED STUDENTS</span>
-              <Users className="w-4 h-4 text-gold-400" />
+              <Users className="w-4 h-4 text-[#B91C1C]" />
             </div>
-            <div className="text-2xl font-extrabold text-white">200 Students</div>
-            <p className="text-[11px] text-gold-400 mt-1">CSE: 120 | ECE: 80</p>
+            <div className="text-2xl font-extrabold text-[#0B2E22]">200 Students</div>
+            <p className="text-[11px] text-[#4B6B5E] mt-1 font-medium">CSE: 120 | ECE: 80</p>
           </div>
 
-          <div className="bg-burgundy-900/80 border border-gold-500/35 rounded-2xl p-4 backdrop-blur-md shadow-lg shadow-black/40">
-            <div className="flex items-center justify-between text-gold-200/70 text-xs mb-1">
+          <div className="bg-[#F0FAF5] border border-[#CDEBDD] rounded-xl p-4 shadow-[0_1px_2px_rgba(11,46,34,0.06)]">
+            <div className="flex items-center justify-between text-[#4B6B5E] text-xs mb-1 font-semibold">
               <span>ACTIVE FACULTY</span>
-              <Award className="w-4 h-4 text-gold-400" />
+              <Award className="w-4 h-4 text-[#B91C1C]" />
             </div>
-            <div className="text-2xl font-extrabold text-white">14 Faculty</div>
-            <p className="text-[11px] text-gold-300 mt-1">100% Syllabus on Track</p>
+            <div className="text-2xl font-extrabold text-[#0B2E22]">14 Faculty</div>
+            <p className="text-[11px] text-[#4B6B5E] mt-1 font-medium">100% Syllabus on Track</p>
           </div>
 
-          <div className="bg-burgundy-900/80 border border-gold-500/35 rounded-2xl p-4 backdrop-blur-md shadow-lg shadow-black/40">
-            <div className="flex items-center justify-between text-gold-200/70 text-xs mb-1">
+          <div className="bg-[#F0FAF5] border border-[#CDEBDD] rounded-xl p-4 shadow-[0_1px_2px_rgba(11,46,34,0.06)]">
+            <div className="flex items-center justify-between text-[#4B6B5E] text-xs mb-1 font-semibold">
               <span>ANNUAL ESTIMATED ARR</span>
-              <DollarSign className="w-4 h-4 text-gold-400" />
+              <DollarSign className="w-4 h-4 text-[#047857]" />
             </div>
-            <div className="text-2xl font-extrabold text-gold-300">
+            <div className="text-2xl font-extrabold text-[#047857]">
               ${estimatedARR.toLocaleString()}
             </div>
-            <p className="text-[11px] text-gold-200/80 mt-1">Autonomous Enterprise Plan</p>
+            <p className="text-[11px] text-[#4B6B5E] mt-1 font-medium">Autonomous Enterprise Plan</p>
           </div>
 
-          <div className="bg-burgundy-900/80 border border-gold-500/35 rounded-2xl p-4 backdrop-blur-md shadow-lg shadow-black/40">
-            <div className="flex items-center justify-between text-gold-200/70 text-xs mb-1">
+          <div className="bg-[#F0FAF5] border border-[#CDEBDD] rounded-xl p-4 shadow-[0_1px_2px_rgba(11,46,34,0.06)]">
+            <div className="flex items-center justify-between text-[#4B6B5E] text-xs mb-1 font-semibold">
               <span>NAAC READINESS</span>
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <ShieldCheck className="w-4 h-4 text-[#047857]" />
             </div>
-            <div className="text-2xl font-extrabold text-gold-200">88.4% (A++)</div>
-            <p className="text-[11px] text-emerald-400 mt-1">Criterion 3 PO Target Met</p>
+            <div className="text-2xl font-extrabold text-[#0B2E22]">88.4% (A++)</div>
+            <p className="text-[11px] text-[#047857] mt-1 font-medium">Criterion 3 PO Target Met</p>
           </div>
-        </div>
-
-        {/* Tab Selector */}
-        <div className="flex items-center gap-2 p-1 bg-burgundy-950/80 border border-gold-500/30 rounded-2xl max-w-2xl">
-          <button
-            onClick={() => setActiveTab("overview")}
-            className={`flex-1 py-2 text-xs font-semibold rounded-xl flex items-center justify-center gap-2 transition-all ${
-              activeTab === "overview"
-                ? "bg-gradient-to-r from-gold-400 via-gold-500 to-gold-600 text-burgundy-950 font-bold shadow-[0_0_15px_rgba(212,175,55,0.4)]"
-                : "text-gold-200/70 hover:text-white"
-            }`}
-          >
-            <Layers className="w-3.5 h-3.5" />
-            <span>Campus Overview</span>
-          </button>
-          <button
-            onClick={() => setActiveTab("billing")}
-            className={`flex-1 py-2 text-xs font-semibold rounded-xl flex items-center justify-center gap-2 transition-all ${
-              activeTab === "billing"
-                ? "bg-gradient-to-r from-gold-400 via-gold-500 to-gold-600 text-burgundy-950 font-bold shadow-[0_0_15px_rgba(212,175,55,0.4)]"
-                : "text-gold-200/70 hover:text-white"
-            }`}
-          >
-            <DollarSign className="w-3.5 h-3.5" />
-            <span>Tenant Billing & ARR</span>
-          </button>
-          <button
-            onClick={() => setActiveTab("nba")}
-            className={`flex-1 py-2 text-xs font-semibold rounded-xl flex items-center justify-center gap-2 transition-all ${
-              activeTab === "nba"
-                ? "bg-mint-400 text-darkEmerald-950 shadow-[0_0_15px_rgba(74,222,154,0.3)]"
-                : "text-mint-accent/70 hover:text-white"
-            }`}
-          >
-            <FileBadge2 className="w-3.5 h-3.5" />
-            <span>NBA / NAAC Outcomes</span>
-          </button>
-          <button
-            onClick={() => setActiveTab("audit")}
-            className={`flex-1 py-2 text-xs font-semibold rounded-xl flex items-center justify-center gap-2 transition-all ${
-              activeTab === "audit"
-                ? "bg-mint-400 text-darkEmerald-950 shadow-[0_0_15px_rgba(74,222,154,0.3)]"
-                : "text-mint-accent/70 hover:text-white"
-            }`}
-          >
-            <ShieldCheck className="w-3.5 h-3.5" />
-            <span>Audit Ledger</span>
-          </button>
         </div>
 
         {/* Notice Toast */}
         {notice && (
-          <div className="p-3.5 rounded-xl bg-mint-500/15 border border-mint-400/40 text-mint-300 text-xs flex items-center gap-2 shadow-lg animate-fadeIn">
-            <CheckCircle2 className="w-4 h-4 text-mint-400 shrink-0" />
-            <span>{notice}</span>
+          <div className="p-3.5 rounded-xl bg-[#F0FAF5] border border-[#34D399] text-[#047857] text-xs flex items-center gap-2 shadow-sm animate-fadeIn">
+            <CheckCircle2 className="w-4 h-4 text-[#047857] shrink-0" />
+            <span className="font-semibold">{notice}</span>
           </div>
         )}
 
@@ -245,12 +186,12 @@ export function AdminDashboardView() {
           <div className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Institutional Health */}
-              <div className="lg:col-span-2 bg-darkEmerald-900/60 border border-mint-400/20 rounded-3xl p-6 backdrop-blur-xl">
-                <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-mint-400" />
+              <div className="lg:col-span-2 bg-[#F0FAF5] border border-[#CDEBDD] rounded-xl p-6 shadow-[0_1px_2px_rgba(11,46,34,0.06)]">
+                <h3 className="text-lg font-bold text-[#0B2E22] mb-1 flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-[#B91C1C]" />
                   Campus Performance Velocity
                 </h3>
-                <p className="text-xs text-mint-accent/70 mb-6">
+                <p className="text-xs text-[#4B6B5E] mb-6">
                   Aggregate attainment trends across 5 core engineering courses for the active semester.
                 </p>
                 <div className="h-64 w-full">
@@ -264,55 +205,56 @@ export function AdminDashboardView() {
                         { name: "EC301", pass: 90, target: 85 },
                       ]}
                     >
-                      <CartesianGrid strokeDasharray="3 3" stroke="#0B3B2E" />
-                      <XAxis dataKey="name" stroke="#5EEAD4" fontSize={11} />
-                      <YAxis stroke="#5EEAD4" fontSize={11} domain={[60, 100]} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="#CDEBDD" />
+                      <XAxis dataKey="name" stroke="#4B6B5E" fontSize={11} />
+                      <YAxis stroke="#4B6B5E" fontSize={11} domain={[60, 100]} />
                       <Tooltip
                         contentStyle={{
-                          backgroundColor: "#06241C",
-                          border: "1px solid #4ADE9A",
+                          backgroundColor: "#FFFFFF",
+                          border: "1px solid #CDEBDD",
                           borderRadius: "12px",
                           fontSize: "12px",
+                          color: "#0B2E22",
                         }}
                       />
-                      <Bar dataKey="pass" name="Pass Attainment %" fill="#4ADE9A" radius={[6, 6, 0, 0]} />
-                      <Bar dataKey="target" name="NBA Target %" fill="#F5B942" radius={[6, 6, 0, 0]} />
+                      <Bar dataKey="pass" name="Pass Attainment %" fill="#34D399" radius={[6, 6, 0, 0]} />
+                      <Bar dataKey="target" name="NBA Target %" fill="#FACC15" radius={[6, 6, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
               </div>
 
               {/* Campus Governance Status */}
-              <div className="bg-darkEmerald-900/60 border border-mint-400/20 rounded-3xl p-6 backdrop-blur-xl flex flex-col justify-between">
+              <div className="bg-[#F0FAF5] border border-[#CDEBDD] rounded-xl p-6 shadow-[0_1px_2px_rgba(11,46,34,0.06)] flex flex-col justify-between">
                 <div>
-                  <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
-                    <ShieldCheck className="w-5 h-5 text-amber-400" />
+                  <h3 className="text-lg font-bold text-[#0B2E22] mb-1 flex items-center gap-2">
+                    <ShieldCheck className="w-5 h-5 text-[#B91C1C]" />
                     Governance Health
                   </h3>
-                  <p className="text-xs text-mint-accent/70 mb-4">
+                  <p className="text-xs text-[#4B6B5E] mb-4">
                     Active compliance checks across data residency and ethical AI protocols.
                   </p>
-                  <div className="space-y-3">
-                    <div className="p-3 rounded-xl bg-darkEmerald-950/70 border border-mint-400/15 flex items-center justify-between">
-                      <span className="text-xs font-medium">Bcrypt Password Hashes</span>
-                      <span className="text-[10px] font-bold text-mint-400 font-mono">100% ENFORCED</span>
+                  <div className="space-y-2.5">
+                    <div className="p-3 rounded-lg bg-white border border-[#CDEBDD] flex items-center justify-between">
+                      <span className="text-xs font-medium text-[#0B2E22]">Bcrypt Password Hashes</span>
+                      <span className="text-[10px] font-bold text-[#047857] font-mono">100% ENFORCED</span>
                     </div>
-                    <div className="p-3 rounded-xl bg-darkEmerald-950/70 border border-mint-400/15 flex items-center justify-between">
-                      <span className="text-xs font-medium">ZK Anonymous Reports</span>
-                      <span className="text-[10px] font-bold text-mint-400 font-mono">ACTIVE (0 Leaks)</span>
+                    <div className="p-3 rounded-lg bg-white border border-[#CDEBDD] flex items-center justify-between">
+                      <span className="text-xs font-medium text-[#0B2E22]">ZK Anonymous Reports</span>
+                      <span className="text-[10px] font-bold text-[#047857] font-mono">ACTIVE (0 Leaks)</span>
                     </div>
-                    <div className="p-3 rounded-xl bg-darkEmerald-950/70 border border-mint-400/15 flex items-center justify-between">
-                      <span className="text-xs font-medium">Work Order Hash Chains</span>
-                      <span className="text-[10px] font-bold text-mint-400 font-mono">VALID (SHA-256)</span>
+                    <div className="p-3 rounded-lg bg-white border border-[#CDEBDD] flex items-center justify-between">
+                      <span className="text-xs font-medium text-[#0B2E22]">Work Order Hash Chains</span>
+                      <span className="text-[10px] font-bold text-[#047857] font-mono">VALID (SHA-256)</span>
                     </div>
-                    <div className="p-3 rounded-xl bg-darkEmerald-950/70 border border-mint-400/15 flex items-center justify-between">
-                      <span className="text-xs font-medium">Multi-Tenant Isolation</span>
-                      <span className="text-[10px] font-bold text-mint-400 font-mono">NITX SECURE</span>
+                    <div className="p-3 rounded-lg bg-white border border-[#CDEBDD] flex items-center justify-between">
+                      <span className="text-xs font-medium text-[#0B2E22]">Multi-Tenant Isolation</span>
+                      <span className="text-[10px] font-bold text-[#047857] font-mono">NITX SECURE</span>
                     </div>
                   </div>
                 </div>
-                <div className="mt-4 pt-4 border-t border-mint-400/15 text-xs text-mint-accent/60">
-                  Tenant ID: <span className="font-mono text-mint-300">northstar</span>
+                <div className="mt-4 pt-4 border-t border-[#CDEBDD] text-xs text-[#4B6B5E]">
+                  Tenant ID: <span className="font-mono text-[#0B2E22] font-semibold">northstar</span>
                 </div>
               </div>
             </div>
@@ -324,28 +266,28 @@ export function AdminDashboardView() {
         {/* ==================================================================== */}
         {activeTab === "billing" && (
           <div className="space-y-6">
-            <div className="bg-darkEmerald-900/60 border border-mint-400/20 rounded-3xl p-6 backdrop-blur-xl">
+            <div className="bg-[#F0FAF5] border border-[#CDEBDD] rounded-xl p-6 shadow-[0_1px_2px_rgba(11,46,34,0.06)]">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <div>
-                  <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                    <DollarSign className="w-5 h-5 text-amber-400" />
+                  <h2 className="text-xl font-bold text-[#0B2E22] flex items-center gap-2">
+                    <DollarSign className="w-5 h-5 text-[#047857]" />
                     Multi-Tenant Billing & Plan Calculator
                   </h2>
-                  <p className="text-xs text-mint-accent/70 mt-1">
+                  <p className="text-xs text-[#4B6B5E] mt-1">
                     Calculate institutional licensing and switch active subscription tier.
                   </p>
                 </div>
-                <div className="text-right">
-                  <span className="text-xs text-mint-accent/70">Estimated ARR:</span>
-                  <div className="text-2xl font-extrabold text-amber-400">${estimatedARR.toLocaleString()} / yr</div>
+                <div className="text-left sm:text-right">
+                  <span className="text-xs text-[#4B6B5E]">Estimated ARR:</span>
+                  <div className="text-2xl font-extrabold text-[#047857]">${estimatedARR.toLocaleString()} / yr</div>
                 </div>
               </div>
 
               {/* Student Count Slider */}
-              <div className="p-4 rounded-2xl bg-darkEmerald-950/70 border border-mint-400/15 mb-6">
-                <div className="flex items-center justify-between text-xs font-medium text-mint-200 mb-2">
+              <div className="p-4 rounded-xl bg-white border border-[#CDEBDD] mb-6">
+                <div className="flex items-center justify-between text-xs font-medium text-[#4B6B5E] mb-2">
                   <span>Billable Student Count:</span>
-                  <span className="font-mono text-mint-400 font-bold">{studentCount} Students</span>
+                  <span className="font-mono text-[#0B2E22] font-bold">{studentCount} Students</span>
                 </div>
                 <input
                   type="range"
@@ -354,9 +296,9 @@ export function AdminDashboardView() {
                   step="50"
                   value={studentCount}
                   onChange={(e) => setStudentCount(parseInt(e.target.value))}
-                  className="w-full accent-mint-400 cursor-pointer"
+                  className="w-full accent-[#34D399] cursor-pointer"
                 />
-                <span className="text-[10px] text-mint-accent/50">Current campus enrollment: 200 enrolled</span>
+                <span className="text-[10px] text-[#7A968A]">Current campus enrollment: 200 enrolled</span>
               </div>
 
               {/* Tiers Grid */}
@@ -366,32 +308,32 @@ export function AdminDashboardView() {
                   return (
                     <div
                       key={tier.key}
-                      className={`p-6 rounded-3xl border flex flex-col justify-between transition-all ${
+                      className={`p-6 rounded-xl border flex flex-col justify-between transition-all ${
                         isCurrent
-                          ? "bg-darkEmerald-950/90 border-mint-400 shadow-[0_0_25px_rgba(74,222,154,0.2)]"
-                          : "bg-darkEmerald-950/50 border-mint-400/15 hover:border-mint-400/30"
+                          ? "bg-white border-[#34D399] shadow-md ring-2 ring-[#34D399]/30"
+                          : "bg-white border-[#CDEBDD] hover:border-[#34D399]"
                       }`}
                     >
                       <div>
                         <div className="flex items-center justify-between mb-3">
-                          <h3 className="text-base font-bold text-white">{tier.name}</h3>
+                          <h3 className="text-base font-bold text-[#0B2E22]">{tier.name}</h3>
                           {isCurrent && (
-                            <span className="px-2.5 py-0.5 rounded-full bg-mint-500/20 text-mint-300 text-[10px] font-bold border border-mint-400/40">
+                            <span className="px-2.5 py-0.5 rounded-full bg-[#FEF9C3] text-[#713F12] text-[10px] font-bold border border-[#FACC15]">
                               ACTIVE
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-mint-accent/70 mb-4">{tier.desc}</p>
+                        <p className="text-xs text-[#4B6B5E] mb-4">{tier.desc}</p>
                         <div className="mb-4">
-                          <span className="text-2xl font-extrabold text-white">
+                          <span className="text-2xl font-extrabold text-[#0B2E22]">
                             {tier.price === 0 ? "Free" : `$${tier.price}`}
                           </span>
-                          {tier.price > 0 && <span className="text-xs text-mint-accent/60"> / student / yr</span>}
+                          {tier.price > 0 && <span className="text-xs text-[#4B6B5E]"> / student / yr</span>}
                         </div>
                         <div className="space-y-2 mb-6">
                           {tier.features.map((f, i) => (
-                            <div key={i} className="flex items-start gap-2 text-xs text-mint-200">
-                              <Check className="w-3.5 h-3.5 text-mint-400 shrink-0 mt-0.5" />
+                            <div key={i} className="flex items-start gap-2 text-xs text-[#4B6B5E]">
+                              <Check className="w-3.5 h-3.5 text-[#047857] shrink-0 mt-0.5" />
                               <span>{f}</span>
                             </div>
                           ))}
@@ -403,8 +345,8 @@ export function AdminDashboardView() {
                         disabled={isCurrent}
                         className={`w-full py-2.5 rounded-xl text-xs font-bold transition-all ${
                           isCurrent
-                            ? "bg-darkEmerald-900 text-mint-400/60 cursor-default"
-                            : "btn-mint-primary shadow-lg shadow-mint-500/20"
+                            ? "bg-[#F0FAF5] text-[#4B6B5E] border border-[#CDEBDD] cursor-default"
+                            : "bg-[#FACC15] hover:bg-[#EAB308] text-[#0B2E22] shadow-sm"
                         }`}
                       >
                         {isCurrent ? "Current Campus Plan" : "Switch to " + tier.name}
@@ -422,20 +364,20 @@ export function AdminDashboardView() {
         {/* ==================================================================== */}
         {activeTab === "nba" && (
           <div className="space-y-6">
-            <div className="bg-darkEmerald-900/60 border border-mint-400/20 rounded-3xl p-6 backdrop-blur-xl">
+            <div className="bg-[#F0FAF5] border border-[#CDEBDD] rounded-xl p-6 shadow-[0_1px_2px_rgba(11,46,34,0.06)]">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <div>
-                  <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                    <FileBadge2 className="w-5 h-5 text-emerald-400" />
+                  <h2 className="text-xl font-bold text-[#0B2E22] flex items-center gap-2">
+                    <FileBadge2 className="w-5 h-5 text-[#B91C1C]" />
                     NBA Criterion 3 & NAAC Outcome Evidence Engine
                   </h2>
-                  <p className="text-xs text-mint-accent/70 mt-1">
+                  <p className="text-xs text-[#4B6B5E] mt-1">
                     Continuous mapping of Course Outcomes (COs) to Program Outcomes (POs 1–12). Direct evidence generation for accreditation audits.
                   </p>
                 </div>
                 <button
                   onClick={handleExportAccreditation}
-                  className="px-4 py-2 rounded-xl bg-mint-500/20 border border-mint-400/40 text-mint-300 hover:bg-mint-500/30 text-xs font-semibold flex items-center gap-2 transition-all self-start"
+                  className="px-4 py-2 rounded-xl bg-[#FACC15] hover:bg-[#EAB308] text-[#0B2E22] text-xs font-bold flex items-center gap-2 transition-all shadow-sm self-start"
                 >
                   <Download className="w-4 h-4" />
                   <span>Export Evidence Bundle (PDF)</span>
@@ -446,17 +388,18 @@ export function AdminDashboardView() {
               <div className="h-80 w-full mb-6">
                 <ResponsiveContainer width="100%" height="100%">
                   <RadarChart data={SAMPLE_PO_DATA}>
-                    <PolarGrid stroke="#0B3B2E" />
-                    <PolarAngleAxis dataKey="po" stroke="#5EEAD4" fontSize={11} />
-                    <PolarRadiusAxis angle={30} domain={[50, 100]} stroke="#0B3B2E" />
-                    <Radar name="Target %" dataKey="target" stroke="#F5B942" fill="#F5B942" fillOpacity={0.2} />
-                    <Radar name="Attained %" dataKey="attained" stroke="#4ADE9A" fill="#4ADE9A" fillOpacity={0.4} />
+                    <PolarGrid stroke="#CDEBDD" />
+                    <PolarAngleAxis dataKey="po" stroke="#4B6B5E" fontSize={11} />
+                    <PolarRadiusAxis angle={30} domain={[50, 100]} stroke="#CDEBDD" />
+                    <Radar name="Target %" dataKey="target" stroke="#FACC15" fill="#FACC15" fillOpacity={0.25} />
+                    <Radar name="Attained %" dataKey="attained" stroke="#047857" fill="#34D399" fillOpacity={0.4} />
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: "#06241C",
-                        border: "1px solid #4ADE9A",
+                        backgroundColor: "#FFFFFF",
+                        border: "1px solid #CDEBDD",
                         borderRadius: "12px",
                         fontSize: "12px",
+                        color: "#0B2E22",
                       }}
                     />
                   </RadarChart>
@@ -466,15 +409,15 @@ export function AdminDashboardView() {
               {/* Outcomes Matrix Grid */}
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                 {SAMPLE_PO_DATA.map((p, idx) => (
-                  <div key={idx} className="p-3 rounded-xl bg-darkEmerald-950/70 border border-mint-400/15">
-                    <div className="text-xs font-semibold text-white truncate">{p.po}</div>
+                  <div key={idx} className="p-3 rounded-xl bg-white border border-[#CDEBDD] shadow-sm">
+                    <div className="text-xs font-semibold text-[#0B2E22] truncate">{p.po}</div>
                     <div className="flex items-center justify-between mt-2 text-xs">
-                      <span className="text-mint-accent/60">Target: {p.target}%</span>
-                      <span className="font-bold text-mint-400">{p.attained}%</span>
+                      <span className="text-[#4B6B5E]">Target: {p.target}%</span>
+                      <span className="font-bold text-[#047857]">{p.attained}%</span>
                     </div>
-                    <div className="w-full bg-darkEmerald-900 h-1.5 rounded-full mt-1.5 overflow-hidden">
+                    <div className="w-full bg-[#F0FAF5] border border-[#CDEBDD] h-1.5 rounded-full mt-1.5 overflow-hidden">
                       <div
-                        className="bg-mint-400 h-full rounded-full"
+                        className="bg-[#34D399] h-full rounded-full"
                         style={{ width: `${(p.attained / 100) * 100}%` }}
                       />
                     </div>
@@ -490,46 +433,46 @@ export function AdminDashboardView() {
         {/* ==================================================================== */}
         {activeTab === "audit" && (
           <div className="space-y-6">
-            <div className="bg-darkEmerald-900/60 border border-mint-400/20 rounded-3xl p-6 backdrop-blur-xl">
+            <div className="bg-[#F0FAF5] border border-[#CDEBDD] rounded-xl p-6 shadow-[0_1px_2px_rgba(11,46,34,0.06)]">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <div>
-                  <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                    <Lock className="w-5 h-5 text-amber-400" />
+                  <h2 className="text-xl font-bold text-[#0B2E22] flex items-center gap-2">
+                    <Lock className="w-5 h-5 text-[#B91C1C]" />
                     Tamper-Evident System Audit Ledger
                   </h2>
-                  <p className="text-xs text-mint-accent/70 mt-1">
+                  <p className="text-xs text-[#4B6B5E] mt-1">
                     Cryptographic SHA-256 hash-chaining records every grade adjustment, attendance override, and facility triage for independent verifiability.
                   </p>
                 </div>
               </div>
 
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto bg-white border border-[#CDEBDD] rounded-xl">
                 <table className="w-full text-left text-xs">
                   <thead>
-                    <tr className="border-b border-mint-400/20 text-mint-300/80 uppercase font-semibold text-[11px]">
-                      <th className="pb-3 pl-3">Log ID</th>
-                      <th className="pb-3">Action Type</th>
-                      <th className="pb-3">Actor</th>
-                      <th className="pb-3">Target / Description</th>
-                      <th className="pb-3">Hash Digest</th>
-                      <th className="pb-3">Integrity</th>
-                      <th className="pb-3 pr-3 text-right">Time</th>
+                    <tr className="border-b border-[#CDEBDD] bg-[#F0FAF5] text-[#4B6B5E] uppercase font-semibold text-[11px]">
+                      <th className="py-3 pl-3">Log ID</th>
+                      <th className="py-3">Action Type</th>
+                      <th className="py-3">Actor</th>
+                      <th className="py-3">Target / Description</th>
+                      <th className="py-3">Hash Digest</th>
+                      <th className="py-3">Integrity</th>
+                      <th className="py-3 pr-3 text-right">Time</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-mint-400/10">
+                  <tbody className="divide-y divide-[#CDEBDD]">
                     {SAMPLE_AUDIT_LOGS.map((log) => (
-                      <tr key={log.id} className="hover:bg-darkEmerald-950/50 transition-colors">
-                        <td className="py-3.5 pl-3 font-mono text-mint-300 font-bold">{log.id}</td>
-                        <td className="py-3.5 font-semibold text-white">{log.action}</td>
-                        <td className="py-3.5 font-mono text-mint-accent/80">{log.actor}</td>
-                        <td className="py-3.5 text-white/90">{log.target}</td>
-                        <td className="py-3.5 font-mono text-mint-400/80 text-[11px]">{log.hash}</td>
+                      <tr key={log.id} className="hover:bg-[#F0FAF5]/50 transition-colors">
+                        <td className="py-3.5 pl-3 font-mono text-[#047857] font-bold">{log.id}</td>
+                        <td className="py-3.5 font-semibold text-[#0B2E22]">{log.action}</td>
+                        <td className="py-3.5 font-mono text-[#4B6B5E]">{log.actor}</td>
+                        <td className="py-3.5 text-[#0B2E22]">{log.target}</td>
+                        <td className="py-3.5 font-mono text-[#4B6B5E] text-[11px]">{log.hash}</td>
                         <td className="py-3.5">
-                          <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[10px] font-bold">
+                          <span className="px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[10px] font-bold">
                             ✓ VERIFIED
                           </span>
                         </td>
-                        <td className="py-3.5 pr-3 text-right text-mint-accent/60 font-mono text-[11px]">{log.time}</td>
+                        <td className="py-3.5 pr-3 text-right text-[#4B6B5E] font-mono text-[11px]">{log.time}</td>
                       </tr>
                     ))}
                   </tbody>
