@@ -19,6 +19,7 @@ import {
   BookOpen,
 } from "lucide-react";
 import { HeroDashboardMockup } from "./HeroDashboardMockup";
+import { PlatformHighlightsSection } from "./PlatformHighlightsSection";
 import { FeatureCard } from "./FeatureCard";
 import { GlassCard } from "./GlassCard";
 import { SectionHeader } from "./SectionHeader";
@@ -55,10 +56,10 @@ export function Slide11LandingPage({
         {/* =================================================================
             HERO SECTION
             ================================================================= */}
-        <section className="pt-12 pb-20 sm:pt-16 sm:pb-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+        <section className="flex min-h-[calc(100vh-72px)] items-center px-4 py-10 sm:px-6 lg:h-[calc(100vh-72px)] lg:min-h-0 lg:px-8 lg:py-8">
+          <div className="mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-8">
             {/* Left Column: Hero Text & Call-To-Actions */}
-            <div className="lg:col-span-6 flex flex-col items-start text-left space-y-6">
+            <div className="flex flex-col items-start space-y-5 text-left lg:col-span-6 lg:space-y-5">
               {/* Badge */}
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase bg-[#FEF9C3] border border-[#FACC15] text-[#713F12] shadow-sm">
                 <Sparkles className="w-3.5 h-3.5 text-[#EAB308]" />
@@ -66,7 +67,7 @@ export function Slide11LandingPage({
               </div>
 
               {/* Headline */}
-              <h1 className="text-4xl sm:text-5xl xl:text-6xl font-black text-[#0B2E22] tracking-tight leading-[1.1]">
+              <h1 className="text-[2.5rem] font-black leading-[1.12] tracking-tight text-[#0F5C4C] sm:text-[3rem] lg:text-[3.25rem]">
                 One Campus. <br />
                 One Intelligence. <br />
                 <span className="text-[#047857]">Better Decisions.</span>
@@ -78,25 +79,6 @@ export function Slide11LandingPage({
                 zero-knowledge grievance safety, automated grading, and cognitive
                 infrastructure.
               </p>
-
-              {/* Mascot Robot Interaction Pill */}
-              <div className="inline-flex items-center gap-3 px-3.5 py-2 rounded-xl bg-[#F0FAF5] border border-[#CDEBDD]">
-                <div className="relative w-8 h-8 rounded-full overflow-hidden bg-white border border-[#CDEBDD] flex items-center justify-center">
-                  <Image
-                    src="/images/robot.svg"
-                    alt="NEXUS Mascot"
-                    width={28}
-                    height={28}
-                    className="object-contain"
-                  />
-                </div>
-                <div className="text-xs">
-                  <span className="font-bold text-[#0B2E22] block">Meet NEXUS Bot</span>
-                  <span className="text-[#4B6B5E] text-[11px]">
-                    24/7 AI tutor & cognitive campus assistant
-                  </span>
-                </div>
-              </div>
 
               {/* CTA Buttons */}
               <div className="flex flex-wrap items-center gap-4 pt-2 w-full sm:w-auto">
@@ -128,20 +110,6 @@ export function Slide11LandingPage({
                 )}
               </div>
 
-              {/* Sub-signals */}
-              <div className="flex items-center gap-4 text-xs text-[#4B6B5E] pt-1">
-                <span className="flex items-center gap-1.5">
-                  <CheckCircle className="w-3.5 h-3.5 text-[#047857]" /> 15 AI Modules
-                </span>
-                <span>•</span>
-                <span className="flex items-center gap-1.5">
-                  <CheckCircle className="w-3.5 h-3.5 text-[#047857]" /> Zero Silos
-                </span>
-                <span>•</span>
-                <span className="flex items-center gap-1.5">
-                  <CheckCircle className="w-3.5 h-3.5 text-[#047857]" /> 1-Click Role Access
-                </span>
-              </div>
             </div>
 
             {/* Right Column: Hero Dashboard Mockup */}
@@ -150,6 +118,8 @@ export function Slide11LandingPage({
             </div>
           </div>
         </section>
+
+        <PlatformHighlightsSection onDemoRole={onDemoRole} />
 
         {/* =================================================================
             4-STATS STRIP

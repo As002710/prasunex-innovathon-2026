@@ -26,7 +26,7 @@ export function Navbar({ onLogin, user: propUser, onBackToConsole, onLogout: pro
 
   return (
     <header className="sticky top-0 z-50 w-full backdrop-blur-xl bg-white/90 border-b border-amber-200/80 transition-all">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-2 sm:gap-4">
+      <div className="mx-auto flex h-[72px] w-full max-w-7xl items-center justify-between gap-2 px-4 sm:gap-4 sm:px-6 lg:px-8">
         {/* Left: Mobile Menu + Logo */}
         <div className="flex items-center gap-2 flex-shrink-0">
           <button
@@ -38,8 +38,8 @@ export function Navbar({ onLogin, user: propUser, onBackToConsole, onLogout: pro
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
-          <div className="flex-shrink-0">
-            <Logo size="lg" />
+          <div className="flex-shrink-0 [&_img]:h-8 [&_img]:w-auto sm:[&_img]:h-10">
+            <Logo showTagline={false} size="lg" />
           </div>
         </div>
 
@@ -101,13 +101,13 @@ export function Navbar({ onLogin, user: propUser, onBackToConsole, onLogout: pro
         {/* The destination page owns its actions; keep this moved header focused on navigation. */}
         {pathname !== "/login" && <div className="flex items-center gap-3">
           {/* Search Box */}
-          <div className="relative hidden md:block w-64 lg:w-72">
+          <div className="relative hidden min-w-[250px] max-w-[380px] flex-1 md:block lg:max-w-[380px]">
             <Search className="w-3.5 h-3.5 text-[#4B6B5E] absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               aria-label="Search CAMPUS-NEXUS"
               name="search"
-              placeholder="Search anything... (marks, courses, queries)"
+              placeholder="Search anything..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-white border border-[#CDEBDD] rounded-full pl-9 pr-4 py-2 text-xs text-[#0B2E22] placeholder-[#7A968A] focus:outline-none focus:border-[#34D399] focus:ring-2 focus:ring-[#34D399]/30 transition-all shadow-sm"
