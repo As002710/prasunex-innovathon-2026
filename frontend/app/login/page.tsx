@@ -133,8 +133,6 @@ function LoginPageContent() {
     const account = DEMO_ACCOUNTS.find((item) => item.role === demoParam);
     if (!account) return;
 
-    setSignInEmail(account.email);
-    setSignInPassword(account.password);
     setBusy(true);
 
     login(account.email, account.password, "NITX")
@@ -245,8 +243,6 @@ function LoginPageContent() {
   const handleQuickDemoLogin = async (acc: (typeof DEMO_ACCOUNTS)[0]) => {
     setErrorMsg(null);
     setSuccessMsg(null);
-    setSignInEmail(acc.email);
-    setSignInPassword(acc.password);
     setBusy(true);
 
     try {
@@ -526,14 +522,16 @@ function LoginPageContent() {
                   <div>
                     <label className="block text-xs font-medium text-slate-700 mb-1.5">Email Address</label>
                     <div className="relative">
-                      <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                      <Mail aria-hidden="true" className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                       <input
                         type="email"
+                        name="login-email"
+                        autoComplete="off"
                         required
                         value={signInEmail}
                         onChange={(e) => setSignInEmail(e.target.value)}
-                        placeholder="you@nitx.demo"
-                        className="w-full bg-slate-50/80 border border-slate-300 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 focus:bg-white transition-all"
+                        placeholder="Enter your email"
+                        className="w-full rounded-xl border border-slate-300 bg-white py-3 pl-11 pr-4 text-sm text-slate-900 placeholder:text-slate-400 transition-all focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-amber-500"
                       />
                     </div>
                   </div>
@@ -553,20 +551,22 @@ function LoginPageContent() {
                       </button>
                     </div>
                     <div className="relative">
-                      <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                      <Lock aria-hidden="true" className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                       <input
                         type={showPassword ? "text" : "password"}
+                        name="login-password"
+                        autoComplete="off"
                         required
                         value={signInPassword}
                         onChange={(e) => setSignInPassword(e.target.value)}
-                        placeholder="••••••••••••"
-                        className="w-full bg-slate-50/80 border border-slate-300 rounded-xl pl-10 pr-10 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 focus:bg-white transition-all"
+                        placeholder="Enter your password"
+                        className="w-full rounded-xl border border-slate-300 bg-white py-3 pl-11 pr-11 text-sm text-slate-900 placeholder:text-slate-400 transition-all focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-amber-500"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
                         aria-label="Toggle password visibility"
-                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                       >
                         {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
@@ -595,10 +595,10 @@ function LoginPageContent() {
 
                   <div className="relative py-1" aria-hidden="true">
                     <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-gold-500/20" />
+                      <div className="w-full border-t border-slate-200" />
                     </div>
                     <div className="relative flex justify-center">
-                      <span className="bg-burgundy-900 px-3 text-[10px] uppercase tracking-wider text-gold-200/50">or continue with</span>
+                      <span className="bg-white px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:bg-[#0F1527] dark:text-slate-300">OR CONTINUE WITH</span>
                     </div>
                   </div>
 
@@ -606,7 +606,7 @@ function LoginPageContent() {
                     type="button"
                     onClick={handleGoogleSignIn}
                     disabled={busy}
-                    className="w-full flex items-center justify-center gap-3 rounded-xl border border-gold-500/30 bg-burgundy-950/60 py-3 text-xs font-semibold text-gold-100 hover:border-gold-400 hover:bg-burgundy-800/70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-400 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="flex w-full items-center justify-center gap-[10px] rounded-xl border border-slate-200 bg-white py-3 text-sm font-semibold text-slate-800 transition-colors hover:border-slate-300 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500 disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
                   >
                     <svg aria-hidden="true" viewBox="0 0 48 48" className="h-4 w-4">
                       <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5Z" />
@@ -617,7 +617,7 @@ function LoginPageContent() {
                     <span>Sign in with Google</span>
                   </button>
 
-                  <div className="text-center pt-2 text-[11px] text-mint-accent/60">
+                  <div className="pt-2 text-center text-[11px] text-slate-500">
                     New to CAMPUS-NEXUS?{" "}
                     <button
                       type="button"

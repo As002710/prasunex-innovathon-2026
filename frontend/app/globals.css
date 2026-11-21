@@ -210,6 +210,14 @@ a {
   background-color: rgba(15, 21, 39, 0.93) !important;
 }
 
+.dark [class~="bg-white/95"] {
+  background-color: rgba(15, 21, 39, 0.97) !important;
+}
+
+.dark [class~="bg-amber-50/80"] {
+  background-color: rgba(45, 35, 20, 0.72) !important;
+}
+
 .dark [class~="bg-[#FCFDFB]"] {
   background-color: rgba(8, 12, 26, 0.72) !important;
 }
