@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Search, Bell, ArrowRight } from "lucide-react";
 import { Logo } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
 
 export function Navbar() {
+  const pathname = usePathname();
   const [searchQuery, setSearchQuery] = useState("");
 
   return (
@@ -33,9 +35,11 @@ export function Navbar() {
             <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white">3</span>
           </button>
           <ThemeToggle />
-          <Link href="/login" className="flex shrink-0 items-center gap-2 rounded-xl bg-[#FACC15] px-4 py-3 text-sm font-bold text-[#0B2E22] shadow-sm transition-colors hover:bg-[#EAB308] sm:px-6">
-            <span className="hidden sm:inline">Login</span><ArrowRight className="h-4 w-4" />
-          </Link>
+          {pathname !== "/login" && (
+            <Link href="/login" className="flex shrink-0 items-center gap-2 rounded-xl bg-[#FACC15] px-4 py-3 text-sm font-bold text-[#0B2E22] shadow-sm transition-colors hover:bg-[#EAB308] sm:px-6">
+              <span className="hidden sm:inline">Login</span><ArrowRight className="h-4 w-4" />
+            </Link>
+          )}
         </div>
       </div>
 

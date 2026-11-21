@@ -170,29 +170,31 @@ a {
 /* Persistent dark mode with a soft galaxy atmosphere. */
 .dark {
   color-scheme: dark;
-  --bg-base: #070B18;
-  --bg-panel: #10182A;
-  --border: #26344D;
-  --text-primary: #E7EEF9;
-  --text-muted: #AAB8CC;
-  --placeholder: #8797AE;
+  --bg-base: #080B18;
+  --bg-panel: #111A2D;
+  --border: #293650;
+  --mint: #45D6B0;
+  --mint-deep: #5ED9B1;
+  --text-primary: #F0F2FA;
+  --text-muted: #B6C0D4;
+  --placeholder: #91A0B8;
 }
 
 .dark html,
 .dark body {
-  background-color: #070B18 !important;
+  background-color: #080B18 !important;
   background-image:
-    radial-gradient(ellipse at 16% 18%, rgba(109, 40, 217, 0.20), transparent 36%),
-    radial-gradient(ellipse at 82% 24%, rgba(14, 116, 144, 0.18), transparent 34%),
-    radial-gradient(ellipse at 52% 94%, rgba(30, 64, 175, 0.17), transparent 42%),
-    radial-gradient(1px 1px at 8% 16%, rgba(255,255,255,.85) 99%, transparent 100%),
-    radial-gradient(1px 1px at 22% 72%, rgba(186,214,255,.8) 99%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 44% 31%, rgba(255,255,255,.8) 99%, transparent 100%),
-    radial-gradient(1px 1px at 68% 63%, rgba(186,214,255,.75) 99%, transparent 100%),
-    radial-gradient(1px 1px at 91% 14%, rgba(255,255,255,.8) 99%, transparent 100%),
-    radial-gradient(1px 1px at 86% 82%, rgba(186,214,255,.65) 99%, transparent 100%) !important;
+    radial-gradient(ellipse at 12% 12%, rgba(57, 75, 168, 0.26), transparent 37%),
+    radial-gradient(ellipse at 82% 28%, rgba(91, 43, 148, 0.2), transparent 34%),
+    radial-gradient(ellipse at 56% 94%, rgba(12, 103, 105, 0.2), transparent 43%),
+    radial-gradient(1px 1px at 8% 16%, rgba(226,235,255,.8) 99%, transparent 100%),
+    radial-gradient(1px 1px at 22% 72%, rgba(184,204,255,.72) 99%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 44% 31%, rgba(247,242,255,.78) 99%, transparent 100%),
+    radial-gradient(1px 1px at 68% 63%, rgba(184,204,255,.68) 99%, transparent 100%),
+    radial-gradient(1px 1px at 91% 14%, rgba(226,235,255,.72) 99%, transparent 100%),
+    radial-gradient(1px 1px at 86% 82%, rgba(184,204,255,.6) 99%, transparent 100%) !important;
   background-attachment: fixed !important;
-  color: #E7EEF9 !important;
+  color: #F0F2FA !important;
 }
 
 .dark h1,
@@ -201,15 +203,21 @@ a {
 .dark h4,
 .dark h5,
 .dark h6 {
-  color: #E7EEF9 !important;
+  color: #F0F2FA !important;
 }
 
-.dark .bg-white,
-.dark [class~="bg-[#FCFDFB]"],
+.dark .bg-white {
+  background-color: rgba(15, 21, 39, 0.93) !important;
+}
+
+.dark [class~="bg-[#FCFDFB]"] {
+  background-color: rgba(8, 12, 26, 0.72) !important;
+}
+
 .dark [class~="bg-[#F4FAF7]"],
 .dark [class~="bg-[#F0FAF5]"],
 .dark .bg-emerald-50 {
-  background-color: rgba(12, 19, 36, 0.88) !important;
+  background-color: rgba(19, 34, 47, 0.92) !important;
 }
 
 .dark [class~="bg-amber-50"],
@@ -220,37 +228,48 @@ a {
 .dark [class~="text-[#0B2E22]"],
 .dark [class~="text-[#123A32]"],
 .dark [class~="text-slate-900"] {
-  color: #E7EEF9 !important;
+  color: #F0F2FA !important;
 }
 
 .dark [class~="text-[#4B6B5E]"],
 .dark [class~="text-slate-600"],
 .dark [class~="text-slate-500"] {
-  color: #AAB8CC !important;
+  color: #B6C0D4 !important;
+}
+
+.dark [class~="text-[#047857]"],
+.dark [class~="text-emerald-700"],
+.dark [class~="text-emerald-800"] {
+  color: #63DDB8 !important;
 }
 
 .dark [class~="border-[#CDEBDD]"],
 .dark [class~="border-emerald-100"],
 .dark [class~="border-emerald-200"] {
-  border-color: #263852 !important;
+  border-color: #293650 !important;
+}
+
+.dark [class~="border-amber-200"],
+.dark [class~="border-amber-300"] {
+  border-color: #64512C !important;
 }
 
 .dark input,
 .dark textarea,
 .dark select {
-  background-color: #0E1729 !important;
-  border-color: #2A3B57 !important;
-  color: #E7EEF9 !important;
+  background-color: #0D1426 !important;
+  border-color: #35425D !important;
+  color: #F0F2FA !important;
 }
 
 .dark input::placeholder,
 .dark textarea::placeholder {
-  color: #8797AE !important;
+  color: #91A0B8 !important;
 }
 
 .dark header {
-  background-color: rgba(8, 13, 27, 0.9) !important;
-  border-color: #26324A !important;
+  background-color: rgba(9, 13, 28, 0.94) !important;
+  border-color: #293650 !important;
 }
 
 ::selection {
