@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 import { Slide11LandingPage } from "@/components/Slide11LandingPage";
 import { useAuth, getDashboardPathForRole } from "@/context/AuthContext";
-import { Navbar } from "@/components/Navbar";
 
 export default function HomePage() {
   const router = useRouter();
@@ -30,15 +29,12 @@ export default function HomePage() {
   };
 
   return (
-    <>
-      <Navbar />
-      <Slide11LandingPage
-        onLogin={openLogin}
-        onDemo={openLogin}
-        onDemoRole={openRoleDemo}
-        user={user}
-        onBackToConsole={openConsole}
-      />
-    </>
+    <Slide11LandingPage
+      onLogin={openLogin}
+      onDemo={openLogin}
+      onDemoRole={openRoleDemo}
+      user={user}
+      onBackToConsole={openConsole}
+    />
   );
 }
