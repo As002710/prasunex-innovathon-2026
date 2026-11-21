@@ -56,7 +56,7 @@ export function Slide11LandingPage({
         {/* =================================================================
             HERO SECTION
             ================================================================= */}
-        <section className="flex min-h-[calc(100vh-72px)] items-center px-4 py-10 sm:px-6 lg:h-[calc(100vh-72px)] lg:min-h-0 lg:px-8 lg:py-8">
+        <section className="flex min-h-screen items-center px-4 py-10 sm:px-6 lg:h-screen lg:min-h-0 lg:px-8 lg:py-8">
           <div className="mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-8">
             {/* Left Column: Hero Text & Call-To-Actions */}
             <div className="flex flex-col items-start space-y-5 text-left lg:col-span-6 lg:space-y-5">
