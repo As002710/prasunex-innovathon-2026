@@ -63,6 +63,7 @@ services:
   - type: keyvalue
     name: campus-nexus-redis
     maxmemoryPolicy: allkeys-lru
+    ipAllowList: []
 
 databases:
   - name: campus-nexus-db
