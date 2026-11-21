@@ -11,7 +11,7 @@ export async function POST(request: Request) {
     }
 
     const user = findUserByEmail(email);
-    if (!user || !verifyUserPassword(password, user)) {
+    if (!user || !(await verifyUserPassword(password, user))) {
       return NextResponse.json({ detail: "Invalid email or password" }, { status: 401 });
     }
 
@@ -34,6 +34,7 @@ export async function POST(request: Request) {
       cgpa: user.cgpa,
       karma_points: user.karma_points,
       opt_in_recruiter: user.opt_in_recruiter,
+      is_new_account: Boolean(user.is_new_account),
     };
 
     return NextResponse.json({

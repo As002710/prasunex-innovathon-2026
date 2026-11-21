@@ -21,6 +21,7 @@ export interface UserRecord {
   cgpa?: number;
   karma_points?: number;
   opt_in_recruiter?: boolean;
+  is_new_account?: boolean;
 }
 
 // In-memory data store for serverless execution
@@ -129,8 +130,14 @@ export const SEED_USERS: UserRecord[] = [
   },
 ];
 
-// In-memory runtime users array
-const runtimeUsers = [...SEED_USERS];
+declare global {
+  var __campusNexusRuntimeUsers: UserRecord[] | undefined;
+}
+
+// Keep one user store across independently bundled Next.js route handlers.
+const runtimeUsers =
+  globalThis.__campusNexusRuntimeUsers ||
+  (globalThis.__campusNexusRuntimeUsers = [...SEED_USERS]);
 
 export function findUserByEmail(email: string): UserRecord | undefined {
   const normEmail = email.trim().toLowerCase();
@@ -141,8 +148,8 @@ export function addUser(user: UserRecord): void {
   runtimeUsers.push(user);
 }
 
-export function verifyUserPassword(rawPassword: string, user: UserRecord): boolean {
-  if (bcrypt.compareSync(rawPassword, user.passwordHash)) {
+export async function verifyUserPassword(rawPassword: string, user: UserRecord): Promise<boolean> {
+  if (await bcrypt.compare(rawPassword, user.passwordHash)) {
     return true;
   }
   // Dual-credential aliases

@@ -2,6 +2,7 @@ import csv
 import io
 import json
 import math
+import time
 from datetime import datetime, timezone
 from typing import Any
 
@@ -24,6 +25,13 @@ router = APIRouter(prefix="/api/grading", tags=["Grading Studio & IRT Audit"])
 # Cache hit/miss counters for Prometheus metrics
 _cache_hits = 0
 _cache_misses = 0
+_cache_redis = redis.Redis.from_url(
+    settings.redis_url,
+    decode_responses=True,
+    socket_connect_timeout=0.05,
+    socket_timeout=0.05,
+)
+_cache_redis_retry_after = 0.0
 
 
 def increment_cache_hit():
@@ -40,12 +48,39 @@ def get_cache_stats():
     return _cache_hits, _cache_misses
 
 
-def invalidate_gradesheet_cache(course_id: str):
+def _get_cached_value(key: str) -> str | None:
+    global _cache_redis_retry_after
+    if time.monotonic() < _cache_redis_retry_after:
+        return None
     try:
-        r = redis.Redis.from_url(settings.redis_url, decode_responses=True, socket_connect_timeout=0.08)
-        r.delete(f"cache:gradesheet:{course_id}")
+        return _cache_redis.get(key)
     except Exception:
-        pass
+        _cache_redis_retry_after = time.monotonic() + 5.0
+        return None
+
+
+def _set_cached_value(key: str, value: str, ttl: int) -> None:
+    global _cache_redis_retry_after
+    if time.monotonic() < _cache_redis_retry_after:
+        return
+    try:
+        _cache_redis.set(key, value, ex=ttl)
+    except Exception:
+        _cache_redis_retry_after = time.monotonic() + 5.0
+
+
+def _delete_cached_value(key: str) -> None:
+    global _cache_redis_retry_after
+    if time.monotonic() < _cache_redis_retry_after:
+        return
+    try:
+        _cache_redis.delete(key)
+    except Exception:
+        _cache_redis_retry_after = time.monotonic() + 5.0
+
+
+def invalidate_gradesheet_cache(course_id: str):
+    _delete_cached_value(f"cache:gradesheet:{course_id}")
 
 
 # --- Pydantic Request Models ---
@@ -649,16 +684,12 @@ def get_course_gradesheet(
     - cache_hit: bool (True if served from Redis, False if fresh DB fetch)
     """
     cache_key = f"cache:gradesheet:{course_id}"
-    try:
-        r = redis.Redis.from_url(settings.redis_url, decode_responses=True, socket_connect_timeout=0.08)
-        cached_data = r.get(cache_key)
-        if cached_data:
-            increment_cache_hit()
-            result = json.loads(cached_data)
-            result["cache_hit"] = True
-            return result
-    except Exception:
-        pass
+    cached_data = _get_cached_value(cache_key)
+    if cached_data:
+        increment_cache_hit()
+        result = json.loads(cached_data)
+        result["cache_hit"] = True
+        return result
 
     increment_cache_miss()
     records = db.query(MarkRecord).filter(MarkRecord.course_id == course_id, MarkRecord.tenant_id == user.tenant_id).all()
@@ -692,11 +723,7 @@ def get_course_gradesheet(
         "cache_hit": False,
     }
 
-    try:
-        r = redis.Redis.from_url(settings.redis_url, decode_responses=True, socket_connect_timeout=0.08)
-        r.set(cache_key, json.dumps(payload), ex=settings.cache_ttl_seconds)
-    except Exception:
-        pass
+    _set_cached_value(cache_key, json.dumps(payload), settings.cache_ttl_seconds)
 
     return payload
 

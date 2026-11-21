@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ detail: "User with this email not found." }, { status: 404 });
     }
 
-    user.passwordHash = bcrypt.hashSync(new_password, 10);
+    user.passwordHash = await bcrypt.hash(new_password, 10);
     return NextResponse.json({
       success: true,
       message: "Password has been successfully updated. You may now sign in.",

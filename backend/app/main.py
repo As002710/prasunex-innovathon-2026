@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 from collections import defaultdict
 from datetime import datetime, timezone
+import asyncio
 import os
 import sys
 import time
@@ -10,6 +11,7 @@ from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, PlainTextResponse
 import redis
+from redis.asyncio import Redis as AsyncRedis
 import socketio
 from sqlalchemy import text
 from sqlalchemy.orm import Session
@@ -82,37 +84,54 @@ _metrics_error_count = 0
 _metrics_latency_sum = 0.0
 _LATENCY_BUCKETS = [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0, 10.0]
 _metrics_latency_counts = defaultdict(int)
+_rate_limit_redis = AsyncRedis.from_url(
+    settings.redis_url,
+    decode_responses=True,
+    socket_connect_timeout=0.05,
+    socket_timeout=0.05,
+)
+_rate_limit_redis_retry_after = 0.0
+_health_redis = redis.Redis.from_url(
+    settings.redis_url,
+    decode_responses=True,
+    socket_connect_timeout=0.05,
+    socket_timeout=0.05,
+)
+_health_redis_status = "unknown"
+_health_redis_checked_at = 0.0
 
 
 @app.middleware("http")
 async def rate_limit_and_metrics_middleware(request: Request, call_next):
-    global _metrics_request_count, _metrics_error_count, _metrics_latency_sum
+    global _metrics_request_count, _metrics_error_count, _metrics_latency_sum, _rate_limit_redis_retry_after
     _metrics_request_count += 1
     start_time = time.perf_counter()
 
     client_ip = request.client.host if request.client else "127.0.0.1"
     now = time.time()
+    monotonic_now = time.monotonic()
 
     # Skip rate limiting for static docs and health checks
     bypass_paths = ["/health", "/metrics", "/docs", "/openapi.json"]
     if request.url.path not in bypass_paths:
         allowed = True
-        try:
-            r = redis.Redis.from_url(settings.redis_url, decode_responses=True, socket_connect_timeout=0.08)
-            key = f"ratelimit:{client_ip}:{int(now // 60)}"
-            count = r.incr(key)
-            if count == 1:
-                r.expire(key, 60)
-            if count > settings.rate_limit_per_minute:
-                allowed = False
-        except Exception:
-            # Memory sliding window fallback
+        if monotonic_now >= _rate_limit_redis_retry_after:
+            try:
+                key = f"ratelimit:{client_ip}:{int(now // 60)}"
+                count = await asyncio.wait_for(_rate_limit_redis.incr(key), timeout=0.06)
+                if count == 1:
+                    await asyncio.wait_for(_rate_limit_redis.expire(key, 60), timeout=0.06)
+                _rate_limit_redis_retry_after = 0.0
+                allowed = count <= settings.rate_limit_per_minute
+            except Exception:
+                _rate_limit_redis_retry_after = time.monotonic() + 5.0
+
+        if monotonic_now < _rate_limit_redis_retry_after:
             timestamps = [t for t in _memory_rate_limits[client_ip] if now - t < 60]
-            if len(timestamps) >= settings.rate_limit_per_minute:
-                allowed = False
-            else:
+            allowed = len(timestamps) < settings.rate_limit_per_minute
+            if allowed:
                 timestamps.append(now)
-                _memory_rate_limits[client_ip] = timestamps
+            _memory_rate_limits[client_ip] = timestamps
 
         if not allowed:
             _metrics_error_count += 1
@@ -181,12 +200,16 @@ def health(db: Session = Depends(get_db)):
     except Exception as e:
         db_status = f"unhealthy: {str(e)}"
 
-    redis_status = "connected"
-    try:
-        r = redis.Redis.from_url(settings.redis_url, socket_connect_timeout=0.08)
-        r.ping()
-    except Exception:
-        redis_status = "offline (using local fallback)"
+    global _health_redis_status, _health_redis_checked_at
+    now_monotonic = time.monotonic()
+    if now_monotonic - _health_redis_checked_at >= 5:
+        try:
+            _health_redis.ping()
+            _health_redis_status = "connected"
+        except Exception:
+            _health_redis_status = "offline (using local fallback)"
+        _health_redis_checked_at = now_monotonic
+    redis_status = _health_redis_status
 
     return {
         "status": "ok" if db_status == "connected" else "degraded",

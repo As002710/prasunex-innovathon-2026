@@ -20,6 +20,7 @@ export interface AuthUser {
   cgpa?: number;
   karma_points?: number;
   opt_in_recruiter?: boolean;
+  is_new_account?: boolean;
 }
 
 export function normalizeRole(role?: string): "student" | "faculty" | "admin" | "other" {
@@ -55,6 +56,7 @@ interface AuthContextType {
     password?: string,
     college_code?: string
   ) => Promise<AuthUser>;
+  loginWithGoogle: (credential: string) => Promise<AuthUser>;
   register: (data: {
     email: string;
     password: string;
@@ -146,6 +148,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const userData: AuthUser = {
           ...data.user,
           normalized_role: normalizeRole(data.user.role),
+          is_new_account: Boolean(data.user.is_new_account || data.account_created),
         };
 
         setToken(data.access_token);
@@ -163,6 +166,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     []
   );
+
+  const loginWithGoogle = useCallback(async (credential: string) => {
+    setIsLoading(true);
+    try {
+      const res = await fetch("/api/auth/google", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ credential }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.detail || "Google sign-in failed");
+      }
+
+      const data = await res.json();
+      const userData: AuthUser = {
+        ...data.user,
+        normalized_role: normalizeRole(data.user.role),
+        is_new_account: Boolean(data.user.is_new_account || data.account_created),
+      };
+
+      setToken(data.access_token);
+      setUser(userData);
+      localStorage.setItem("nexus_token", data.access_token);
+      localStorage.setItem("nexus_user", JSON.stringify(userData));
+      setCookie("nexus_token", data.access_token, 7);
+      setCookie("nexus_role", userData.normalized_role || "other", 7);
+      return userData;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   const register = useCallback(
     async (data: {
@@ -200,6 +236,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const userData: AuthUser = {
         ...resData.user,
         normalized_role: normalizeRole(resData.user.role),
+        is_new_account: Boolean(resData.user.is_new_account || resData.account_created),
       };
 
       setToken(resData.access_token);
@@ -266,6 +303,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isLoading,
     isAuthenticated: !!token && !!user,
     login,
+    loginWithGoogle,
     register,
     logout,
     forgotPassword,

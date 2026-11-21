@@ -20,8 +20,11 @@ import {
   TrendingUp,
   Cpu,
   Lock,
+  Menu,
+  X,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { Logo } from "@/components/Logo";
 import { DashboardTopNavbar, NavItem } from "@/components/DashboardTopNavbar";
 import {
   BarChart,
@@ -90,6 +93,7 @@ export function AdminDashboardView() {
   const [currentTier, setCurrentTier] = useState("autonomous_enterprise");
   const [studentCount, setStudentCount] = useState(200);
   const [notice, setNotice] = useState<string | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Admin Navbar Items
   const adminNavItems: NavItem[] = [
@@ -115,18 +119,74 @@ export function AdminDashboardView() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-[#0B2E22] flex flex-col font-sans selection:bg-[#34D399]/30">
-      {/* Top Navigation Bar with Admin Red Accent (#B91C1C) */}
-      <DashboardTopNavbar
-        items={adminNavItems}
-        activeId={activeTab}
-        onSelect={(id) => setActiveTab(id as any)}
-        user={user}
-        onLogout={logout}
-        roleBadgeText="Admin"
-        roleColor="#B91C1C"
-        tagline="Campus Administration & Tenant Governance"
-      />
+    <div className="min-h-screen bg-gradient-to-br from-[#120206] via-[#1B040A] to-[#2E0813] text-white">
+      {/* Top Header */}
+      <header className="sticky top-0 z-40 border-b border-gold-500/30 backdrop-blur-xl bg-burgundy-950/85 px-6 py-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-2 sm:gap-4">
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden p-2 rounded-lg border border-gold-500/30 bg-burgundy-900/80 text-gold-300"
+              aria-label="Toggle menu"
+              aria-expanded={mobileMenuOpen}
+              aria-controls="admin-mobile-navigation"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+            <Logo size="md" />
+            <div className="hidden md:flex items-center gap-2 pl-4 border-l border-gold-500/30">
+              <span className="px-2.5 py-1 rounded-full bg-gold-500/15 border border-gold-400/40 text-gold-300 text-xs font-semibold flex items-center gap-1.5 shadow-[0_0_10px_rgba(212,175,55,0.2)]">
+                <Building2 className="w-3.5 h-3.5" />
+                ADMINISTRATION CONSOLE
+              </span>
+              <span className="text-xs text-gold-200/60">Northstar Institute (NITX) · Enterprise Tenant</span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="hidden sm:flex flex-col text-right">
+              <span className="text-xs font-bold text-white">{user?.full_name || "Campus Administrator"}</span>
+              <span className="text-[11px] text-gold-400 font-mono">{user?.email || "admin@nitx.demo"}</span>
+            </div>
+            <button
+              onClick={logout}
+              className="px-3 py-1.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 hover:bg-red-500/20 text-xs font-semibold flex items-center gap-1.5 transition-all"
+              title="Sign Out"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Logout</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {mobileMenuOpen && (
+        <nav id="admin-mobile-navigation" className="lg:hidden border-b border-gold-500/25 bg-burgundy-950/95 px-4 py-3 backdrop-blur-xl">
+          <div className="grid grid-cols-2 gap-2">
+            {([
+              ["overview", "Overview"],
+              ["billing", "Billing"],
+              ["nba", "NBA/NAAC"],
+              ["audit", "Audit"],
+            ] as const).map(([tab, label]) => (
+              <button
+                key={tab}
+                onClick={() => {
+                  setActiveTab(tab);
+                  setMobileMenuOpen(false);
+                }}
+                className={`rounded-xl border px-3 py-2.5 text-xs font-semibold ${
+                  activeTab === tab
+                    ? "border-gold-400 bg-gold-500 text-burgundy-950"
+                    : "border-gold-500/25 bg-burgundy-900/80 text-gold-200"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </nav>
+      )}
 
       {/* Main Container */}
       <main className="flex-1 w-full max-w-[1280px] mx-auto px-4 sm:px-6 py-6 space-y-6">

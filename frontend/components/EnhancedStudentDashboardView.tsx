@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -28,6 +28,7 @@ import {
   Sliders,
   CheckCircle2,
   LogOut,
+  X,
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -40,7 +41,6 @@ import {
   Pie,
   Cell,
 } from "recharts";
-import { Logo } from "@/components/Logo";
 import { KpiCard } from "@/components/KpiCard";
 import { ProgressBar } from "@/components/ProgressBar";
 import { DashboardTopNavbar, NavItem } from "@/components/DashboardTopNavbar";
@@ -63,6 +63,96 @@ interface EnhancedStudentDashboardViewProps {
   embedded?: boolean;
 }
 
+const STUDENT_TOUR_STEPS = [
+  {
+    title: "Welcome To Your Dashboard",
+    description: "This is your personal student workspace. Your profile is ready, and your academic data will appear when it is available from campus.",
+  },
+  {
+    title: "Find Your Tools",
+    description: "Use the top navigation on desktop, or open the menu on mobile, to explore learning, planning, attendance, and campus services.",
+  },
+  {
+    title: "Your Progress Starts Fresh",
+    description: "New accounts start with zero academic stats. We do not show sample grades or attendance as if they were yours.",
+  },
+  {
+    title: "Pick Up Where You Left Off",
+    description: "Your dashboard interactions are saved in this browser for your account. Sign in again here to restore them.",
+  },
+];
+
+function FreshStudentDashboard({
+  user,
+  onStartTour,
+}: {
+  user?: any;
+  onStartTour: () => void;
+}) {
+  const zeroKpis = KPI_CARDS.map((item) => ({
+    ...item,
+    value: item.id === "assessments" ? "0" : "0%",
+    change: "New",
+    trend: "neutral" as const,
+    linkText: undefined,
+    sparkline: item.sparkline.map(({ x }) => ({ x, y: 0 })),
+  }));
+
+  return (
+    <div className="space-y-6">
+      <section className="rounded-3xl border border-mint-400/30 bg-darkEmerald-900/80 p-6 shadow-2xl sm:p-8">
+        <p className="text-xs font-bold uppercase tracking-wider text-mint-300">Your CAMPUS-NEXUS workspace</p>
+        <h1 className="mt-2 text-2xl font-extrabold text-white sm:text-3xl [text-wrap:balance]">
+          Welcome, {user?.full_name?.split(" ")[0] || "Student"}
+        </h1>
+        <p className="mt-2 max-w-2xl break-words text-sm leading-relaxed text-mint-accent/80">
+          Your account is ready. This dashboard starts with zero stats and will show your actual course data when it becomes available.
+        </p>
+        <button
+          type="button"
+          onClick={onStartTour}
+          className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-xl bg-mint-400 px-4 py-2.5 text-sm font-bold text-darkEmerald-950 transition-colors hover:bg-mint-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mint-300"
+        >
+          <Sparkles className="h-4 w-4" aria-hidden="true" />
+          Start Dashboard Tour
+        </button>
+      </section>
+
+      <section aria-label="Your current stats" className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {zeroKpis.map((item) => <KpiCard key={item.id} item={item} />)}
+      </section>
+
+      <section className="grid gap-6 lg:grid-cols-2">
+        <div className="min-w-0 rounded-2xl border border-mint-400/20 bg-darkEmerald-900/70 p-5">
+          <div className="flex items-center gap-2">
+            <Compass className="h-5 w-5 shrink-0 text-mint-400" aria-hidden="true" />
+            <h2 className="text-base font-bold text-white">Learning Progress</h2>
+          </div>
+          <p className="mt-3 text-sm leading-relaxed text-mint-accent/75">
+            No course progress has been recorded yet. Your mastery map will update when real course activity is available.
+          </p>
+          <div className="mt-5 h-2 overflow-hidden rounded-full bg-darkEmerald-950">
+            <div className="h-full w-0 bg-mint-400" />
+          </div>
+          <p className="mt-2 text-xs text-mint-accent/60">0% complete · No course data yet</p>
+        </div>
+
+        <div className="min-w-0 rounded-2xl border border-mint-400/20 bg-darkEmerald-900/70 p-5">
+          <div className="flex items-center gap-2">
+            <CalendarDays className="h-5 w-5 shrink-0 text-mint-400" aria-hidden="true" />
+            <h2 className="text-base font-bold text-white">Your Next Steps</h2>
+          </div>
+          <ol className="mt-4 space-y-3 text-sm text-mint-accent/80">
+            <li className="flex gap-3"><span className="font-bold text-mint-300">1.</span><span>Explore the dashboard tour.</span></li>
+            <li className="flex gap-3"><span className="font-bold text-mint-300">2.</span><span>Open your learning tools from the navigation.</span></li>
+            <li className="flex gap-3"><span className="font-bold text-mint-300">3.</span><span>Return later to continue from this account.</span></li>
+          </ol>
+        </div>
+      </section>
+    </div>
+  );
+}
+
 export function EnhancedStudentDashboardView({
   user,
   onView,
@@ -71,10 +161,30 @@ export function EnhancedStudentDashboardView({
   onLogout,
   embedded = false,
 }: EnhancedStudentDashboardViewProps) {
+  const isNewAccount = user?.is_new_account === true;
+  const progressKey = user?.id ? `nexus_student_progress:${user.id}` : null;
+
   const [activeMenu, setActiveMenu] = useState("overview");
+  const [progressLoaded, setProgressLoaded] = useState(false);
+  const [tourOpen, setTourOpen] = useState(false);
+  const [tourStep, setTourStep] = useState(0);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const [searchVal, setSearchVal] = useState("");
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   // Grade Predictor Interactive Effort Slider
-  const [effortLevel, setEffortLevel] = useState(10); // +10% effort by default
+  const [effortLevel, setEffortLevel] = useState(isNewAccount ? 0 : 10);
   const getPredictedGradeInfo = (effort: number) => {
     const base = 78;
     const calculatedScore = Math.min(100, Math.round(base + (effort / 20) * 10));
@@ -99,7 +209,7 @@ export function EnhancedStudentDashboardView({
 
   // Interactive Checklist for AI Study Recommendation
   const [recommendationActions, setRecommendationActions] = useState(
-    AI_RECOMMENDATION.actions
+    isNewAccount ? [] : AI_RECOMMENDATION.actions
   );
   const [studyPlanGenerated, setStudyPlanGenerated] = useState(false);
 
@@ -114,13 +224,130 @@ export function EnhancedStudentDashboardView({
     {
       id: "msg-0",
       sender: "bot",
-      text: "Hi Student! How can I help you today? Ask me anything about your courses, weak topics, or study plans.",
+      text: isNewAccount
+        ? "Welcome to CAMPUS-NEXUS. Your course data will appear here as your campus shares it."
+        : "Hi Student! How can I help you today? Ask me anything about your courses, weak topics, or study plans.",
       time: "Just now",
     },
   ]);
   const [chatInput, setChatInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const chatScrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!progressKey) {
+      setProgressLoaded(true);
+      return;
+    }
+
+    setProgressLoaded(false);
+    setActiveMenu("overview");
+    setEffortLevel(isNewAccount ? 0 : 10);
+    setRecommendationActions(isNewAccount ? [] : AI_RECOMMENDATION.actions);
+    setStudyPlanGenerated(false);
+    setMessages([
+      {
+        id: "msg-0",
+        sender: "bot",
+        text: isNewAccount
+          ? "Welcome to CAMPUS-NEXUS. Your course data will appear here as your campus shares it."
+          : "Hi Student! How can I help you today? Ask me anything about your courses, weak topics, or study plans.",
+        time: "Just now",
+      },
+    ]);
+
+    try {
+      const saved = localStorage.getItem(progressKey);
+      if (saved) {
+        const progress = JSON.parse(saved) as {
+          activeMenu?: string;
+          effortLevel?: number;
+          completedRecommendationIds?: string[];
+          studyPlanGenerated?: boolean;
+          messages?: CopilotMessage[];
+        };
+        if (typeof progress.activeMenu === "string") setActiveMenu(progress.activeMenu);
+        if (typeof progress.effortLevel === "number") setEffortLevel(progress.effortLevel);
+        if (typeof progress.studyPlanGenerated === "boolean") {
+          setStudyPlanGenerated(progress.studyPlanGenerated);
+        }
+        if (Array.isArray(progress.completedRecommendationIds)) {
+          setRecommendationActions((actions) =>
+            actions.map((action) => ({
+              ...action,
+              completed: progress.completedRecommendationIds!.includes(action.id),
+            }))
+          );
+        }
+        if (Array.isArray(progress.messages)) setMessages(progress.messages);
+      }
+    } catch (error) {
+      console.error("Could not restore saved student dashboard progress:", error);
+    } finally {
+      setProgressLoaded(true);
+    }
+  }, [progressKey, isNewAccount]);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    const tourKey = `nexus_student_tour_complete:${user.id}`;
+    try {
+      setTourOpen(isNewAccount && localStorage.getItem(tourKey) !== "true");
+    } catch (error) {
+      console.error("Could not read student tour status:", error);
+      setTourOpen(isNewAccount);
+    }
+    setTourStep(0);
+  }, [user?.id, isNewAccount]);
+
+  useEffect(() => {
+    if (!progressKey || !progressLoaded || isTyping) return;
+    try {
+      localStorage.setItem(
+        progressKey,
+        JSON.stringify({
+          activeMenu,
+          effortLevel,
+          completedRecommendationIds: recommendationActions
+            .filter((action) => action.completed)
+            .map((action) => action.id),
+          studyPlanGenerated,
+          messages,
+        })
+      );
+    } catch (error) {
+      console.error("Could not save student dashboard progress:", error);
+    }
+  }, [
+    activeMenu,
+    effortLevel,
+    isTyping,
+    messages,
+    progressKey,
+    progressLoaded,
+    recommendationActions,
+    studyPlanGenerated,
+  ]);
+
+  const closeTour = useCallback(() => {
+    if (user?.id) {
+      try {
+        localStorage.setItem(`nexus_student_tour_complete:${user.id}`, "true");
+      } catch (error) {
+        console.error("Could not save student tour status:", error);
+      }
+    }
+    setTourOpen(false);
+  }, [user?.id]);
+
+  useEffect(() => {
+    if (!tourOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") closeTour();
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [closeTour, tourOpen]);
 
   useEffect(() => {
     chatScrollRef.current?.scrollTo({
@@ -237,19 +464,124 @@ export function EnhancedStudentDashboardView({
           </div>
         </div>
 
-        {/* 4 KPI Cards with Sparklines */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-          {KPI_CARDS.map((kpi) => (
-            <KpiCard
-              key={kpi.id}
-              item={kpi}
-              onClick={() => {
-                if (kpi.id === "kpi-attendance" && onView) onView("attendance");
-                else if (kpi.id === "kpi-mastery" && onView) onView("learning");
+      {/* Main Content Workspace */}
+      <div className="flex-1 flex flex-col min-w-0 z-10">
+        {!embedded && (
+          <header className="h-16 px-4 sm:px-6 lg:px-8 border-b border-mint-400/15 bg-darkEmerald-950/70 backdrop-blur-xl flex items-center justify-between gap-4 sticky top-0 z-30">
+            <div className="relative w-full max-w-md hidden sm:block">
+              <Search className="w-3.5 h-3.5 text-mint-400/70 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <input
+                ref={searchInputRef}
+                type="text"
+                placeholder="Search for anything... (marks, courses, queries)"
+                value={searchVal}
+                onChange={(e) => setSearchVal(e.target.value)}
+                className="w-full bg-darkEmerald-900/70 border border-mint-400/25 rounded-full pl-9 pr-14 py-1.5 text-xs text-white placeholder:text-mint-accent/40 focus:outline-none focus:border-mint-accent focus:ring-1 focus:ring-mint-accent"
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-mono font-bold text-mint-accent/60 bg-darkEmerald-800/80 px-1.5 py-0.5 rounded border border-mint-400/20">
+                ⌘K
+              </span>
+            </div>
+
+            <div className="flex items-center gap-4 ml-auto">
+              <button
+                type="button"
+                onClick={() => {
+                  setTourStep(0);
+                  setTourOpen(true);
+                }}
+                className="hidden rounded-lg border border-mint-400/25 px-3 py-2 text-xs font-semibold text-mint-accent transition-colors hover:border-mint-400/50 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mint-400 md:inline-flex"
+              >
+                Take Tour
+              </button>
+              {onBackToLanding ? (
+                <button
+                  onClick={onBackToLanding}
+                  className="text-xs text-mint-accent/70 hover:text-white transition-colors hidden md:inline-flex items-center gap-1"
+                >
+                  <span>Public Showcase</span>
+                  <ArrowUpRight className="w-3 h-3" />
+                </button>
+              ) : (
+                <Link
+                  href="/"
+                  className="text-xs text-mint-accent/70 hover:text-white transition-colors hidden md:inline-flex items-center gap-1"
+                >
+                  <span>Public Showcase</span>
+                  <ArrowUpRight className="w-3 h-3" />
+                </Link>
+              )}
+
+              <button
+                aria-label={isNewAccount ? "No new notifications" : "3 new notifications"}
+                onClick={() => onNotify?.(
+                  isNewAccount
+                    ? "No notifications yet. Your campus updates will appear here."
+                    : "You have 3 notifications: Database Systems quiz graded, OS assignment due tomorrow, and a new study partner match!",
+                  "info"
+                )}
+                className="relative p-2 rounded-full bg-darkEmerald-900/80 border border-mint-400/25 text-mint-accent hover:text-white transition-all shadow-sm"
+              >
+                <Bell className="w-4 h-4" />
+                {!isNewAccount && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white rounded-full text-[10px] font-bold flex items-center justify-center ring-2 ring-darkEmerald-950 shadow-[0_0_8px_rgba(239,68,68,0.8)]">
+                    3
+                  </span>
+                )}
+              </button>
+
+              <div className="flex items-center gap-2 pl-2 border-l border-mint-400/20">
+                <div className="w-8 h-8 rounded-full bg-mint-400 text-darkEmerald-950 font-bold flex items-center justify-center text-xs shadow-[0_0_10px_rgba(74,222,154,0.5)]">
+                  {user ? user.full_name?.slice(0, 2).toUpperCase() : "ST"}
+                </div>
+                <div className="hidden sm:flex flex-col text-left">
+                  <span className="text-xs font-bold text-white flex items-center gap-1">
+                    {user ? user.full_name.split(" ")[0] : "Student"} <ChevronDown className="w-3 h-3 text-mint-400/70" />
+                  </span>
+                  <span className="text-[10px] text-mint-accent/60 -mt-0.5">
+                    {user ? `${user.department || "Computer Science"} (Sem ${user.semester || 5})` : "Computer Science (Sem 5)"}
+                  </span>
+                </div>
+              </div>
+
+              {onLogout && (
+                <button
+                  onClick={onLogout}
+                  className="p-2 text-xs text-mint-accent/70 hover:text-white rounded-lg border border-mint-400/20 hover:border-mint-400/50 transition-colors ml-1"
+                  title="Sign out"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+          </header>
+        )}
+
+        {/* Dashboard Body Workspace */}
+        <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl w-full mx-auto">
+          {isNewAccount ? (
+            <FreshStudentDashboard
+              user={user}
+              onStartTour={() => {
+                setTourStep(0);
+                setTourOpen(true);
               }}
             />
-          ))}
-        </div>
+          ) : (
+          <>
+          {/* 4 KPI Cards with Sparklines */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+            {KPI_CARDS.map((kpi) => (
+              <KpiCard
+                key={kpi.id}
+                item={kpi}
+                onClick={() => {
+                  if (kpi.id === "kpi-attendance" && onView) onView("attendance");
+                  else if (kpi.id === "kpi-mastery" && onView) onView("learning");
+                }}
+              />
+            ))}
+          </div>
 
         {/* Main 2-Column Dashboard Grid */}
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
@@ -750,7 +1082,84 @@ export function EnhancedStudentDashboardView({
             </div>
           </div>
         </div>
+          </>
+          )}
+        </div>
+      </div>
       </main>
+      {tourOpen && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) closeTour();
+          }}
+        >
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="student-tour-title"
+            aria-describedby="student-tour-description"
+            className="w-full max-w-lg rounded-2xl border border-mint-400/35 bg-darkEmerald-950 p-5 shadow-2xl sm:p-7"
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-mint-300">Dashboard Tour · {tourStep + 1} of {STUDENT_TOUR_STEPS.length}</p>
+                <h2 id="student-tour-title" className="mt-2 text-xl font-bold text-white [text-wrap:balance]">
+                  {STUDENT_TOUR_STEPS[tourStep].title}
+                </h2>
+              </div>
+              <button
+                type="button"
+                onClick={closeTour}
+                aria-label="Close tour"
+                className="shrink-0 rounded-lg p-2 text-mint-accent hover:bg-darkEmerald-900 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-mint-400"
+              >
+                <X className="h-5 w-5" aria-hidden="true" />
+              </button>
+            </div>
+            <p id="student-tour-description" aria-live="polite" className="mt-4 text-sm leading-relaxed text-mint-accent/80">
+              {STUDENT_TOUR_STEPS[tourStep].description}
+            </p>
+            <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+              <button
+                type="button"
+                onClick={closeTour}
+                className="rounded-lg px-3 py-2 text-xs font-semibold text-mint-accent/75 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-mint-400"
+              >
+                Skip Tour
+              </button>
+              <div className="flex items-center gap-2">
+                {tourStep > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setTourStep((step) => Math.max(0, step - 1))}
+                    className="rounded-lg border border-mint-400/25 px-3 py-2 text-xs font-semibold text-mint-200 hover:bg-darkEmerald-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-mint-400"
+                  >
+                    Back
+                  </button>
+                )}
+                {tourStep < STUDENT_TOUR_STEPS.length - 1 ? (
+                  <button
+                    type="button"
+                    onClick={() => setTourStep((step) => Math.min(STUDENT_TOUR_STEPS.length - 1, step + 1))}
+                    className="rounded-lg bg-mint-400 px-4 py-2 text-xs font-bold text-darkEmerald-950 hover:bg-mint-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mint-300"
+                  >
+                    Next
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={closeTour}
+                    className="rounded-lg bg-mint-400 px-4 py-2 text-xs font-bold text-darkEmerald-950 hover:bg-mint-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mint-300"
+                  >
+                    Finish Tour
+                  </button>
+                )}
+              </div>
+            </div>
+          </section>
+        </div>
+      )}
     </div>
   );
 }

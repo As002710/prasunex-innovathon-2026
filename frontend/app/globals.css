@@ -99,6 +99,28 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+html {
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+img,
+svg {
+  max-width: 100%;
+}
+
+section,
+footer,
+[id] {
+  scroll-margin-top: 80px;
+}
+
+/* Subtle luxury gold grid texture */
 body::before {
   display: none !important;
 }
@@ -117,6 +139,22 @@ button, input, select, textarea {
 
 button {
   cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid #F5C542;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 button:disabled {
@@ -855,4 +893,24 @@ input:focus, select:focus, textarea:focus {
 
 .hero-mockup-frame {
   perspective: 1200px;
+}
+@media (max-width: 640px) {
+  .hero-mockup-frame {
+    width: 100%;
+  }
+
+  .hero-mockup-frame [class*="grid-cols"] {
+    min-width: 0;
+  }
+
+  .card,
+  .stat-card {
+    min-width: 0;
+  }
+
+  input,
+  select,
+  textarea {
+    max-width: 100%;
+  }
 }

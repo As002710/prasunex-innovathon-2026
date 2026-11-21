@@ -25,11 +25,22 @@ export function Navbar({ onLogin, user: propUser, onBackToConsole, onLogout: pro
   const [searchQuery, setSearchQuery] = useState("");
 
   return (
-    <header className="sticky top-0 z-50 w-full backdrop-blur-xl bg-white/95 border-b border-[#CDEBDD] shadow-[0_1px_2px_rgba(11,46,34,0.06)] transition-all">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-        {/* Left: Logo */}
-        <div className="flex-shrink-0">
-          <Logo size="md" />
+    <header className="sticky top-0 z-50 w-full backdrop-blur-xl bg-burgundy-950/85 border-b border-gold-500/30 transition-all">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-2 sm:gap-4">
+        {/* Left: Mobile Menu + Logo */}
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="xl:hidden p-2 rounded-lg bg-burgundy-900/80 border border-gold-500/30 text-gold-400"
+            aria-label="Toggle Menu"
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-navigation"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+          <div className="flex-shrink-0">
+            <Logo size="md" />
+          </div>
         </div>
 
         {/* Center: Desktop Nav Links */}
@@ -94,6 +105,8 @@ export function Navbar({ onLogin, user: propUser, onBackToConsole, onLogout: pro
             <Search className="w-3.5 h-3.5 text-[#4B6B5E] absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
+              aria-label="Search CAMPUS-NEXUS"
+              name="search"
               placeholder="Search anything... (marks, courses, queries)"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -136,9 +149,9 @@ export function Navbar({ onLogin, user: propUser, onBackToConsole, onLogout: pro
           ) : onLogin ? (
             <button
               onClick={onLogin}
-              className="px-5 py-2 rounded-xl text-xs font-bold bg-[#FACC15] hover:bg-[#EAB308] text-[#0B2E22] flex items-center gap-1.5 shadow-sm transition-all"
+              className="btn-gold-primary px-3 sm:px-5 py-2 text-xs flex items-center gap-1.5"
             >
-              <span>Login</span>
+              <span className="hidden sm:inline">Login</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           ) : (
@@ -151,25 +164,19 @@ export function Navbar({ onLogin, user: propUser, onBackToConsole, onLogout: pro
             </Link>
           )}
 
-          {/* Mobile Menu Trigger */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="xl:hidden p-2 rounded-lg bg-[#F0FAF5] border border-[#CDEBDD] text-[#0B2E22]"
-            aria-label="Toggle Menu"
-          >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
         </div>
       </div>
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="xl:hidden px-4 pt-2 pb-6 bg-white border-b border-[#CDEBDD] shadow-lg">
+        <div id="mobile-navigation" className="xl:hidden px-4 pt-2 pb-6 bg-burgundy-950/95 border-b border-gold-500/30 backdrop-blur-2xl">
           <div className="flex flex-col gap-2.5">
             <div className="relative mb-2">
               <Search className="w-4 h-4 text-[#4B6B5E] absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
+                aria-label="Search CAMPUS-NEXUS"
+                name="mobile-search"
                 placeholder="Search anything..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
