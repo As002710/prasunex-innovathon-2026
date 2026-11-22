@@ -41,6 +41,7 @@ from .modules.business_privacy import router as business_privacy_router
 from .modules.accreditation import router as accreditation_router
 from .modules.attendance import router as attendance_router
 from .modules.study import router as study_router
+from .api_v1 import router as api_v1_router
 
 
 # Initialize python-socketio ASGI server
@@ -184,6 +185,7 @@ app.include_router(business_privacy_router)
 app.include_router(accreditation_router)
 app.include_router(attendance_router)
 app.include_router(study_router)
+app.include_router(api_v1_router)
 
 
 # --- Health & Prometheus Metrics Endpoints ---
