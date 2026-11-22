@@ -32,12 +32,11 @@ router = APIRouter(prefix="/api/v1", tags=["CAMPUS-NEXUS v2 Official Specificati
 
 
 def _resolve_course(db: Session, course_id: str) -> Optional[Course]:
-    c = db.query(Course).filter(
+    return db.query(Course).filter(
         (Course.id == course_id) |
         (Course.code.ilike(f"%{course_id}%")) |
         (Course.id.ilike(f"%{course_id}%"))
     ).first()
-    return c or db.query(Course).first()
 
 
 def _resolve_student(db: Session, student_id: str) -> Optional[User]:
@@ -78,42 +77,11 @@ def verify_zk_proof(payload: ZKProofRequest, db: Session = Depends(get_db)):
     - Enforces single-use nullifier within the external scope (anti-double-reporting)
     - Verifies cryptographic zero-knowledge proof
     """
-    # Check if nullifier has already been spent in this scope
-    existing_nonce = db.query(ZKTokenNonce).filter(
-        ZKTokenNonce.token_hash == payload.nullifier_hash
-    ).first()
-    if existing_nonce:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Nullifier already spent. Double-reporting or double-voting prevented by ZK protocol."
-        )
-
-    # Check if group member commitment exists in zk_group_members table
-    # (If not seeded, auto-register for demo purposes so verifier succeeds)
-    member = db.query(ZKGroupMember).filter(
-        ZKGroupMember.group_id == payload.group_id,
-        ZKGroupMember.identity_commitment == payload.identity_commitment
-    ).first()
-
-    if not member:
-        member = ZKGroupMember(
-            group_id=payload.group_id,
-            identity_commitment=payload.identity_commitment
-        )
-        db.add(member)
-        db.commit()
-
-    # Generate deterministic verification token
-    token_seed = f"{payload.group_id}:{payload.nullifier_hash}:{payload.external_nullifier}:zk-valid"
-    verification_token = "zktok_" + hashlib.sha256(token_seed.encode()).hexdigest()[:32]
-
-    return ZKProofResponse(
-        verified=True,
-        nullifier_hash=payload.nullifier_hash,
-        group_id=payload.group_id,
-        scope=payload.external_nullifier,
-        verification_token=verification_token,
-        message="Semaphore ZK proof verified successfully. Zero identity linkability established."
+    # This endpoint currently has no Semaphore verifier dependency. Never
+    # accept caller-supplied commitments as proof of membership.
+    raise HTTPException(
+        status_code=status.HTTP_501_NOT_IMPLEMENTED,
+        detail="Zero-knowledge proof verification is not configured. No proof was accepted.",
     )
 
 
@@ -223,59 +191,12 @@ def ingest_marks_photo(payload: PhotoMarksIngestRequest, db: Session = Depends(g
     - Calculates row checksum (Sum(Q_ij) == Total_i) and column totals
     - Flags arithmetic discrepancies for human-in-the-loop audit
     """
-    course = _resolve_course(db, payload.course_id)
-    if not course:
-        raise HTTPException(status_code=404, detail="Course not found.")
-
-    # Retrieve enrolled students for this course
-    students = db.query(User).filter(User.role == "student", User.tenant_id == course.tenant_id).limit(10).all()
-    if not students:
-        students = db.query(User).filter(User.role == "student").limit(10).all()
-
-    # Synthetic realistic OCR cell matrix with checksum cross-validation
-    extracted_rows = []
-    has_discrepancy = False
-
-    for idx, s in enumerate(students):
-        # 4 Questions: Q1 (10m), Q2 (10m), Q3 (15m), Q4 (15m) -> Total 50m
-        q1 = min(10.0, max(2.0, 7.5 + (idx % 3) - 1.0))
-        q2 = min(10.0, max(3.0, 8.0 - (idx % 4) * 0.5))
-        q3 = min(15.0, max(4.0, 12.0 - (idx % 5)))
-        q4 = min(15.0, max(5.0, 11.5 + (idx % 2)))
-        calc_sum = round(q1 + q2 + q3 + q4, 1)
-
-        # Introduce intentional OCR human-error discrepancy on row 3 for audit demonstration
-        sheet_total = calc_sum
-        mismatch = False
-        if idx == 2:
-            sheet_total = calc_sum - 3.0  # Faculty wrote arithmetic error on paper!
-            mismatch = True
-            has_discrepancy = True
-
-        extracted_rows.append({
-            "student_id": s.id,
-            "student_name": s.name,
-            "roll_number": s.email.split("@")[0].upper(),
-            "q1": q1,
-            "q2": q2,
-            "q3": q3,
-            "q4": q4,
-            "calculated_sum": calc_sum,
-            "sheet_total": sheet_total,
-            "checksum_passed": not mismatch,
-            "confidence": 0.88 if mismatch else 0.97
-        })
-
-    return {
-        "status": "extracted_with_discrepancy" if has_discrepancy else "extracted_verified",
-        "course_id": payload.course_id,
-        "perspective_corrected": True,
-        "ocr_confidence_mean": 0.964,
-        "total_rows_detected": len(extracted_rows),
-        "discrepancies_count": 1 if has_discrepancy else 0,
-        "audit_notice": "Row 3 arithmetic discrepancy flagged: Q1+Q2+Q3+Q4 != Written Total. Please review before committing.",
-        "rows": extracted_rows
-    }
+    if not payload.image_base64:
+        raise HTTPException(status_code=422, detail="Provide an image to process.")
+    raise HTTPException(
+        status_code=status.HTTP_501_NOT_IMPLEMENTED,
+        detail="Photo OCR and perspective correction are not configured. No marks were extracted or saved.",
+    )
 
 
 # ==============================================================================
@@ -302,14 +223,10 @@ def simulate_grading(payload: GradingSimulateRequest, db: Session = Depends(get_
     if not course:
         raise HTTPException(status_code=404, detail="Course not found.")
 
-    records = db.query(MarkRecord).filter(MarkRecord.course_id == payload.course_id).all()
-    if not records:
-        # Fallback to realistic distribution if unseeded
-        raw_scores = [34, 45, 49, 58, 62, 69, 71, 74, 78, 79, 82, 85, 88, 89, 94]
-    else:
-        raw_scores = [float(r.total_score) for r in records if r.total_score is not None]
-        if not raw_scores:
-            raw_scores = [34, 45, 49, 58, 62, 69, 71, 74, 78, 79, 82, 85, 88, 89, 94]
+    records = db.query(MarkRecord).filter(MarkRecord.course_id == course.id).all()
+    raw_scores = [float(r.total_score) for r in records if r.total_score is not None]
+    if not raw_scores:
+        raise HTTPException(status_code=404, detail="No marks are recorded for this course yet.")
 
     scores = sorted(raw_scores)
     n = len(scores)
@@ -901,28 +818,6 @@ def get_equipment_failure_forecast(tenant_id: str = "nitx", db: Session = Depend
     college = db.query(College).first()
     t_id = college.id if college else tenant_id
     assets = db.query(LabEquipment).filter(LabEquipment.tenant_id == t_id).all()
-    if not assets:
-        # Seed realistic asset list for demo
-        demo_assets = [
-            {"name": "Digital Storage Oscilloscope Lab 3", "tag": "EE-DSO-014", "loc": "ECE Lab 3", "age": 620, "k": 2.8, "lam": 700.0},
-            {"name": "Hostel 4 Water Chiller Pump", "tag": "HST-WTR-04", "loc": "Hostel Block 4", "age": 710, "k": 3.2, "lam": 750.0},
-            {"name": "Spectrophotometer Chem Lab", "tag": "CH-SPEC-02", "loc": "Chemistry Lab B", "age": 310, "k": 1.9, "lam": 900.0},
-            {"name": "Air Handling Unit Server Room", "tag": "IT-AHU-01", "loc": "Data Center", "age": 450, "k": 2.4, "lam": 800.0},
-            {"name": "3D Printer CoreXY Mech Lab", "tag": "ME-3DP-07", "loc": "Robotics Studio", "age": 140, "k": 1.5, "lam": 600.0},
-        ]
-        for a in demo_assets:
-            db.add(LabEquipment(
-                tenant_id=t_id,
-                name=a["name"],
-                asset_tag=a["tag"],
-                location=a["loc"],
-                age_days=a["age"],
-                k_shape=a["k"],
-                lambda_scale=a["lam"],
-                status="operational"
-            ))
-        db.commit()
-        assets = db.query(LabEquipment).filter(LabEquipment.tenant_id == t_id).all()
 
     ranked = []
     for item in assets:
