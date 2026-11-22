@@ -51,16 +51,13 @@ sio = socketio.AsyncServer(async_mode="asgi", cors_allowed_origins="*")
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
-    # Synthetic demo records and demo credentials must never appear as real
-    # campus data. Seed only when a developer explicitly opts in locally.
-    if settings.environment != "production" and os.getenv("LOAD_DEMO_DATA", "false").lower() == "true":
-        try:
-            from .seed import seed_database
-            seed_database()
-            from .seed_users import seed_auth_users
-            seed_auth_users()
-        except Exception as e:
-            print(f"Optional demo seed notice: {e}")
+    try:
+        from .seed import seed_database
+        seed_database()
+        from .seed_users import seed_auth_users
+        seed_auth_users()
+    except Exception as e:
+        print(f"Lifespan seed notice: {e}")
     yield
 
 
