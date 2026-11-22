@@ -7,7 +7,7 @@ import sys
 import time
 from pathlib import Path
 
-from fastapi import Depends, FastAPI, HTTPException, Request
+from fastapi import Depends, FastAPI, HTTPException, Request, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, PlainTextResponse
 import redis
@@ -301,6 +301,15 @@ def dashboard_overview(user: User = Depends(get_current_user), db: Session = Dep
         "average_mastery": avg_mastery,
         "courses": courses_count,
     }
+
+
+@app.websocket("/ws/v1/sla-tracker/{ticket_id}")
+async def app_websocket_sla_tracker(websocket: WebSocket, ticket_id: str):
+    """
+    Live WebSocket Stream of ticket resolution countdown specified in understand.md
+    """
+    from .api_v1 import websocket_sla_tracker_handler
+    await websocket_sla_tracker_handler(websocket, ticket_id)
 
 
 # Socket.IO Event Handlers
