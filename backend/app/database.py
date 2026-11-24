@@ -28,6 +28,8 @@ def _make_engine():
             conn.exec_driver_sql("SELECT 1")
         return eng
     except Exception:
+        if settings.environment.lower() in {"prod", "production"}:
+            raise
         # Automatic SQLite fallback for local demo if Postgres is unavailable
         fallback_url = "sqlite:///./campus_nexus.db"
         return create_engine(fallback_url, connect_args={"check_same_thread": False})

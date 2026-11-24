@@ -13,12 +13,22 @@ from ..config import settings
 from ..database import get_db
 from ..models import College, MaintenanceTicket, TicketAuditLedger, User
 from ..security import get_current_user, require_roles
-from ml.inference import classify_defect_image, cosine_similarity, embed_text
 
 router = APIRouter(prefix="/api/facilities", tags=["Facilities & Grievance Desk"])
 
 ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp"}
 MAX_IMAGE_BYTES = 10 * 1024 * 1024
+
+
+def _load_inference_helpers():
+    try:
+        from ml.inference import classify_defect_image, cosine_similarity, embed_text
+    except ImportError as exc:
+        raise HTTPException(
+            status_code=503,
+            detail="Campus image classification is unavailable in this deployment.",
+        ) from exc
+    return classify_defect_image, cosine_similarity, embed_text
 
 CAMPUS_NODES = [
     "Lab 2 - Bench 14",
@@ -219,6 +229,7 @@ async def submit_ticket(
 
     # 1. AI Vision Triage: MobileNetV3 ONNX + Keyword fusion
     full_text = f"{title} {description} {location}"
+    classify_defect_image, cosine_similarity, embed_text = _load_inference_helpers()
     vision_cat, vision_conf = classify_defect_image(photo_bytes, full_text)
 
     # Map categories to required innovation labels

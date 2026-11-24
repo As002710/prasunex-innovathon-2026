@@ -91,7 +91,10 @@ def export_sar_pdf(user: User = Depends(require_roles(["chancellor_dean", "profe
 
 @router.get("/sar.docx")
 def export_sar_docx(user: User = Depends(require_roles(["chancellor_dean", "professor_hod"])), db: Session = Depends(get_db)):
-    from docx import Document
+    try:
+        from docx import Document
+    except ImportError as exc:
+        raise HTTPException(501, "DOCX export is not installed on this server. PDF export remains available.") from exc
 
     outcomes = outcome_matrix(user, db)
     document = Document()

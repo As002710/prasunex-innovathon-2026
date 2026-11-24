@@ -1,2 +1,21 @@
-[tool.vercel]
-entrypoint = "backend.app.main:app"
+[project]
+name = "campus-nexus-api"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi>=0.115.0",
+  "sqlalchemy>=2.0.35",
+  "pydantic>=2.9.0",
+  "pydantic-settings>=2.6.0",
+  "pyjwt>=2.9.0",
+  "bcrypt>=4.0.0",
+  "cryptography>=43.0.0",
+  "python-multipart>=0.0.12",
+  "numpy>=2.1.0",
+  "scipy>=1.14.0",
+  "reportlab>=4.2.0",
+  "redis>=5.1.0",
+  "python-socketio>=5.11.0",
+  "psycopg[binary]>=3.2",
+]
+
