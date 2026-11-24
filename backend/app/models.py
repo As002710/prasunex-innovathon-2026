@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 from typing import Any
 import hashlib
 import json
-from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Integer, String, Text, UniqueConstraint
 from sqlalchemy.orm import relationship
 
 from .database import Base
@@ -420,6 +420,68 @@ class ReviewCard(Base):
     last_review = Column(DateTime(timezone=True), default=utcnow)
     next_due = Column(DateTime(timezone=True), default=utcnow)
     state = Column(String(32), nullable=False, default="learning")
+
+
+class DrillQuestionReview(Base):
+    """Teacher-reviewed multiple-choice content attached to an assessment bank item."""
+    __tablename__ = "drill_question_reviews"
+
+    question_id = Column(Integer, ForeignKey("assessment_questions.id"), primary_key=True)
+    options_json = Column(Text, nullable=False)
+    correct_idx = Column(Integer, nullable=False)
+    explanation = Column(Text, nullable=False)
+    source_citation = Column(String(500), nullable=True)
+    reviewed_by = Column(String(64), ForeignKey("users.id"), nullable=False)
+    reviewed_at = Column(DateTime(timezone=True), nullable=False, default=utcnow)
+    is_published = Column(Boolean, nullable=False, default=True)
+
+
+class ReviewAttempt(Base):
+    __tablename__ = "review_attempts"
+
+    id = Column(String(64), primary_key=True)
+    tenant_id = Column(String(64), ForeignKey("colleges.id"), nullable=False, index=True)
+    student_id = Column(String(64), ForeignKey("users.id"), nullable=False, index=True)
+    card_id = Column(Integer, ForeignKey("review_cards.id"), nullable=False, index=True)
+    question_id = Column(Integer, ForeignKey("assessment_questions.id"), nullable=False)
+    idempotency_key = Column(String(100), nullable=False)
+    selected_idx = Column(Integer, nullable=False)
+    is_correct = Column(Boolean, nullable=False)
+    confidence = Column(Integer, nullable=False)
+    response_ms = Column(Integer, nullable=True)
+    reviewed_at = Column(DateTime(timezone=True), nullable=False, default=utcnow)
+    stability_before = Column(Float, nullable=False)
+    stability_after = Column(Float, nullable=False)
+    retention_before = Column(Float, nullable=False)
+    next_due = Column(DateTime(timezone=True), nullable=False)
+    __table_args__ = (UniqueConstraint("student_id", "idempotency_key", name="uq_review_attempt_idempotency"),)
+
+
+class ReviewEvent(Base):
+    __tablename__ = "review_events"
+
+    id = Column(String(64), primary_key=True)
+    tenant_id = Column(String(64), ForeignKey("colleges.id"), nullable=False, index=True)
+    student_id = Column(String(64), ForeignKey("users.id"), nullable=False, index=True)
+    card_id = Column(Integer, ForeignKey("review_cards.id"), nullable=False, index=True)
+    attempt_id = Column(String(64), ForeignKey("review_attempts.id"), nullable=False, unique=True)
+    event_type = Column(String(40), nullable=False, default="review_completed")
+    payload_json = Column(Text, nullable=False, default="{}")
+    occurred_at = Column(DateTime(timezone=True), nullable=False, default=utcnow)
+
+
+class ReviewReminderJob(Base):
+    __tablename__ = "review_reminder_jobs"
+
+    id = Column(String(64), primary_key=True)
+    tenant_id = Column(String(64), ForeignKey("colleges.id"), nullable=False, index=True)
+    student_id = Column(String(64), ForeignKey("users.id"), nullable=False, index=True)
+    card_id = Column(Integer, ForeignKey("review_cards.id"), nullable=False, index=True)
+    scheduled_for = Column(DateTime(timezone=True), nullable=False)
+    timezone_name = Column(String(80), nullable=False)
+    status = Column(String(24), nullable=False, default="scheduled")
+    dedupe_key = Column(String(160), nullable=False, unique=True)
+    created_at = Column(DateTime(timezone=True), nullable=False, default=utcnow)
 
 
 class AttendanceScan(Base):

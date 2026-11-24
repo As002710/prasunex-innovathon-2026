@@ -49,6 +49,7 @@ import {
 } from "recharts";
 import { KpiCard } from "@/components/KpiCard";
 import { ProgressBar } from "@/components/ProgressBar";
+import { StudentMicroDrills } from "@/components/StudentMicroDrills";
 import { DashboardTopNavbar, NavItem } from "@/components/DashboardTopNavbar";
 import {
   KPI_CARDS,
@@ -922,7 +923,9 @@ export function EnhancedStudentDashboardView({
         {/* ==================================================================== */}
         {/* TAB 6: MICRO DRILLS (FSRS SPACED REPETITION) */}
         {/* ==================================================================== */}
-        {activeMenu === "drills" && (
+        {activeMenu === "drills" && <StudentMicroDrills />}
+
+        {activeMenu === "drills-legacy" && (
           <div className="space-y-6">
             <div className="bg-[#F0FAF5] border border-[#CDEBDD] rounded-xl p-5 shadow-[0_1px_2px_rgba(11,46,34,0.06)]">
               <h2 className="text-lg font-bold text-[#0B2E22] flex items-center gap-2 mb-1">
