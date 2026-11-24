@@ -1,8 +1,10 @@
 import csv
+import re
 import io
 import json
 import math
 import time
+from difflib import SequenceMatcher
 from datetime import datetime, timezone
 from typing import Any
 
@@ -11,7 +13,6 @@ import redis
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
-from rapidfuzz import process, fuzz
 from scipy.stats import gaussian_kde, norm, skew
 from sqlalchemy.orm import Session
 
@@ -21,6 +22,32 @@ from ..models import AssessmentQuestion, Course, GradeChangeLedger, MarkRecord, 
 from ..security import get_current_user, require_roles, verify_student_row_level_security
 
 router = APIRouter(prefix="/api/grading", tags=["Grading Studio & IRT Audit"])
+
+
+def _extract_header_match(query: str, choices: list[str], *, partial: bool = False):
+    """Small standard-library fuzzy matcher for short CSV headers."""
+    if not choices:
+        return None
+    normalized_query = re.sub(r"[^a-z0-9]", "", query.lower())
+    query_tokens = " ".join(sorted(re.findall(r"[a-z0-9]+", query.lower())))
+    best = None
+    for index, choice in enumerate(choices):
+        normalized_choice = re.sub(r"[^a-z0-9]", "", choice.lower())
+        if partial and normalized_query and (
+            normalized_query in normalized_choice or normalized_choice in normalized_query
+        ):
+            score = 100.0
+        else:
+            candidate = (
+                " ".join(sorted(re.findall(r"[a-z0-9]+", choice.lower())))
+                if not partial
+                else normalized_choice
+            )
+            source = query_tokens if not partial else normalized_query
+            score = SequenceMatcher(None, source, candidate).ratio() * 100
+        if best is None or score > best[1]:
+            best = (choice, score, index)
+    return best
 
 # Cache hit/miss counters for Prometheus metrics
 _cache_hits = 0
@@ -247,8 +274,8 @@ async def upload_marks_fuzzy(
     # Target patterns
     roll_patterns = ["roll number", "roll no", "enrollment", "student id", "email", "registration no"]
     for idx, h in enumerate(headers):
-        best_match, score, _ = process.extractOne(h.lower(), roll_patterns, scorer=fuzz.token_sort_ratio)
-        if score >= 70:
+        match = _extract_header_match(h, roll_patterns)
+        if match and match[1] >= 70:
             roll_col_idx = idx
             header_mapping[h] = "roll_number"
             break
@@ -268,8 +295,9 @@ async def upload_marks_fuzzy(
 
         if not matched_q:
             # Fuzzy match against questions
-            candidate, score, _ = process.extractOne(h.lower(), [q.lower() for q in q_max_marks.keys()], scorer=fuzz.partial_ratio)
-            if score >= 80:
+            match = _extract_header_match(h, list(q_max_marks.keys()), partial=True)
+            if match and match[1] >= 80:
+                candidate = match[0]
                 matched_q = candidate.upper()
 
         if matched_q:

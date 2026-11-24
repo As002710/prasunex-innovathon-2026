@@ -13,6 +13,7 @@ if not ENV_FILE.exists():
 BACKEND_DIR = Path(__file__).resolve().parent.parent
 DEFAULT_DB_PATH = BACKEND_DIR / "campus_nexus.db"
 DEFAULT_DB_URL = f"sqlite:///{DEFAULT_DB_PATH}"
+DEFAULT_JWT_SECRET = "campus-nexus-v2-super-secret-jwt-key-2026-hackathon"
 
 
 class Settings(BaseSettings):
@@ -26,7 +27,7 @@ class Settings(BaseSettings):
     minio_secret_key: str = Field(default="minioadmin_secret")
     minio_bucket_grievances: str = Field(default="campus-grievances")
     minio_bucket_assets: str = Field(default="campus-assets")
-    jwt_secret: str = Field(default="campus-nexus-v2-super-secret-jwt-key-2026-hackathon")
+    jwt_secret: str = Field(default=DEFAULT_JWT_SECRET)
     jwt_algorithm: str = Field(default="HS256")
     jwt_exp_minutes: int = Field(default=120)
     refresh_token_exp_days: int = Field(default=7)
@@ -44,6 +45,12 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+if settings.environment.lower() in {"prod", "production"}:
+    if settings.jwt_secret == DEFAULT_JWT_SECRET:
+        raise RuntimeError("JWT_SECRET must be set to a unique secret in production.")
+    if settings.database_url.lower().startswith("sqlite"):
+        raise RuntimeError("DATABASE_URL must point to persistent PostgreSQL in production.")
 
 TIER_CONFIG = {
     "core": {

@@ -8,9 +8,22 @@ from sqlalchemy.orm import Session
 from ..database import get_db
 from ..models import AssessmentQuestion, ConceptNode, Course, KnowledgeState, User
 from ..security import get_current_user, require_roles
-from ml.inference import bkt_update, run_dkt_gru
 
 router = APIRouter(prefix="/api/dkt", tags=["Innovation 1: DKT-Graph"])
+
+
+def bkt_update(prior: float, correct: bool, p_transit: float = 0.18, p_slip: float = 0.10, p_guess: float = 0.20) -> float:
+    """Update mastery with the same BKT parameters as the experimental ML helper."""
+    prior = min(max(prior, 0.02), 0.98)
+    if correct:
+        numerator = prior * (1.0 - p_slip)
+        denominator = numerator + (1.0 - prior) * p_guess
+    else:
+        numerator = prior * p_slip
+        denominator = numerator + (1.0 - prior) * (1.0 - p_guess)
+    posterior = numerator / max(denominator, 1e-6)
+    updated = posterior + (1.0 - posterior) * p_transit
+    return round(float(min(max(updated, 0.05), 0.99)), 4)
 
 
 class MicroDrillSubmitRequest(BaseModel):
