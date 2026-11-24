@@ -19,6 +19,9 @@ export function Navbar() {
         </div>
 
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+          <Link href="/documentation" className="hidden text-sm font-semibold text-[#047857] transition-colors hover:text-[#065F46] md:inline-flex">
+            Engineering docs
+          </Link>
           <label className="relative hidden w-[25vw] min-w-[250px] max-w-[380px] lg:block">
             <Search className="pointer-events-none absolute left-3.5 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-[#4B6B5E]" />
             <input
